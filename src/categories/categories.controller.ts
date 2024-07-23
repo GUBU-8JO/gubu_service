@@ -8,7 +8,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return { message: '카테고리 조회에 성공했습니다.' };
   }
 }
