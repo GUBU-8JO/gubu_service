@@ -4,6 +4,11 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+  
+  @Get('/me')
+  findMe(@Req() req:number ){
+    return {message: "정보조회에 성공하셨습니다."}
+  }
 }
 // @Get('/me')
 // findMe(@Req()){

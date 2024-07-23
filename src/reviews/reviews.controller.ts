@@ -3,34 +3,36 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
   Delete,
+  Req,
+  Param,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { FindReviewDto } from './dto/find-review.dto';
+import { DeleteReviewDto } from './dto/delete-review.dto';
 
-@Controller('reviews')
+@Controller('reviwes')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
-
-  @Post(':serviceId')
-  create(@Param('serviceId') @Body() createReviewDto: CreateReviewDto) {
+//jwt로 req.user.id 받아올꺼임
+  @Post()
+  create(@Req() req:number, @Body() createReviewDto: CreateReviewDto) {
     return { message: '리뷰를 성공적으로 등록했습니다.' };
   }
 
-  @Get(':serviceId')
-  findAll(@Param(':serviceId') serviceId: number, @Body('id') id: number) {
+  @Get()
+  findOne(@Req() req:number, @Body('serviceId') findReviewDto: FindReviewDto) {
     return { message: '리뷰를 성공적으로 조회했습니다.' };
   }
 
-  @Get(':servicedId')
-  findOne(@Param(':serviceId') serviceId: string, @Body('id') id: number) {
-    return this.reviewsService.findOne(+id);
+  @Get()
+  findAll(@Body('serviceId') findReviewDto: FindReviewDto) {
+    return { message: '리뷰를 성공적으로 조회했습니다.' };
   }
 
-  @Delete(':servicedId')
-  remove(@Param(':serviceId') serviceId: string, @Body('id') id: number) {
-    return this.reviewsService.remove(+id);
-  }
+  @Delete(':reviewId')
+  remove(@Param() id:number) {
+    return {message: '리뷰를 성공적으로 삭제하였습니다.'};
+  } 
 }

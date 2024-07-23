@@ -21,10 +21,10 @@ export class AuthController {
     return { message: '로그인에 성공했습니다.' };
   }
 
+  // @Post('/sign-out')
+  // signOut(){
+  //   return {message: '로그아웃에 성공하였습니다.'}
+  // }
   //로그아웃 어떻게 할건지
   //회원탈퇴
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.authService.remove(+id);
-  // }
 }

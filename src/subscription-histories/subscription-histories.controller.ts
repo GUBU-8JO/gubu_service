@@ -7,28 +7,6 @@ import { UpdateSubscriptionHistoryDto } from './dto/update-subscription-history.
 export class SubscriptionHistoriesController {
   constructor(private readonly subscriptionHistoriesService: SubscriptionHistoriesService) {}
 
-  @Post()
-  create(@Body() createSubscriptionHistoryDto: CreateSubscriptionHistoryDto) {
-    return this.subscriptionHistoriesService.create(createSubscriptionHistoryDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.subscriptionHistoriesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subscriptionHistoriesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubscriptionHistoryDto: UpdateSubscriptionHistoryDto) {
-    return this.subscriptionHistoriesService.update(+id, updateSubscriptionHistoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.subscriptionHistoriesService.remove(+id);
-  }
+  //내부로직으로 구현할 예정 아마 사용자구독정보를 입력하거나 갱신할 경우 자동으로 로직으로 DB에 저장
+  
 }
