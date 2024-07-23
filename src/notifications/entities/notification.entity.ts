@@ -1,9 +1,11 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserSubscriptions } from "src/user-subscriptions/entities/user-subscription.entity";
+import { Users } from "src/users/entities/users.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
-export class Notification {
+export class Notifications {
   @PrimaryGeneratedColumn({type:"int"})
-  notificationId:number
+  id:number
 
   @Column({type:"int"})
   userId:number
@@ -22,4 +24,12 @@ export class Notification {
 
   @UpdateDateColumn({type:"datetime"})
   readedAt:Date
+
+  @ManyToOne(()=> Users, (user)=>user.notification, {onDelete:"CASCADE"})
+  @JoinColumn({name:"user_id"})
+  user:Users
+
+  @ManyToOne(()=> UserSubscriptions, (userSubscription)=>userSubscription.notification)
+  @JoinColumn({name:"user_subscription_id"})
+  userSubscription:UserSubscriptions
 }

@@ -1,9 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { UserSubscriptions } from "src/user-subscriptions/entities/user-subscription.entity";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class SubscriptionHistories {
   @PrimaryGeneratedColumn({type:"int"})
-  subscriptionHistoriesId:number
+  id:number
 
   @Column({type:"int"})
   userSubscriptionId: number
@@ -13,4 +14,8 @@ export class SubscriptionHistories {
 
   @Column()
   endDate: Date
+
+  @OneToOne(()=> UserSubscriptions, (userSubscription) => userSubscription.subscriptionHistory)
+  @JoinColumn({name:"user_subscription_id"})
+  userSubscription:UserSubscriptions
 }

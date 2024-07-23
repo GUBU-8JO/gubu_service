@@ -1,15 +1,15 @@
-import { Service } from "src/services/entities/service.entity";
+import { Services } from "src/services/entities/service.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
-export class Category {
+export class Categories {
   @PrimaryGeneratedColumn({type:"int"})
-  categoryId:number
+  id:number
 
   @Column({type:"varchar"})
   category:string
 
-  // @OneToMany(()=> Service, (service) => service.category)
-  // service: Service
+  @OneToMany(()=> Services, (service) => service.category)
+  service: Services[]
 }

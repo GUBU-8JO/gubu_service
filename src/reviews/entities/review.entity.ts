@@ -1,9 +1,11 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { Services } from "src/services/entities/service.entity";
+import { Users } from "src/users/entities/users.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
-export class Review {
+export class Reviews {
   @PrimaryGeneratedColumn({type:"int"})
-  reviewId:number
+  id:number
 
   @Column({type:"int"})
   userId:number
@@ -23,4 +25,11 @@ export class Review {
   @DeleteDateColumn({type:"datetime"})
   DeletedAt:number
 
+  @OneToOne(()=> Services, (service) => service.review)
+  @JoinColumn({name:"service_id"})
+  service:Services
+
+  @ManyToOne(()=>Users, (user)=> user.review)
+  @JoinColumn({name:"user_id"})
+  user:Users
 }

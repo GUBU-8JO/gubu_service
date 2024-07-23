@@ -1,9 +1,10 @@
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Services } from "./service.entity";
 
 @Entity()
-export class ServicePrice {
+export class ServicePrices {
   @PrimaryGeneratedColumn()
-  servicePriceId:number
+  id:number
 
   @Column()
   serviceId:number
@@ -16,4 +17,8 @@ export class ServicePrice {
 
   @DeleteDateColumn()
   deletedAt: Date
+
+  @OneToOne(()=> Services , (service)=>service.servicePrice)
+  @JoinColumn({name:"service_id"})
+  service:Services
 }

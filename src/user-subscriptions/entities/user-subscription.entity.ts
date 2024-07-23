@@ -1,9 +1,13 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Notifications } from "src/notifications/entities/notification.entity";
+import { Services } from "src/services/entities/service.entity";
+import { SubscriptionHistories } from "src/subscription-histories/entities/subscription-histories.entity";
+import { Users } from "src/users/entities/users.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
-export class UserSubscription {
+export class UserSubscriptions {
   @PrimaryGeneratedColumn({type:"int"})
-  userSubscriptionsId: number
+  id: number
   
   @Column({type:"int"})
   userId: number
@@ -43,4 +47,18 @@ export class UserSubscription {
 
   @DeleteDateColumn({type:"datetime"})
   deletedAt: Date
+
+  @OneToOne(()=> SubscriptionHistories, (subscriptionHistory) => subscriptionHistory.userSubscription)
+  subscriptionHistory: SubscriptionHistories
+
+  @OneToMany(()=> Notifications, (notification)=> notification.userSubscription)
+  notification:Notifications[]
+
+  @ManyToOne(()=>Services, (service)=>service.userSubscription)
+  @JoinColumn({name:"service_id"})
+  service:Services
+
+  @ManyToOne(()=>Users, (user)=>user.userSubscription)
+  @JoinColumn({name:"user_id"})
+  user:Users
 }
