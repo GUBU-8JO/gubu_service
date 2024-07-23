@@ -1,25 +1,23 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+
 @Entity()
-export class Notification {
+export class Users {
   @PrimaryGeneratedColumn({type:"int"})
-  notificationId:number
-
-  @Column({type:"int"})
-  userId:number
-
-  @Column({type:"int"})
-  userSubscriptionId:number
+  userId: Number
 
   @Column()
-  title:string
+  nickname: string
 
   @Column()
-  isRead:boolean
+  email: string
+
+  @Column()
+  password: string
 
   @CreateDateColumn({type:"datetime"})
-  createdAt:Date
+  createdAt: Date
 
   @UpdateDateColumn({type:"datetime"})
-  readedAt:Date
+  updatedAt: Date
 }

@@ -1,16 +1,16 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Service {
+export class SubscriptionHistories {
   @PrimaryGeneratedColumn({type:"int"})
-  serviceId:number
+  subscriptionHistoriesId:number
 
   @Column({type:"int"})
-  categoryId:number
+  userSubscriptionId: number
 
   @Column()
-  title:string
+  startDate: Date
 
   @Column()
-  image:string
+  endDate: Date
 }
