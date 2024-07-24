@@ -13,7 +13,7 @@ import {
 
 @Entity()
 export class Users {
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
@@ -23,7 +23,7 @@ export class Users {
   email: string;
 
   @IsNotEmpty({ message: '비밀번호를 입력해주세요' })
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @CreateDateColumn({ type: 'datetime' })

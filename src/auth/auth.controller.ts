@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Body,
+  HttpStatus,
 
   // Delete,
 } from '@nestjs/common';
@@ -13,12 +14,22 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/sign-up')
-  signUp(@Body() signUpDto: SignUpDto) {
-    return { message: '회원가입에 성공했습니다.' };
+  async signUp(@Body() signUpDto: SignUpDto) {
+    const data = await this.authService.signUp(signUpDto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: '회원가입에 성공했습니다.',
+      data,
+    };
   }
   @Post('/sign-in')
-  signIn(@Body() signUpDto: SignUpDto) {
-    return { message: '로그인에 성공했습니다.' };
+  async signIn(@Body() signUpDto: SignUpDto) {
+    const data = await this.authService.signIn(signUpDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: '로그인에 성공했습니다.',
+      data,
+    };
   }
 
   // @Post('/sign-out')
