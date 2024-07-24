@@ -13,6 +13,7 @@ import { SubscriptionHistoriesModule } from './subscription-histories/subscripti
 import { ServicesModule } from './services/services.module';
 import { CategoriesModule } from './categories/categories.module';
 import Joi from 'joi';
+import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -27,6 +28,7 @@ const typeOrmModuleOptions = {
     database: configService.get('DB_NAME'),
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: configService.get('DB_SYNC'),
+    autoLoadEntities: true,
     logging: true,
   }),
   inject: [ConfigService],
@@ -36,7 +38,7 @@ const typeOrmModuleOptions = {
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: Joi.object({}),
+      validationSchema: ConfigModuleValidationSchema,
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     UsersModule,
