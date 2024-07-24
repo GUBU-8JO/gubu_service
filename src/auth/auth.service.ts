@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from 'src/users/entities/users.entity';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -27,12 +28,13 @@ export class AuthService {
       );
     }
 
-    // const
+    const hashRounds = this.configService.get<number>('HASH_ROUNDS');
+    const hashedPassword = bcrypt.hashSync(password, hashRounds);
 
     const user = await this.userRepository.save({
       email,
       nickname,
-      password,
+      password: hashedPassword,
       rePassword,
     });
     delete user.password;
