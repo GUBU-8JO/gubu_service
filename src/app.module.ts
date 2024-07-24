@@ -14,7 +14,9 @@ import { ServicesModule } from './services/services.module';
 import { CategoriesModule } from './categories/categories.module';
 
 const typeOrmModuleOptions = {
-  useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => ({
+  useFactory: async (
+    configService: ConfigService,
+  ): Promise<TypeOrmModuleOptions> => ({
     namingStrategy: new SnakeNamingStrategy(),
     type: 'mysql',
     host: configService.get('DB_HOST'),
@@ -42,7 +44,7 @@ const typeOrmModuleOptions = {
     UserSubscriptionsModule,
     SubscriptionHistoriesModule,
     ServicesModule,
-    CategoriesModule
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
