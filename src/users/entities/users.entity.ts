@@ -1,3 +1,4 @@
+import { IsNotEmpty } from 'class-validator';
 import { Notifications } from 'src/notifications/entities/notification.entity';
 import { Reviews } from 'src/reviews/entities/review.entity';
 import { UserSubscriptions } from 'src/user-subscriptions/entities/user-subscription.entity';
@@ -13,7 +14,7 @@ import {
 @Entity()
 export class Users {
   @PrimaryGeneratedColumn({ type: 'int' })
-  id: Number;
+  id: number;
 
   @Column()
   nickname: string;
@@ -21,6 +22,7 @@ export class Users {
   @Column()
   email: string;
 
+  @IsNotEmpty({ message: '비밀번호를 입력해주세요' })
   @Column()
   password: string;
 
