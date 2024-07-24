@@ -12,6 +12,7 @@ import { UserSubscriptionsModule } from './user-subscriptions/user-subscriptions
 import { SubscriptionHistoriesModule } from './subscription-histories/subscription-histories.module';
 import { ServicesModule } from './services/services.module';
 import { CategoriesModule } from './categories/categories.module';
+import Joi from 'joi';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -35,6 +36,7 @@ const typeOrmModuleOptions = {
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: Joi.object({}),
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     UsersModule,
