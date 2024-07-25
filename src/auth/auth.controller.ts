@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   HttpStatus,
+  UseGuards,
 
   // Delete,
 } from '@nestjs/common';
@@ -10,6 +11,9 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign-in.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { userInfo } from 'src/auth/decorators/userInfo.decorator';
+import { Users } from 'src/users/entities/users.entity';
 
 @ApiTags('인증')
 @Controller('auth')
@@ -35,8 +39,9 @@ export class AuthController {
    * @param signInDto
    * @returns
    */
+  @UseGuards(AuthGuard('local'))
   @Post('/sign-in')
-  async signIn(@Body() signInDto: SignInDto) {
+  async signIn(@userInfo() users: Users, @Body() signInDto: SignInDto) {
     const data = await this.authService.signIn(signInDto);
     return {
       statusCode: HttpStatus.OK,
