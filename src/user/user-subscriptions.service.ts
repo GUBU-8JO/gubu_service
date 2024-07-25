@@ -65,8 +65,41 @@ export class UserSubscriptionsService {
     return data;
   }
 
-  update(id: number, updateUserSubscriptionDto: UpdateUserSubscriptionDto) {
-    return `This action updates a #${id} userSubscription`;
+  async update(
+    id: number,
+    {
+      startedDate,
+      paymentMethod,
+      period,
+      accountId,
+      accountPw,
+    }: UpdateUserSubscriptionDto,
+  ) {
+    const existUserSubscription = await this.userSubscriptionRepository.findOne(
+      {
+        where: { id },
+      },
+    );
+
+    if (!existUserSubscription)
+      throw new NotFoundException({ message: '등록되지않는 구독정보입니다.' });
+
+    await this.userSubscriptionRepository.update(
+      { id },
+      {
+        startedDate,
+        paymentMethod,
+        period,
+        accountId,
+        accountPw,
+      },
+    );
+
+    const data = await this.userSubscriptionRepository.findOne({
+      where: { id },
+    });
+
+    return data;
   }
 
   remove(id: number) {
