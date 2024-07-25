@@ -29,7 +29,10 @@ export class UserSubscriptionsService {
     });
 
     if (!existPlatform)
-      throw new NotFoundException({ message: '등록되지않는 플랫폼입니다.' });
+      throw new NotFoundException({
+        status: 404,
+        message: '등록되지않는 플랫폼입니다.',
+      });
 
     const data = await this.userSubscriptionRepository.save({
       startedDate,
@@ -43,8 +46,16 @@ export class UserSubscriptionsService {
     return data;
   }
 
-  findAll() {
-    return `This action returns all userSubscriptions`;
+  async findAllMe(userId: number) {
+    const data = await this.userSubscriptionRepository.find({
+      where: { userId },
+    });
+    if (!data)
+      throw new NotFoundException({
+        status: 404,
+        message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
+      });
+    return data;
   }
 
   findOne(id: number) {

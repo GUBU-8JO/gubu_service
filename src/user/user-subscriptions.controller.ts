@@ -25,7 +25,7 @@ export class UserSubscriptionsController {
    * 유저구독정보 생성
    * @returns
    */
-  @Post()
+  @Post('/')
   async create(
     // @Req() req: number,
     @Body() createUserSubscriptionDto: CreateUserSubscriptionDto,
@@ -40,9 +40,21 @@ export class UserSubscriptionsController {
     };
   }
 
-  @Get()
-  findAllMe(@Req() req: number) {
-    return { message: '나의 구독정보가 모두 조회되었습니다.' };
+  /**
+   * 유저구독 나의정보 조회
+   * @returns
+   */
+  @Get(':userId')
+  async findAllMe(
+    // @Req() req: number,
+    @Param('userId') userId: number,
+  ) {
+    const data = await this.userSubscriptionsService.findAllMe(userId);
+    return {
+      status: HttpStatus.CONFLICT,
+      message: '정상적으로 생성이 완료되었습니다.',
+      data,
+    };
   }
 
   @Get(':subscriptionId')
