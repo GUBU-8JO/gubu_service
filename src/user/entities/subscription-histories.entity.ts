@@ -1,4 +1,4 @@
-import { UserSubscriptions } from 'src/user-subscriptions/entities/user-subscription.entity';
+import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
 import {
   Column,
   Entity,

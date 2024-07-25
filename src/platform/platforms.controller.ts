@@ -1,9 +1,9 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ServicesService } from './services.service';
+import { PlatformsService } from './platforms.service';
 
-@Controller('services')
-export class ServicesController {
-  constructor(private readonly servicesService: ServicesService) {}
+@Controller('platform')
+export class PlatformsController {
+  constructor(private readonly servicesService: PlatformsService) {}
 
   //카테고리 검색 : 아이디가 없을 때 모두조회가능
   @Get()

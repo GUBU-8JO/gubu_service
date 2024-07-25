@@ -1,5 +1,5 @@
-import { UserSubscriptions } from 'src/user-subscriptions/entities/user-subscription.entity';
-import { Users } from 'src/users/entities/users.entity';
+import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
+import { Users } from 'src/user/entities/users.entity';
 import {
   Column,
   CreateDateColumn,

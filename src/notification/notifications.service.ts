@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Repository } from 'typeorm';
-import { UserSubscriptions } from 'src/user-subscriptions/entities/user-subscription.entity';
-import { Users } from 'src/users/entities/users.entity';
+import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
+import { Users } from 'src/user/entities/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from './entities/notification.entity';
 
@@ -58,7 +58,7 @@ export class NotificationsService {
   // }
 
   // findAll() {
-  //   return `This action returns all notifications`;
+  //   return `This action returns all notification`;
   // }
 
   // findOne(id: number) {

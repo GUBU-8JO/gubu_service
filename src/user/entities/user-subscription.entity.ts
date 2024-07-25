@@ -1,7 +1,7 @@
-import { Notifications } from 'src/notifications/entities/notification.entity';
-import { Services } from 'src/services/entities/service.entity';
-import { SubscriptionHistories } from 'src/subscription-histories/entities/subscription-histories.entity';
-import { Users } from 'src/users/entities/users.entity';
+import { Notifications } from 'src/notification/entities/notification.entity';
+import { Services } from 'src/platform/entities/service.entity';
+import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
+import { Users } from 'src/user/entities/users.entity';
 import {
   Column,
   CreateDateColumn,

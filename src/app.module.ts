@@ -4,14 +4,14 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
-import { ReviewsModule } from './reviews/reviews.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { UserSubscriptionsModule } from './user-subscriptions/user-subscriptions.module';
-import { SubscriptionHistoriesModule } from './subscription-histories/subscription-histories.module';
-import { ServicesModule } from './services/services.module';
-import { CategoriesModule } from './categories/categories.module';
+import { ReviewsModule } from './review/reviews.module';
+import { NotificationsModule } from './notification/notifications.module';
+import { UserSubscriptionsModule } from './user/user-subscriptions.module';
+import { SubscriptionHistoriesModule } from './user/subscription-histories.module';
+import { PlatformsModule } from './platform/platforms.module';
+import { CategoriesModule } from './categorie/categories.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 
 const typeOrmModuleOptions = {
@@ -46,7 +46,7 @@ const typeOrmModuleOptions = {
     NotificationsModule,
     UserSubscriptionsModule,
     SubscriptionHistoriesModule,
-    ServicesModule,
+    PlatformsModule,
     CategoriesModule,
   ],
   controllers: [AppController],

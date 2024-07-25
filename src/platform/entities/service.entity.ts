@@ -1,8 +1,8 @@
-import { Categories } from "src/categories/entities/category.entity";
+import { Categories } from "src/categorie/entities/category.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ServicePrices } from "./service-prices.entity";
-import { UserSubscriptions } from "src/user-subscriptions/entities/user-subscription.entity";
-import { Reviews } from "src/reviews/entities/review.entity";
+import { UserSubscriptions } from "src/user/entities/user-subscription.entity";
+import { Reviews } from "src/review/entities/review.entity";
 
 @Entity()
 export class Services {
