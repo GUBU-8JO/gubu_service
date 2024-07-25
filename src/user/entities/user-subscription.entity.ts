@@ -12,7 +12,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,13 +27,12 @@ export class UserSubscriptions {
 
   @Column({ type: 'int' })
   @ApiProperty({ example: 1 })
-  @IsNumber()
-  @IsNotEmpty({ message: '플랫폼을 입력해주세요' })
   platformId: number;
 
   @Column()
   @ApiProperty({ example: '2014-06-18' })
   @IsString()
+  @IsNotEmpty({ message: '구독시작일을 입력해주세요.' })
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: '날짜 형식이 올바르지 않습니다. YYYY-MM-DD 형식으로 입력해주세요.',
   })
@@ -42,18 +40,26 @@ export class UserSubscriptions {
 
   @Column()
   @ApiProperty({ example: '신한' })
+  @IsString()
+  @IsNotEmpty({ message: '결제수단을 입력해주세요.' })
   paymentMethod: string;
 
   @Column({ type: 'int' })
   @ApiProperty({ example: 1 })
+  @IsNumber()
+  @IsNotEmpty({ message: '결제주기를 입력해주세요.' })
   period: number;
 
   @Column()
   @ApiProperty({ example: 'example01@exapmple.com' })
+  @IsString()
+  @IsNotEmpty({ message: '계정ID를 입력해주세요.' })
   accountId: string;
 
   @Column()
   @ApiProperty({ example: '!1234ASdf' })
+  @IsString()
+  @IsNotEmpty({ message: '계정PW를 입력해주세요.' })
   accountPw: string;
 
   @CreateDateColumn({ type: 'datetime' })

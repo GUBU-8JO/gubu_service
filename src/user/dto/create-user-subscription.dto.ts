@@ -1,5 +1,6 @@
 import { PickType } from '@nestjs/swagger';
 import { UserSubscriptions } from '../entities/user-subscription.entity';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateUserSubscriptionDto extends PickType(UserSubscriptions, [
   'startedDate',
