@@ -50,12 +50,25 @@ export class UserSubscriptionsController {
     return { message: '선택하신 구독정보가 조회되었습니다.' };
   }
 
+  /**
+   * 유저구독정보 수정
+   * @returns
+   */
   @Patch(':subscriptionId')
-  update(
+  async update(
     @Param('subscriptionId') id: number,
     @Body() updateUserSubscriptionDto: UpdateUserSubscriptionDto,
   ) {
-    return { message: '나의 구독정보 수정이 완료되었습니다.' };
+    const data = await this.userSubscriptionsService.update(
+      id,
+      updateUserSubscriptionDto,
+    );
+
+    return {
+      status: HttpStatus.OK,
+      message: '정상적으로 수정 완료되었습니다.',
+      data,
+    };
   }
 
   @Delete(':subscriptionId')
