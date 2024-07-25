@@ -2,7 +2,7 @@ import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
 import {
   Column,
   Entity,
-  JoinColumn,
+  JoinColumn, ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -16,12 +16,18 @@ export class SubscriptionHistories {
   userSubscriptionId: number;
 
   @Column()
-  startDate: Date;
+  startedDate: Date;
 
   @Column()
-  endDate: Date;
+  nextDate: Date;
 
-  @OneToOne(
+  @Column()
+  price: number;
+
+  @Column()
+  stopDate: Date;
+
+  @ManyToOne(
     () => UserSubscriptions,
     (userSubscription) => userSubscription.subscriptionHistory,
   )

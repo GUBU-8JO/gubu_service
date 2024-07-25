@@ -1,81 +1,72 @@
-import { Notifications } from 'src/notification/entities/notification.entity';
-import { Services } from 'src/platform/entities/service.entity';
-import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
-import { Users } from 'src/user/entities/users.entity';
+import {Notifications} from 'src/notification/entities/notification.entity';
+import {Platforms} from 'src/platform/entities/platforms.entity';
+import {SubscriptionHistories} from 'src/user/entities/subscription-histories.entity';
+import {Users} from 'src/user/entities/users.entity';
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    OneToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class UserSubscriptions {
-  @PrimaryGeneratedColumn({ type: 'int' })
-  id: number;
+    @PrimaryGeneratedColumn({type: 'int'})
+    id: number;
 
-  @Column({ type: 'int' })
-  userId: number;
+    @Column({type: 'int'})
+    userId: number;
 
-  @Column({ type: 'int' })
-  serviceId: number;
+    @Column({type: 'int'})
+    platformId: number;
 
-  @Column()
-  startedDate: Date;
+    @Column()
+    startedDate: Date;
 
-  @Column({ type: 'int' })
-  period: number;
+    @Column()
+    paymentMethod: string;
 
-  @Column()
-  price: number;
+    @Column({type: 'int'})
+    period: number;
 
-  @Column()
-  paymentMethod: string;
+    @Column()
+    accountId: string;
 
-  @Column()
-  nextPaymentDate: Date;
+    @Column()
+    accountPw: string;
 
-  @Column()
-  finalPaymentDate: Date;
+    @CreateDateColumn({type: 'datetime'})
+    createdAt: Date;
 
-  @Column()
-  accountId: string;
+    @UpdateDateColumn({type: 'datetime'})
+    updatedAt: Date;
 
-  @Column()
-  accountPw: string;
+    @DeleteDateColumn({type: 'datetime'})
+    deletedAt: Date;
 
-  @CreateDateColumn({ type: 'datetime' })
-  createdAt: Date;
+    @OneToMany(
+        () => SubscriptionHistories,
+        (subscriptionHistory) => subscriptionHistory.userSubscription,
+    )
+    subscriptionHistory: SubscriptionHistories[];
 
-  @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: Date;
+    @OneToMany(
+        () => Notifications,
+        (notification) => notification.userSubscription,
+    )
+    notification: Notifications[];
 
-  @DeleteDateColumn({ type: 'datetime' })
-  deletedAt: Date;
+    @ManyToOne(() => Platforms, (platform) => platform.userSubscription)
+    @JoinColumn({name: 'platform_id'})
+    platform: Platforms
 
-  @OneToOne(
-    () => SubscriptionHistories,
-    (subscriptionHistory) => subscriptionHistory.userSubscription,
-  )
-  subscriptionHistory: SubscriptionHistories;
-
-  @OneToMany(
-    () => Notifications,
-    (notification) => notification.userSubscription,
-  )
-  notification: Notifications[];
-
-  @ManyToOne(() => Services, (service) => service.userSubscription)
-  @JoinColumn({ name: 'service_id' })
-  service: Services;
-
-  @ManyToOne(() => Users, (user) => user.userSubscription)
-  @JoinColumn({ name: 'user_id' })
-  user: Users;
+    @ManyToOne(() => Users, (user) => user.userSubscription)
+    @JoinColumn({name: 'user_id'})
+    user: Users
 }

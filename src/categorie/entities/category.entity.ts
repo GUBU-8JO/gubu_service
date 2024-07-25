@@ -1,4 +1,4 @@
-import { Services } from "src/platform/entities/service.entity";
+import { Platforms } from "src/platform/entities/platforms.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
@@ -10,6 +10,6 @@ export class Categories {
   @Column({type:"varchar"})
   category:string
 
-  @OneToMany(()=> Services, (service) => service.category)
-  service: Services[]
+  @OneToMany(()=> Platforms, (platform) => platform.category)
+  platform: Platforms[]
 }

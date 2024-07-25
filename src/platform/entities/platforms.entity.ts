@@ -1,11 +1,10 @@
 import { Categories } from "src/categorie/entities/category.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ServicePrices } from "./service-prices.entity";
 import { UserSubscriptions } from "src/user/entities/user-subscription.entity";
 import { Reviews } from "src/review/entities/review.entity";
 
 @Entity()
-export class Services {
+export class Platforms {
   @PrimaryGeneratedColumn({type:"int"})
   id:number
 
@@ -18,16 +17,22 @@ export class Services {
   @Column()
   image:string
 
-  @OneToMany(()=> UserSubscriptions, (userSubscription)=> userSubscription.service)
+  @Column()
+  purchaseLink:string
+
+  @Column({type:"int"})
+  price:number
+
+  @Column({type:"int"})
+  period:number
+
+  @OneToMany(()=> UserSubscriptions, (userSubscription)=> userSubscription.platform)
   userSubscription: UserSubscriptions
 
-  @OneToOne(()=> ServicePrices, (servicePrice) => servicePrice.service)
-  servicePrice:ServicePrices
-
-  @OneToOne(()=> Reviews, (review) => review.service)
+  @OneToOne(()=> Reviews, (review) => review.platform)
   review:Reviews
 
-  @ManyToOne(()=> Categories, (category)=>category.service, {onDelete:"CASCADE"})
+  @ManyToOne(()=> Categories, (category)=>category.platform, {onDelete:"CASCADE"})
   @JoinColumn({name:"category_id"})
   category:Categories
 }
