@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Notifications } from 'src/notification/entities/notification.entity';
 import { Platforms } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
@@ -15,50 +16,37 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('userSubscriptions')
 export class UserSubscriptions {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
   @Column({ type: 'int' })
+  @ApiProperty({ example: 1 })
   userId: number;
 
   @Column({ type: 'int' })
+  @ApiProperty({ example: 1 })
   platformId: number;
 
-  /**
-   * 구독시작일
-   * @example "2014-06-18"
-   */
   @Column()
+  @ApiProperty({ example: '2014-06-18' })
   startedDate: Date;
 
-  /**
-   * 결제수단
-   * @example "신한"
-   */
   @Column()
+  @ApiProperty({ example: '신한' })
   paymentMethod: string;
 
-  /**
-   * 결제주기
-   * @example "1"
-   */
   @Column({ type: 'int' })
+  @ApiProperty({ example: 1 })
   period: number;
 
-  /**
-   * 계정ID
-   * @example "example01@exapmple.com"
-   */
   @Column()
+  @ApiProperty({ example: 'example01@exapmple.com' })
   accountId: string;
 
-  /**
-   * 계정PW
-   * @example "!1234ASdf"
-   */
   @Column()
+  @ApiProperty({ example: '!1234ASdf' })
   accountPw: string;
 
   @CreateDateColumn({ type: 'datetime' })

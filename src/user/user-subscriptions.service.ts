@@ -1,11 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserSubscriptions } from './entities/user-subscription.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserSubscriptionsService {
-  create(createUserSubscriptionDto: CreateUserSubscriptionDto) {
-    return 'This action adds a new userSubscription';
+  constructor(
+    @InjectRepository(UserSubscriptions)
+    private readonly userSubscriptionRepository: Repository<UserSubscriptions>,
+  ) {}
+
+  create({
+    startedDate,
+    paymentMethod,
+    period,
+    accountId,
+    accountPw,
+    userId,
+    platformId,
+  }: CreateUserSubscriptionDto) {
+    const data = this.userSubscriptionRepository.save({
+      startedDate,
+      paymentMethod,
+      period,
+      accountId,
+      accountPw,
+      userId,
+      platformId,
+    });
+    return data;
   }
 
   findAll() {
