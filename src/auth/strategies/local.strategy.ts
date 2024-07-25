@@ -8,12 +8,13 @@ import { AuthService } from '../auth.service';
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super({
+      //이메일과 비밀번호 가져와서
       usernameField: 'email',
-      // passwordField 요거는 안써도 됨
+      //+ passwordField 요거는 안써도 됨
       passwordField: 'password',
     });
   }
-
+  //이메일과 비밀번호 인증
   async validate(email: string, password: string): Promise<any> {
     const user = await this.authService.validateUser({ email, password });
     if (!user) {

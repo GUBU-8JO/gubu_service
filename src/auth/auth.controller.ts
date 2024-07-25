@@ -39,7 +39,7 @@ export class AuthController {
    * @param signInDto
    * @returns
    */
-  @UseGuards(AuthGuard('local'))
+  // @UseGuards(AuthGuard('local')) 없어도될듯
   @Post('/sign-in')
   async signIn(@userInfo() users: Users, @Body() signInDto: SignInDto) {
     const data = await this.authService.signIn(signInDto);
