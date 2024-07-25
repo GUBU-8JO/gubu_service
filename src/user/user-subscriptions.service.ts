@@ -50,7 +50,7 @@ export class UserSubscriptionsService {
     const data = await this.userSubscriptionRepository.find({
       where: { userId },
     });
-    if (!data)
+    if (!data.length)
       throw new NotFoundException({
         status: 404,
         message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
@@ -58,8 +58,11 @@ export class UserSubscriptionsService {
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userSubscription`;
+  async findOne(id: number) {
+    const data = await this.userSubscriptionRepository.findOne({
+      where: { id },
+    });
+    return data;
   }
 
   update(id: number, updateUserSubscriptionDto: UpdateUserSubscriptionDto) {
