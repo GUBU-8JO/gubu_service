@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { Notifications } from 'src/notification/entities/notification.entity';
 import { Platforms } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
@@ -53,13 +59,13 @@ export class UserSubscriptions {
   @Column()
   @ApiProperty({ example: 'example01@exapmple.com' })
   @IsString()
-  @IsNotEmpty({ message: '계정ID를 입력해주세요.' })
+  @IsOptional()
   accountId: string;
 
   @Column()
   @ApiProperty({ example: '!1234ASdf' })
   @IsString()
-  @IsNotEmpty({ message: '계정PW를 입력해주세요.' })
+  @IsOptional()
   accountPw: string;
 
   @CreateDateColumn({ type: 'datetime' })
