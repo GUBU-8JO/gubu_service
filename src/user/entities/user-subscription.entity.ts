@@ -29,20 +29,11 @@ export class UserSubscriptions {
     @Column()
     startedDate: Date;
 
-    @Column({type: 'int'})
-    period: number;
-
-    @Column()
-    price: number;
-
     @Column()
     paymentMethod: string;
 
-    @Column()
-    nextPaymentDate: Date;
-
-    @Column()
-    finalPaymentDate: Date;
+    @Column({type: 'int'})
+    period: number;
 
     @Column()
     accountId: string;
@@ -59,11 +50,11 @@ export class UserSubscriptions {
     @DeleteDateColumn({type: 'datetime'})
     deletedAt: Date;
 
-    @OneToOne(
+    @OneToMany(
         () => SubscriptionHistories,
         (subscriptionHistory) => subscriptionHistory.userSubscription,
     )
-    subscriptionHistory: SubscriptionHistories;
+    subscriptionHistory: SubscriptionHistories[];
 
     @OneToMany(
         () => Notifications,

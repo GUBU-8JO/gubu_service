@@ -2,7 +2,7 @@ import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
 import {
   Column,
   Entity,
-  JoinColumn,
+  JoinColumn, ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -19,27 +19,15 @@ export class SubscriptionHistories {
   startedDate: Date;
 
   @Column()
-  paymentMethod: string;
-
-  @Column({type:'int'})
-  period: number;
+  nextDate: Date;
 
   @Column()
-  accountId: string;
+  price: number;
 
   @Column()
-  accountPw: string;
+  stopDate: Date;
 
-  @Column()
-  createdAt: Date;
-
-  @Column()
-  updatedAt: Date;
-
-  @Column()
-  deletedAt: Date;
-
-  @OneToOne(
+  @ManyToOne(
     () => UserSubscriptions,
     (userSubscription) => userSubscription.subscriptionHistory,
   )
