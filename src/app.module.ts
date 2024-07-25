@@ -12,7 +12,6 @@ import { UserSubscriptionsModule } from './user-subscriptions/user-subscriptions
 import { SubscriptionHistoriesModule } from './subscription-histories/subscription-histories.module';
 import { ServicesModule } from './services/services.module';
 import { CategoriesModule } from './categories/categories.module';
-import Joi from 'joi';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 
 const typeOrmModuleOptions = {

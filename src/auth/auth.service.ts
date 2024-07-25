@@ -35,14 +35,21 @@ export class AuthService {
       email,
       nickname,
       password: hashedPassword,
-      rePassword,
     });
+    console.log(password);
     delete user.password;
     return user;
   }
   signIn(signInDto: SignInDto) {
     return 'This action adds a new auth';
   }
+
+  //async validateUser({email, password}: singInDto)
+  //findOnBy 사용시 select옵션을 사용할 수 없으므로, 엔티티에 안가져오기로 했던 비밀번호를 가져올 수 없음
+  //const user = await this.userRepository.findOne({where:{email}, select:{id:true, password:true},});
+  //const passwordMatched = bcrypt.compareSync(password, user?.password ?? '')
+  //if(!user || !passwordMathed ){
+  // return null}
 
   // remove(id: number) {
   //   return `This action removes a #${id} auth`;

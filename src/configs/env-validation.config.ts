@@ -10,3 +10,4 @@ export const ConfigModuleValidationSchema = Joi.object({
   DB_SYNC: Joi.boolean().required().default(true),
   HASH_ROUNDS: Joi.number().required().default(10),
 });
+//

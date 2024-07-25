@@ -49,6 +49,5 @@ export class AuthController {
   // signOut(){
   //   return {message: '로그아웃에 성공하였습니다.'}
   // }
-  //로그아웃 어떻게 할건지
-  //회원탈퇴
+  //로그아웃, 회원탈퇴 어떻게 할건지
 }

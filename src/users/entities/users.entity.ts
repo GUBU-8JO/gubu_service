@@ -16,9 +16,11 @@ export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @IsNotEmpty({ message: '닉네임을 입력해주세요' })
   @Column()
   nickname: string;
 
+  @IsNotEmpty({ message: '이메일을 입력해주세요' })
   @Column()
   email: string;
 
@@ -44,3 +46,4 @@ export class Users {
   @OneToMany(() => Notifications, (notification) => notification.user)
   notification: Notifications[];
 }
+///
