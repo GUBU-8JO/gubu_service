@@ -2,8 +2,8 @@ import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
 import {
   Column,
   Entity,
-  JoinColumn, ManyToOne,
-  OneToOne,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
