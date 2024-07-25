@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
 import { Notifications } from 'src/notification/entities/notification.entity';
 import { Platforms } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
@@ -27,11 +28,17 @@ export class UserSubscriptions {
 
   @Column({ type: 'int' })
   @ApiProperty({ example: 1 })
+  @IsNumber()
+  @IsNotEmpty({ message: '플랫폼을 입력해주세요' })
   platformId: number;
 
   @Column()
   @ApiProperty({ example: '2014-06-18' })
-  startedDate: Date;
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: '날짜 형식이 올바르지 않습니다. YYYY-MM-DD 형식으로 입력해주세요.',
+  })
+  startedDate: string;
 
   @Column()
   @ApiProperty({ example: '신한' })

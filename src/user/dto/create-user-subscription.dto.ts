@@ -1,4 +1,4 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
 import { UserSubscriptions } from '../entities/user-subscription.entity';
 
 export class CreateUserSubscriptionDto extends PickType(UserSubscriptions, [
@@ -7,6 +7,6 @@ export class CreateUserSubscriptionDto extends PickType(UserSubscriptions, [
   'period',
   'accountId',
   'accountPw',
-  'userId',
+  'userId', // 나중에 jwt로 받을 예정
   'platformId',
 ]) {}
