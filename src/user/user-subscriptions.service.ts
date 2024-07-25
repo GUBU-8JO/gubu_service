@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserSubscriptions } from './entities/user-subscription.entity';
 import { Repository } from 'typeorm';
 import { Platforms } from 'src/platform/entities/platforms.entity';
+import _ from 'lodash';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -102,7 +107,16 @@ export class UserSubscriptionsService {
     return data;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userSubscription`;
+  async remove(id: number) {
+    await this.userSubscriptionRepository.delete({ id });
+    const existData = this.userSubscriptionRepository.findOne({
+      where: { id },
+    });
+    console.log(existData);
+    if (_.isNil(existData))
+      throw new BadRequestException({
+        message: 'data가 정상적으로 삭제되지 않았습니다.',
+      });
+    return true;
   }
 }

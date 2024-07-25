@@ -92,8 +92,17 @@ export class UserSubscriptionsController {
     };
   }
 
+  /**
+   * 유저구독정보 삭제
+   * @returns
+   */
   @Delete(':subscriptionId')
-  remove(@Param('subscriptionId') id: number) {
-    return { message: '나의 구독정보가 삭제되었습니다.' };
+  async remove(@Param('subscriptionId') id: number) {
+    await this.userSubscriptionsService.remove(id);
+
+    return {
+      status: HttpStatus.OK,
+      message: '정상적으로 삭제되었습니다.',
+    };
   }
 }
