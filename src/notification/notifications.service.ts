@@ -18,6 +18,23 @@ export class NotificationsService {
     private notificationRepository: Repository<Notifications>,
   ) {}
 
+  /** 알림 목록 조회 */
+  async findAll(userId: number) {
+    const notifications = await this.notificationRepository.find({
+      where: {
+        userId,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    if (!notifications) {
+      throw new NotFoundException('알림 목록이 존재하지 않습니다.');
+    }
+    return notifications;
+  }
+
   /** 알림 한가지 조회 */
   async findOne(userId: number, notificationId: number) {
     const notification = await this.notificationRepository.findOne({

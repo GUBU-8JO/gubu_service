@@ -10,7 +10,7 @@ import {
 import { NotificationsService } from './notifications.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Notifications')
+@ApiTags('알림')
 @Controller('notifications')
 export class NotificationsController {
   // 테스트 유저 생성
@@ -21,41 +21,27 @@ export class NotificationsController {
   };
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  // @Post()
-  // create(@Body() createNotificationDto: CreateNotificationDto) {
-  //   return this.notificationsService.create(createNotificationDto);
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.notificationsService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.notificationsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateNotificationDto: UpdateNotificationDto,
-  // ) {
-  //   return this.notificationsService.update(+id, updateNotificationDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.notificationsService.remove(+id);
-  // }
-  //jwt로 req.user.id로 받을꺼임
+  /**
+   * 알림 목록 조회
+   * @param req
+   * @returns
+   */
   @Get()
-  findAll(@Request() req: number) {
-    return { message: '넷플릭스 결제일이 2일 남았습니다' };
+  async GetMyNotifications(@Request() req: any) {
+    // const userId = Number(req.user.id);
+    const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
+    const notifications = await this.notificationsService.findAll(userId);
+    return {
+      status: HttpStatus.OK,
+      message: '알림 목록 조회에 성공했습니다.',
+      data: notifications,
+    };
   }
 
   /**
-   * 구독 상세정보 가져오기
+   * 알림 상세정보 가져오기
+   * @param notificationId
+   * @returns
    */
   @Get(':notificationId')
   @ApiBearerAuth()
@@ -76,6 +62,4 @@ export class NotificationsController {
       date: notification,
     };
   }
-
-  //create, update등등 database알림 저장하는것은 내부 로직으로 구현
 }
