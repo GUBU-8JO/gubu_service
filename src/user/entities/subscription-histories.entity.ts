@@ -16,10 +16,28 @@ export class SubscriptionHistories {
   userSubscriptionId: number;
 
   @Column()
-  startDate: Date;
+  startedDate: Date;
 
   @Column()
-  endDate: Date;
+  paymentMethod: string;
+
+  @Column({type:'int'})
+  period: number;
+
+  @Column()
+  accountId: string;
+
+  @Column()
+  accountPw: string;
+
+  @Column()
+  createdAt: Date;
+
+  @Column()
+  updatedAt: Date;
+
+  @Column()
+  deletedAt: Date;
 
   @OneToOne(
     () => UserSubscriptions,
