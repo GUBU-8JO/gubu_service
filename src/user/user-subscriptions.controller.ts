@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
   HttpStatus,
 } from '@nestjs/common';
 import { UserSubscriptionsService } from './user-subscriptions.service';
@@ -25,7 +24,7 @@ export class UserSubscriptionsController {
    * 유저구독정보 생성
    * @returns
    */
-  @Post()
+  @Post('/')
   async create(
     // @Req() req: number,
     @Body() createUserSubscriptionDto: CreateUserSubscriptionDto,
@@ -40,14 +39,36 @@ export class UserSubscriptionsController {
     };
   }
 
-  @Get()
-  findAllMe(@Req() req: number) {
-    return { message: '나의 구독정보가 모두 조회되었습니다.' };
+  /**
+   * 유저구독 나의정보 조회
+   * @returns
+   */
+  @Get('/me/:userId')
+  async findAllMe(
+    // @Req() req: number,
+    @Param('userId') userId: number,
+  ) {
+    const data = await this.userSubscriptionsService.findAllMe(userId);
+    return {
+      status: HttpStatus.OK,
+      message: '자기구독정보 조회가 완료되었습니다.',
+      data,
+    };
   }
 
-  @Get(':subscriptionId')
-  findOne(@Param('subscriptionId') id: number) {
-    return { message: '선택하신 구독정보가 조회되었습니다.' };
+  /**
+   * 특정 구독정보 조회
+   * @returns
+   */
+  @Get('/:subscriptionId')
+  async findOne(@Param('subscriptionId') id: number) {
+    const data = await this.userSubscriptionsService.findOne(id);
+
+    return {
+      status: HttpStatus.OK,
+      message: '특정 구독정보 조회가 완료되었습니다.',
+      data,
+    };
   }
 
   /**
