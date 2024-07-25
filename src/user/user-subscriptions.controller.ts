@@ -7,23 +7,37 @@ import {
   Param,
   Delete,
   Req,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserSubscriptionsService } from './user-subscriptions.service';
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('유저구독정보 API')
 @Controller('user-subscriptions')
 export class UserSubscriptionsController {
   constructor(
     private readonly userSubscriptionsService: UserSubscriptionsService,
   ) {}
-  //jwt
+
+  /**
+   * 유저구독정보 생성
+   * @returns
+   */
   @Post()
-  create(
-    @Req() req: number,
+  async create(
+    // @Req() req: number,
     @Body() createUserSubscriptionDto: CreateUserSubscriptionDto,
   ) {
-    return { message: '정상적으로 생성이 완료되었습니다.' };
+    const data = await this.userSubscriptionsService.create(
+      createUserSubscriptionDto,
+    );
+    return {
+      status: HttpStatus.CREATED,
+      message: '정상적으로 생성이 완료되었습니다.',
+      data,
+    };
   }
 
   @Get()

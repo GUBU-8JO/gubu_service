@@ -1,11 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserSubscriptions } from './entities/user-subscription.entity';
+import { Repository } from 'typeorm';
+import { Platforms } from 'src/platform/entities/platforms.entity';
 
 @Injectable()
 export class UserSubscriptionsService {
-  create(createUserSubscriptionDto: CreateUserSubscriptionDto) {
-    return 'This action adds a new userSubscription';
+  constructor(
+    @InjectRepository(UserSubscriptions)
+    private readonly userSubscriptionRepository: Repository<UserSubscriptions>,
+    @InjectRepository(Platforms)
+    private readonly platformRepository: Repository<Platforms>,
+  ) {}
+
+  async create({
+    userId,
+    platformId,
+    startedDate,
+    paymentMethod,
+    period,
+    accountId,
+    accountPw,
+  }: CreateUserSubscriptionDto) {
+    const existPlatform = await this.platformRepository.findOne({
+      where: { id: platformId },
+    });
+
+    if (!existPlatform)
+      throw new NotFoundException({ message: '등록되지않는 플랫폼입니다.' });
+
+    const data = await this.userSubscriptionRepository.save({
+      startedDate,
+      paymentMethod,
+      period,
+      accountId,
+      accountPw,
+      userId,
+      platformId,
+    });
+    return data;
   }
 
   findAll() {
