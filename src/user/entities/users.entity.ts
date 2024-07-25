@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
-import { Notifications } from 'src/notifications/entities/notification.entity';
-import { Reviews } from 'src/reviews/entities/review.entity';
-import { UserSubscriptions } from 'src/user-subscriptions/entities/user-subscription.entity';
+import { Notifications } from 'src/notification/entities/notification.entity';
+import { Reviews } from 'src/review/entities/review.entity';
+import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
 import {
   Column,
   CreateDateColumn,

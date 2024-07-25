@@ -1,5 +1,5 @@
-import { Services } from "src/services/entities/service.entity";
-import { Users } from "src/users/entities/users.entity";
+import { Services } from "src/platform/entities/service.entity";
+import { Users } from "src/user/entities/users.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()

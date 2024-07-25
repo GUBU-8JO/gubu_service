@@ -1,4 +1,4 @@
-import { Services } from "src/services/entities/service.entity";
+import { Services } from "src/platform/entities/service.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
