@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserSubscriptionDto } from './create-user-subscription.dto';
+import { UserSubscriptions } from '../entities/user-subscription.entity';
+import { PickType } from '@nestjs/swagger';
 
-export class UpdateUserSubscriptionDto extends PartialType(CreateUserSubscriptionDto) {}
+export class UpdateUserSubscriptionDto extends PickType(UserSubscriptions, [
+  'userId',
+]) {}
