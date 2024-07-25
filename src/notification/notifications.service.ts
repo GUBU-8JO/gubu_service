@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Repository } from 'typeorm';
 import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
@@ -18,7 +18,21 @@ export class NotificationsService {
     private notificationRepository: Repository<Notifications>,
   ) {}
 
-  @Cron('00 49 18 * * *')
+  /** 알림 한가지 조회 */
+  async findOne(userId: number, notificationId: number) {
+    const notification = await this.notificationRepository.findOne({
+      where: {
+        userId,
+        id: notificationId,
+      },
+    });
+    if (!notification) {
+      throw new NotFoundException('알림이 존재하지 않습니다.');
+    }
+    return notification;
+  }
+
+  @Cron('00 53 14 * * *')
   async handleCron() {
     this.logger.debug('알림 테스트');
 
@@ -52,25 +66,4 @@ export class NotificationsService {
       }
     });
   }
-
-  // create(createNotificationDto: CreateNotificationDto) {
-  //   return 'This action adds a new notification';
-  // }
-
-  // findAll() {
-  //   return `This action returns all notification`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} notification`;
-  // }
-
-  // update(id: number, updateNotificationDto: UpdateNotificationDto) {
-  //   return `This action updates a #${id} notification`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} notification`;
-  // }
-  // }
 }
