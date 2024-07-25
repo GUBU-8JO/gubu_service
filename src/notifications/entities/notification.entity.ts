@@ -1,35 +1,46 @@
-import { UserSubscriptions } from "src/user-subscriptions/entities/user-subscription.entity";
-import { Users } from "src/users/entities/users.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserSubscriptions } from 'src/user-subscriptions/entities/user-subscription.entity';
+import { Users } from 'src/users/entities/users.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Notifications {
-  @PrimaryGeneratedColumn({type:"int"})
-  id:number
+  @PrimaryGeneratedColumn({ type: 'int' })
+  id: number;
 
-  @Column({type:"int"})
-  userId:number
+  @Column({ type: 'int' })
+  userId: number;
 
-  @Column({type:"int"})
-  userSubscriptionId:number
-
-  @Column()
-  title:string
+  @Column({ type: 'int' })
+  userSubscriptionId: number;
 
   @Column()
-  isRead:boolean
+  title: string;
 
-  @CreateDateColumn({type:"datetime"})
-  createdAt:Date
+  @Column()
+  isRead: boolean;
 
-  @UpdateDateColumn({type:"datetime"})
-  readedAt:Date
+  @CreateDateColumn({ type: 'datetime' })
+  createdAt: Date;
 
-  @ManyToOne(()=> Users, (user)=>user.notification, {onDelete:"CASCADE"})
-  @JoinColumn({name:"user_id"})
-  user:Users
+  @UpdateDateColumn({ type: 'datetime' })
+  readedAt: Date;
 
-  @ManyToOne(()=> UserSubscriptions, (userSubscription)=>userSubscription.notification)
-  @JoinColumn({name:"user_subscription_id"})
-  userSubscription:UserSubscriptions
+  @ManyToOne(() => Users, (user) => user.notification, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: Users;
+
+  @ManyToOne(
+    () => UserSubscriptions,
+    (userSubscription) => userSubscription.notification,
+  )
+  @JoinColumn({ name: 'user_subscription_id' })
+  userSubscription: UserSubscriptions;
 }
