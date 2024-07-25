@@ -13,7 +13,6 @@ export class PlatformsController {
   //   return { message: '카테고리 검색에 성공했습니다' };
   // }
 
-  //플랫폼별 가격 조회
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return await this.platformService.findById(id);
