@@ -6,24 +6,17 @@ import {
   ParseIntPipe,
   Req,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('알림')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('notifications')
 export class NotificationsController {
-  // 테스트 유저 생성
-  private user = {
-    id: 1,
-    email: 'user@user.com',
-    nickname: 'user',
-  };
-  private user2 = {
-    id: 2,
-    email: 'user@user.com',
-    nickname: 'user',
-  };
   constructor(private readonly notificationsService: NotificationsService) {}
 
   /**
@@ -32,10 +25,12 @@ export class NotificationsController {
    * @returns
    */
   @Get()
-  async GetMyNotifications(@Request() req: any) {
-    // const userId = Number(req.user.id);
-    const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
+  async GetMyNotifications(@Req() req) {
+    const userId = Number(req.user.id);
+    console.log('아이디', userId)
+    // const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notifications = await this.notificationsService.findAll(userId);
+    console.log(userId);
 
     return {
       status: HttpStatus.OK,
@@ -50,10 +45,9 @@ export class NotificationsController {
    * @returns
    */
   @Get('count')
-  @ApiBearerAuth()
   async countNotReadNotifications(@Req() req: any) {
-    // const userId = Number(req.user.id);
-    const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
+    const userId = Number(req.user.id);
+    // const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notReadNotifications =
       await this.notificationsService.countNotifications(userId);
 
@@ -70,13 +64,12 @@ export class NotificationsController {
    * @returns
    */
   @Get(':notificationId')
-  @ApiBearerAuth()
   async GetNotificationById(
     @Param('notificationId', ParseIntPipe) notificationId: number,
     @Req() req: any,
   ) {
-    // const userId = Number(req.user.id);
-    const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
+    const userId = Number(req.user.id);
+    // const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notification = await this.notificationsService.findOne(
       userId,
       notificationId,
