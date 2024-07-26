@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class FindReviewDto {
   @IsNumber()
   @IsNotEmpty()
-  serviceId: number;
+  platformId: number;
 }
