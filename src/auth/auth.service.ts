@@ -40,14 +40,11 @@ export class AuthService {
     return user;
   }
   async signIn(signInDto: SignInDto) {
-    const { email, password } = signInDto;
-    // console.log('password', password);
+    const { email } = signInDto;
+
     const user = await this.userRepository.findOne({
       where: { email },
-      // select: ['id', 'password'],
     });
-    //아직안함 : 정보가 맞는지 조회
-    console.log('user', user);
     const payload = { id: user.id };
     const accessToken = this.jwtService.sign(payload);
     return accessToken;
