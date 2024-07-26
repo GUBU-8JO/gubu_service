@@ -22,7 +22,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('userSubscriptions')
+@Entity()
 export class UserSubscriptions {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
