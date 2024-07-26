@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Users } from 'src/users/entities/users.entity';
+import { User } from 'src/user/entities/user.entity';
 import bcrypt from 'bcrypt';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-    @InjectRepository(Users) private readonly userRepository: Repository<Users>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
   async signUp({ email, nickname, password, rePassword }: SignUpDto) {
     const passwordMatched = password === rePassword;
@@ -41,12 +41,13 @@ export class AuthService {
   }
   async signIn(signInDto: SignInDto) {
     const { email, password } = signInDto;
+    // console.log('password', password);
     const user = await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'password'],
+      // select: ['id', 'password'],
     });
     //아직안함 : 정보가 맞는지 조회
-
+    console.log('user', user);
     const payload = { id: user.id };
     const accessToken = this.jwtService.sign(payload);
     return accessToken;
@@ -58,6 +59,7 @@ export class AuthService {
       where: { email },
       select: { id: true, password: true },
     });
+
     const passwordMatched = bcrypt.compareSync(password, user?.password ?? '');
     if (!user || !passwordMatched) {
       return null;

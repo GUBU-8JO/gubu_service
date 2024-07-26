@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UsersService } from 'src/users/users.service';
+import { UserService } from 'src/user/user.service';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -9,7 +9,7 @@ import { PassportStrategy } from '@nestjs/passport';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private userService: UsersService,
+    private userService: UserService,
     private configService: ConfigService,
   ) {
     super({
