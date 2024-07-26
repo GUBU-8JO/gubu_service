@@ -28,7 +28,6 @@ export class NotificationsController {
   async GetMyNotifications(@Req() req) {
     const userId = Number(req.user.id);
     console.log('아이디', userId)
-    // const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notifications = await this.notificationsService.findAll(userId);
     console.log(userId);
 
@@ -47,7 +46,6 @@ export class NotificationsController {
   @Get('count')
   async countNotReadNotifications(@Req() req: any) {
     const userId = Number(req.user.id);
-    // const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notReadNotifications =
       await this.notificationsService.countNotifications(userId);
 
@@ -69,7 +67,6 @@ export class NotificationsController {
     @Req() req: any,
   ) {
     const userId = Number(req.user.id);
-    // const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notification = await this.notificationsService.findOne(
       userId,
       notificationId,
