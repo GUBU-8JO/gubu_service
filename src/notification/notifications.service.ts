@@ -78,10 +78,12 @@ export class NotificationsService {
       },
     );
 
-    if (!countNotifications) {
+    const [_, count] = countNotifications;
+
+    if (count === 0) {
       throw new NotFoundException('모든 알림을 확인하셨습니다.');
     }
-    const [_, count] = countNotifications;
+
     return count;
   }
 

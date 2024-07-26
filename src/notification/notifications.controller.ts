@@ -36,6 +36,7 @@ export class NotificationsController {
     // const userId = Number(req.user.id);
     const userId = this.user.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notifications = await this.notificationsService.findAll(userId);
+
     return {
       status: HttpStatus.OK,
       message: '알림 목록 조회에 성공했습니다.',
@@ -52,9 +53,10 @@ export class NotificationsController {
   @ApiBearerAuth()
   async countNotReadNotifications(@Req() req: any) {
     // const userId = Number(req.user.id);
-    const userId = this.user.id;
+    const userId = this.user2.id; // 테스트 유저 사용으로 로그인 기능 생성 시 삭제
     const notReadNotifications =
       await this.notificationsService.countNotifications(userId);
+
     return {
       status: HttpStatus.OK,
       message: '미확인 알림 목록 조회에 성공했습니다.',
