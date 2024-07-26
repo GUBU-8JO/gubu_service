@@ -1,6 +1,18 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { PlatformsService } from './platforms.service';
 import { ApiTags } from '@nestjs/swagger';
+import {Platforms} from "./entities/platforms.entity";
+import {PlatformVo} from "./dto/PlatformVo";
+
+class ResponseDto<T> {
+  errorMessage?: string
+  data: T
+
+  constructor(data: T = null, errorMessage?: string) {
+    this.data = data
+    this.errorMessage = errorMessage
+  }
+}
 
 @ApiTags('PLATFORM API')
 @Controller('platforms')
@@ -14,13 +26,14 @@ export class PlatformsController {
   // }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
-    return await this.platformService.findById(id);
+  async findOne(@Param('id') id: number): Promise<ResponseDto<PlatformVo>> {
+    return new ResponseDto(await this.platformService.findById(id))
   }
 
   //여러 플랫폼 가격 조회
   @Get()
-  async getAllPlatforms() {
-    return await this.platformService.findMany();
+  async getAllPlatforms(): Promise<ResponseDto<PlatformVo[]>> {
+    const platforms = await this.platformService.findMany();
+    return new ResponseDto(platforms)
   }
 }
