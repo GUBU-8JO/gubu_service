@@ -7,6 +7,4 @@ export class CreateUserSubscriptionDto extends PickType(UserSubscriptions, [
   'period',
   'accountId',
   'accountPw',
-  'userId', // 나중에 jwt로 받을 예정
-  'platformId',
 ]) {}
