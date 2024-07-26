@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UserSubscriptionsService } from './user-subscriptions.service';
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('유저구독정보 API')
 @Controller('user-subscriptions')
@@ -22,15 +25,23 @@ export class UserSubscriptionsController {
 
   /**
    * 유저구독정보 생성
+   * @param req
    * @returns
    */
-  @Post('/')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiParam({ name: 'platformId', description: '플랫폼 ID', required: true })
+  @Post('platform/:platformId')
   async create(
-    // @Req() req: number,
+    @Req() req,
+    @Param('platformId') platformId: number,
     @Body() createUserSubscriptionDto: CreateUserSubscriptionDto,
   ) {
+    const userId = req.user.id;
     const data = await this.userSubscriptionsService.create(
       createUserSubscriptionDto,
+      userId,
+      platformId,
     );
     return {
       status: HttpStatus.CREATED,
@@ -41,13 +52,14 @@ export class UserSubscriptionsController {
 
   /**
    * 유저구독 나의정보 조회
+   * @param req
    * @returns
    */
-  @Get('/me/:userId')
-  async findAllMe(
-    // @Req() req: number,
-    @Param('userId') userId: number,
-  ) {
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('/me')
+  async findAllMe(@Req() req) {
+    const userId = req.user.id;
     const data = await this.userSubscriptionsService.findAllMe(userId);
     return {
       status: HttpStatus.OK,

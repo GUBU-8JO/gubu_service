@@ -20,15 +20,17 @@ export class UserSubscriptionsService {
     private readonly platformRepository: Repository<Platforms>,
   ) {}
 
-  async create({
-    userId,
-    platformId,
-    startedDate,
-    paymentMethod,
-    period,
-    accountId,
-    accountPw,
-  }: CreateUserSubscriptionDto) {
+  async create(
+    {
+      startedDate,
+      paymentMethod,
+      period,
+      accountId,
+      accountPw,
+    }: CreateUserSubscriptionDto,
+    userId: number,
+    platformId: number,
+  ) {
     const existPlatform = await this.platformRepository.findOne({
       where: { id: platformId },
     });
