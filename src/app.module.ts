@@ -4,7 +4,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './user/users.module';
+import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ReviewsModule } from './review/reviews.module';
 import { NotificationsModule } from './notification/notifications.module';
@@ -40,7 +40,7 @@ const typeOrmModuleOptions = {
       validationSchema: ConfigModuleValidationSchema,
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
-    UsersModule,
+    UserModule,
     AuthModule,
     ReviewsModule,
     NotificationsModule,

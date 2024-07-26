@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { NotificationsController } from './notifications.controller';
-import { UsersService } from 'src/user/users.service';
+import { UserService } from 'src/user/user.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
-import { Users } from 'src/user/entities/users.entity';
+import { User } from 'src/user/entities/user.entity';
 import { Notifications } from './entities/notification.entity';
 
 @Module({
   controllers: [NotificationsController],
-  providers: [NotificationsService, UsersService],
+  providers: [NotificationsService, UserService],
   imports: [
     ScheduleModule.forRoot(),
-    TypeOrmModule.forFeature([Users, UserSubscriptions, Notifications]),
+    TypeOrmModule.forFeature([User, UserSubscriptions, Notifications]),
   ],
 })
 export class NotificationsModule {}

@@ -1,5 +1,5 @@
 import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
-import { Users } from 'src/user/entities/users.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -33,9 +33,9 @@ export class Notifications {
   @UpdateDateColumn({ type: 'datetime' })
   readedAt: Date;
 
-  @ManyToOne(() => Users, (user) => user.notification, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.notification, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: Users;
+  user: User;
 
   @ManyToOne(
     () => UserSubscriptions,

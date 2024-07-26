@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Repository } from 'typeorm';
 import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
-import { Users } from 'src/user/entities/users.entity';
+import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from './entities/notification.entity';
 
@@ -11,7 +11,7 @@ export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
 
   constructor(
-    @InjectRepository(Users) private userRepository: Repository<Users>,
+    @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserSubscriptions)
     private userSubscriptionsRepository: Repository<UserSubscriptions>,
     @InjectRepository(Notifications)

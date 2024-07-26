@@ -9,7 +9,7 @@ import {
 import { Notifications } from 'src/notification/entities/notification.entity';
 import { Platforms } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
-import { Users } from 'src/user/entities/users.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -93,7 +93,7 @@ export class UserSubscriptions {
   @JoinColumn({ name: 'platform_id' })
   platform: Platforms;
 
-  @ManyToOne(() => Users, (user) => user.userSubscription)
+  @ManyToOne(() => User, (user) => user.userSubscription)
   @JoinColumn({ name: 'user_id' })
-  user: Users;
+  user: User;
 }
