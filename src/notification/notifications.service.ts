@@ -5,6 +5,8 @@ import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
 import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from './entities/notification.entity';
+import _ from 'lodash';
+import { count } from 'console';
 
 @Injectable()
 export class NotificationsService {
@@ -63,6 +65,24 @@ export class NotificationsService {
       throw new NotFoundException('알림이 존재하지 않습니다.');
     }
     return notification;
+  }
+
+  /** 미확인 알림 카운트 */
+  async countNotifications(userId: number) {
+    const countNotifications = await this.notificationRepository.findAndCountBy(
+      {
+        user: {
+          id: userId,
+        },
+        isRead: false,
+      },
+    );
+
+    if (!countNotifications) {
+      throw new NotFoundException('모든 알림을 확인하셨습니다.');
+    }
+    const [_, count] = countNotifications;
+    return count;
   }
 
   @Cron('00 53 14 * * *')
