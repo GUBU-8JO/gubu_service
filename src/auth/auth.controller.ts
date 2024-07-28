@@ -53,20 +53,5 @@ export class AuthController {
     console.log(typeof signInData);
     return new ResponseDto(signInData);
   }
-  // @UseGuards(AuthGuard('local'))
-  // @Post('/sign-in')
-  // async signIn(@userInfo() user: User, @Body() signInDto: SignInDto) {
-  //   const data = await this.authService.signIn(signInDto);
-  //   return {
-  //     statusCode: HttpStatus.OK,
-  //     message: '로그인에 성공했습니다.',
-  //     data,
-  //   };
-  // }
 }
-
-// @Post('/sign-out')
-// signOut(){
-//   return {message: '로그아웃에 성공하였습니다.'}
-// }
 //로그아웃, 회원탈퇴 어떻게 할건지
