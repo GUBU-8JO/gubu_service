@@ -36,7 +36,12 @@ export class AuthService {
       nickname,
       password: hashedPassword,
     });
-    delete user.password;
+    // delete user.password;
+    user.password = undefined;
+    //typeorm 방법 => 프리즈마
+    delete user.createdAt;
+    delete user.updatedAt;
+
     return user;
   }
   async signIn(signInDto: SignInDto) {
@@ -45,11 +50,12 @@ export class AuthService {
     const user = await this.userRepository.findOne({
       where: { email },
     });
+
     const payload = { id: user.id };
     const accessToken = this.jwtService.sign(payload);
     return accessToken;
   }
-
+  //디비에 있는 사용자 확인
   async validateUser({ email, password }: SignInDto) {
     //findOnBy 사용시 select옵션을 사용할 수 없으므로, 엔티티에 안가져오기로 했던 비밀번호를 가져올 수 없음
     const user = await this.userRepository.findOne({
