@@ -3,9 +3,9 @@ import { IsString } from 'class-validator';
 //로그인
 export class SignInDataVo {
   @IsString()
-  data: string;
+  accessToken: string;
 
-  constructor(data: string) {
-    this.data = data;
+  constructor(accessToken: string) {
+    this.accessToken = accessToken;
   }
 }

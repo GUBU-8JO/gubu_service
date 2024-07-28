@@ -3,7 +3,6 @@ import {
   Post,
   Body,
   UseGuards,
-  HttpStatus,
 
   // Delete,
 } from '@nestjs/common';
@@ -16,7 +15,7 @@ import { userInfo } from 'src/auth/decorators/userInfo.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { ResponseDto } from 'src/common/response.dto';
 import { SignUpDataVo } from 'src/auth/dto/sign-up.data.vo';
-// import { SignInDataVo } from 'src/auth/dto/sign-in.data.vo';
+import { SignInDataVo } from 'src/auth/dto/sign-in.data.vo';
 
 @ApiTags('인증')
 @Controller('auth')
@@ -33,52 +32,37 @@ export class AuthController {
     @Body() signUpDto: SignUpDto,
   ): Promise<ResponseDto<SignUpDataVo>> {
     const data = await this.authService.signUp(signUpDto);
+    console.log(typeof data);
     return new ResponseDto(data);
   }
-
-  // @Post('/sign-up')
-  // async signUp(@Body() signUpDto: SignUpDto) {
-  //   const data = await this.authService.signUp(signUpDto);
-  //   return {
-  //     statusCode: HttpStatus.CREATED,
-  //     message: '회원가입에 성공했습니다.',
-  //     data,
-  //   };
-  // }
-
-  //여러개라면 <ResponseDto<data[]>>
-  // @Post('/sign-up')
-  // async signUp(@Body() signUpDto: SignUpDto): Promise <ResponseDto<data[]>> {
-  //  const data = await this.authService.signUp(signUpDto);
-  //   return new responseDto(data)
-
-  // }
 
   /**
    * 로그인
    * @param signInDto
    * @returns
    */
-  // @UseGuards(AuthGuard('local'))
-  // @Post('/sign-in')
-  // async signIn(
-  //   @userInfo() user: User,
-  //   @Body() signInDto: SignInDto,
-  // ): Promise<ResponseDto<SignInDataVo>> {
-  //   const data = await this.authService.signIn(signInDto);
-  //   return new ResponseDto(data);
-  // }
-
   @UseGuards(AuthGuard('local'))
   @Post('/sign-in')
-  async signIn(@userInfo() user: User, @Body() signInDto: SignInDto) {
+  async signIn(
+    @userInfo() user: User,
+    @Body() signInDto: SignInDto,
+  ): Promise<ResponseDto<SignInDataVo>> {
     const data = await this.authService.signIn(signInDto);
-    return {
-      statusCode: HttpStatus.OK,
-      message: '로그인에 성공했습니다.',
-      data,
-    };
+    const signInData = new SignInDataVo(data);
+    console.log(typeof data);
+    console.log(typeof signInData);
+    return new ResponseDto(signInData);
   }
+  // @UseGuards(AuthGuard('local'))
+  // @Post('/sign-in')
+  // async signIn(@userInfo() user: User, @Body() signInDto: SignInDto) {
+  //   const data = await this.authService.signIn(signInDto);
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: '로그인에 성공했습니다.',
+  //     data,
+  //   };
+  // }
 }
 
 // @Post('/sign-out')

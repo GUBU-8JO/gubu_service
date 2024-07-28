@@ -53,6 +53,7 @@ export class AuthService {
 
     const payload = { id: user.id };
     const accessToken = this.jwtService.sign(payload);
+    console.log(accessToken);
     return accessToken;
   }
   //디비에 있는 사용자 확인
