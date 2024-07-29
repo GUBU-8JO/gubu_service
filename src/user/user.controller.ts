@@ -29,8 +29,8 @@ export class UserController {
   @Get('/me')
   async findById(@userInfo() user: User): Promise<ResponseDto<UserMeVo>> {
     const userId = user.id;
-    // const data = await this.userService.findById(userId);
-    return new ResponseDto(await this.userService.findById(userId));
+    const data = await this.userService.findById(userId);
+    return new ResponseDto(new UserMeVo(data));
     // return new ResponseDto(UserMeVo);
   }
 }

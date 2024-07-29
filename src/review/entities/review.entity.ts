@@ -9,7 +9,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Platforms } from '../../platform/entities/platforms.entity';
+import { Platform } from '../../platform/entities/platforms.entity';
 
 @Entity()
 export class Reviews {
@@ -34,9 +34,9 @@ export class Reviews {
   @DeleteDateColumn({ type: 'datetime' })
   DeletedAt: number;
 
-  @OneToOne(() => Platforms, (platform) => platform.review)
+  @OneToOne(() => Platform, (platform) => platform.review)
   @JoinColumn({ name: 'platform_id' })
-  platform: Platforms;
+  platform: Platform;
 
   @ManyToOne(() => User, (user) => user.review)
   @JoinColumn({ name: 'user_id' })

@@ -1,33 +1,24 @@
-import { IsEmail, IsNumber, IsString } from 'class-validator';
 import { Exclude } from 'class-transformer';
+import { User } from '../entities/user.entity';
 
 export class UserMeVo {
   @Exclude()
-  updatedAt: Date;
-
-  @Exclude()
   createdAt: Date;
 
-  @IsNumber()
+  @Exclude()
+  updatedAt: Date;
+
   id: number;
 
-  @IsString()
   nickname: string;
 
-  @IsEmail()
   email: string;
 
-  // @Exclude()
-  // @UpdateDateColumn({ type: 'datetime', select: false })
-  // updatedAt: Date;
-
-  // constructor(id: number, nickname: string, email: string, updatedAt: Date) {
-  //   this.id = id;
-  //   this.nickname = nickname;
-  //   this.email = email;
-  //   this.updatedAt = this.updatedAt;
-  // }
-  constructor(partial: Partial<UserMeVo>) {
-    Object.assign(this, partial);
+  constructor(user: User) {
+    this.id = user.id;
+    this.nickname = user.nickname;
+    this.email = user.email;
+    this.createdAt = user.createdAt;
+    this.updatedAt = user.updatedAt;
   }
 }

@@ -28,12 +28,10 @@ export class AuthController {
    * @returns
    */
   @Post('/sign-up')
-  async signUp(
-    @Body() signUpDto: SignUpDto,
-  ): Promise<ResponseDto<SignUpDataVo>> {
+  async signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto> {
     console.log(typeof SignUpDataVo);
     const data = await this.authService.signUp(signUpDto);
-    return new ResponseDto(data);
+    return new ResponseDto();
   }
 
   /**
