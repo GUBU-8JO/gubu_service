@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { Notifications } from 'src/notification/entities/notification.entity';
-import { Reviews } from 'src/review/entities/review.entity';
-import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
+import { Review } from 'src/review/entities/review.entity';
+import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 import {
   Column,
   CreateDateColumn,
@@ -51,15 +51,15 @@ export class User {
   updatedAt: Date;
 
   @OneToMany(
-    () => UserSubscriptions,
+    () => UserSubscription,
     (userSubscription) => userSubscription.user,
   )
-  userSubscription: UserSubscriptions[];
+  userSubscription: UserSubscription[];
 
-  @OneToMany(() => Reviews, (review) => review.user)
-  review: Reviews[];
+  @OneToMany(() => Review, (review) => review.user)
+  review: Review[];
 
-  @OneToMany(() => Notifications, (notification) => notification.user)
-  notification: Notifications[];
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notification: Notification[];
 }
 ///

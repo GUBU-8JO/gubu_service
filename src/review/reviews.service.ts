@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Reviews } from './entities/review.entity';
+import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -9,8 +9,8 @@ import _ from 'lodash';
 @Injectable()
 export class ReviewsService {
   constructor(
-    @InjectRepository(Reviews)
-    private readonly reviewsRepository: Repository<Reviews>,
+    @InjectRepository(Review)
+    private readonly reviewsRepository: Repository<Review>,
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
   ) {}

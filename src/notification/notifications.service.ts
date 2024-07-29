@@ -1,12 +1,11 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Repository } from 'typeorm';
-import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
+import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notifications } from './entities/notification.entity';
+import { Notification } from './entities/notification.entity';
 import _ from 'lodash';
-import { count } from 'console';
 
 @Injectable()
 export class NotificationsService {
@@ -14,10 +13,10 @@ export class NotificationsService {
 
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(UserSubscriptions)
-    private userSubscriptionsRepository: Repository<UserSubscriptions>,
-    @InjectRepository(Notifications)
-    private notificationRepository: Repository<Notifications>,
+    @InjectRepository(UserSubscription)
+    private userSubscriptionsRepository: Repository<UserSubscription>,
+    @InjectRepository(Notification)
+    private notificationRepository: Repository<Notification>,
   ) {}
 
   /** 알림 목록 조회 */
