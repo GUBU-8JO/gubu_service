@@ -31,7 +31,7 @@ export class ReviewsController {
    */
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post('platformId/:platformId')
+  @Post('platform/:platformId')
   async create(
     @Req() req,
     @Param('platformId') platformId: number,
