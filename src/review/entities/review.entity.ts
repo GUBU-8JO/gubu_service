@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Platform } from '../../platform/entities/platforms.entity';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 @Entity()
 export class Reviews {
@@ -23,9 +24,12 @@ export class Reviews {
   platformId: number;
 
   @Column({ type: 'int' })
+  @IsNotEmpty({ message: '별점를 적어주세요.' })
+  @IsNumber()
   rate: number;
 
   @Column({ type: 'text' })
+  @IsNotEmpty({ message: '후기를 남겨주세요' })
   comment: string;
 
   @CreateDateColumn({ type: 'datetime' })
