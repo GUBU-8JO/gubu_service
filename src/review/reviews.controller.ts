@@ -53,7 +53,7 @@ export class ReviewsController {
   }
 
   /**
-   * 리뷰등록
+   * 리뷰삭제
    * @param req
    * @returns
    */
