@@ -8,7 +8,7 @@ import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserSubscriptions } from './entities/user-subscription.entity';
 import { Repository } from 'typeorm';
-import { Platforms } from 'src/platform/entities/platforms.entity';
+import { Platform } from 'src/platform/entities/platforms.entity';
 import _ from 'lodash';
 import { UserSubscriptionsSerVo } from './dto/user-subscription-responseDto/create-service-subscription-response.dto';
 
@@ -17,8 +17,8 @@ export class UserSubscriptionsService {
   constructor(
     @InjectRepository(UserSubscriptions)
     private readonly userSubscriptionRepository: Repository<UserSubscriptions>,
-    @InjectRepository(Platforms)
-    private readonly platformRepository: Repository<Platforms>,
+    @InjectRepository(Platform)
+    private readonly platformRepository: Repository<Platform>,
   ) {}
 
   async create(
