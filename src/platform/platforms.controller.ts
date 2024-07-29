@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param } from '@nestjs/common';
 import { PlatformsService } from './platforms.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/common/response.dto';
@@ -16,13 +16,15 @@ export class PlatformsController {
   // }
 
   @Get(':id')
+  @HttpCode(200)
   async findOne(@Param('id') id: number): Promise<ResponseDto<PlatformVo>> {
     return new ResponseDto(await this.platformService.findById(id));
   }
 
   //여러 플랫폼 가격 조회
   @Get()
-  async getAllPlatforms() {
-    return await this.platformService.findMany();
+  @HttpCode(200)
+  async getAllPlatforms(): Promise<ResponseDto<PlatformVo[]>> {
+    return new ResponseDto(await this.platformService.findMany());
   }
 }
