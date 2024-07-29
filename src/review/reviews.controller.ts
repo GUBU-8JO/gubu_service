@@ -52,8 +52,15 @@ export class ReviewsController {
     return { message: '리뷰를 성공적으로 조회했습니다.' };
   }
 
+  /**
+   * 리뷰등록
+   * @param req
+   * @returns
+   */
   @Delete(':reviewId')
-  remove(@Param() id: number) {
+  remove(@Param('reviewId') id: number) {
+    const data = this.reviewsService.delete(id);
+
     return { message: '리뷰를 성공적으로 삭제하였습니다.' };
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -34,5 +38,17 @@ export class ReviewsService {
     });
 
     return review;
+  }
+
+  async delete(id: number) {
+    await this.reviewsRepository.delete({ id });
+
+    const data = await this.reviewsRepository.findOne({ where: { id } });
+
+    if (_.isNil(data)) {
+      return true;
+    } else {
+      throw new BadRequestException('삭제가 이루어지지 않았습니다.');
+    }
   }
 }
