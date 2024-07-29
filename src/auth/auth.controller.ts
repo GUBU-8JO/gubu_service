@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  HttpStatus,
   UseGuards,
 
   // Delete,
@@ -14,6 +13,9 @@ import { SignInDto } from './dto/sign-in.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { userInfo } from 'src/auth/decorators/userInfo.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { ResponseDto } from 'src/common/response.dto';
+import { SignUpDataVo } from 'src/auth/dto/sign-up.data.vo';
+import { SignInDataVo } from 'src/auth/dto/sign-in.data.vo';
 
 @ApiTags('인증')
 @Controller('auth')
@@ -26,14 +28,12 @@ export class AuthController {
    * @returns
    */
   @Post('/sign-up')
-  async signUp(@Body() signUpDto: SignUpDto) {
-    const data = await this.authService.signUp(signUpDto);
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: '회원가입에 성공했습니다.',
-      data,
-    };
+  async signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto> {
+    // const data =
+    await this.authService.signUp(signUpDto);
+    return new ResponseDto();
   }
+
   /**
    * 로그인
    * @param signInDto
@@ -41,18 +41,12 @@ export class AuthController {
    */
   @UseGuards(AuthGuard('local'))
   @Post('/sign-in')
-  async signIn(@userInfo() user: User, @Body() signInDto: SignInDto) {
+  async signIn(
+    @userInfo() user: User,
+    @Body() signInDto: SignInDto,
+  ): Promise<ResponseDto<SignInDataVo>> {
     const data = await this.authService.signIn(signInDto);
-    return {
-      statusCode: HttpStatus.OK,
-      message: '로그인에 성공했습니다.',
-      data,
-    };
-  }
 
-  // @Post('/sign-out')
-  // signOut(){
-  //   return {message: '로그아웃에 성공하였습니다.'}
-  // }
-  //로그아웃, 회원탈퇴 어떻게 할건지
+    return new ResponseDto(data);
+  }
 }
