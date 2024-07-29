@@ -1,4 +1,4 @@
-import { Category } from 'src/categorie/entities/category.entity';
+import { Category } from 'src/category/entities/category.entity';
 import {
   Column,
   Entity,
