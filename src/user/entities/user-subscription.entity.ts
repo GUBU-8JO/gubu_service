@@ -7,7 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 import { Notifications } from 'src/notification/entities/notification.entity';
-import { Platforms } from 'src/platform/entities/platforms.entity';
+import { Platform } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
@@ -89,9 +89,9 @@ export class UserSubscriptions {
   )
   notification: Notifications[];
 
-  @ManyToOne(() => Platforms, (platform) => platform.userSubscription)
+  @ManyToOne(() => Platform, (platform) => platform.userSubscription)
   @JoinColumn({ name: 'platform_id' })
-  platform: Platforms;
+  platform: Platform;
 
   @ManyToOne(() => User, (user) => user.userSubscription)
   @JoinColumn({ name: 'user_id' })

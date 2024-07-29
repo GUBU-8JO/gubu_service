@@ -1,4 +1,4 @@
-import { Platforms } from 'src/platform/entities/platforms.entity';
+import { Platform } from 'src/platform/entities/platforms.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -9,6 +9,6 @@ export class Categories {
   @Column({ type: 'varchar' })
   category: string;
 
-  @OneToMany(() => Platforms, (platform) => platform.category)
-  platform: Platforms[];
+  @OneToMany(() => Platform, (platform) => platform.category)
+  platform: Platform[];
 }
