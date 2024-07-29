@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import _ from 'lodash';
+import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -23,7 +24,6 @@ export class ReviewsService {
     const existPlatform = this.platformRepository.findOne({
       where: { id: platformId },
     });
-
     if (_.isNil(existPlatform)) throw new NotFoundException();
 
     const review = this.reviewsRepository.save({
@@ -31,6 +31,15 @@ export class ReviewsService {
       platformId,
       rate,
       comment,
+    });
+
+    return review;
+  }
+
+  async findMyReview(userId): Promise<ReadReviewVo[]> {
+    const review = this.reviewsRepository.find({
+      where: { userId },
+      select: ['id', 'rate', 'comment'],
     });
 
     return review;
