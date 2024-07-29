@@ -7,6 +7,7 @@ import {
   Req,
   Param,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -14,10 +15,12 @@ import { FindReviewDto } from './dto/find-review.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ResponseDto } from 'src/common/response.dto';
-import { CreateReviewVo } from './dto/vo/create-reivew-vo.dto';
+import { CreateReviewVo } from './dto/vo/create-review-vo.dto';
+import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
+import _ from 'lodash';
 import { ReadAllReviewVo } from './dto/vo/readAll-review-vo.dto';
 
-@ApiTags('review')
+@ApiTags('리뷰')
 @Controller('reviwes')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
@@ -44,9 +47,20 @@ export class ReviewsController {
     return new ResponseDto(data);
   }
 
+  /**
+   * 나의리뷰조회
+   * @returns
+   */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('/me')
-  findMe(@Req() req: number, @Body('serviceId') findReviewDto: FindReviewDto) {
-    return { message: '리뷰를 성공적으로 조회했습니다.' };
+  async findMyReview(@Req() req): Promise<ResponseDto<ReadReviewVo[]>> {
+    const userId = req.user.id;
+    const data = await this.reviewsService.findMyReview(userId);
+
+    if (_.isNil(data)) throw new NotFoundException('작성하신 리뷰가 없습니다.');
+
+    return new ResponseDto(data);
   }
 
   /**
@@ -57,10 +71,10 @@ export class ReviewsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('platformId/:platformId')
-  async findAll(
+  async findPlatformReview(
     @Param('platformId') platformId: number,
   ): Promise<ResponseDto<ReadAllReviewVo[]>> {
-    const data = await this.reviewsService.findAll(platformId);
+    const data = await this.reviewsService.findPlatformReview(platformId);
     return new ResponseDto(data);
   }
 

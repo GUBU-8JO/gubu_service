@@ -1,4 +1,4 @@
-import { CreateReviewVo } from './create-reivew-vo.dto';
+import { CreateReviewVo } from './create-review-vo.dto';
 
 export class ReadAllReviewVo extends CreateReviewVo {
   platformId: number;
