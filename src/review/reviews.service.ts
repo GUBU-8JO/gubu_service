@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Reviews } from './entities/review.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { Platform } from 'src/platform/entities/platforms.entity';
+import _ from 'lodash';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectRepository(Reviews)
     private readonly reviewsRepository: Repository<Reviews>,
+    @InjectRepository(Platform)
+    private readonly platformRepository: Repository<Platform>,
   ) {}
 
   async create(
@@ -16,6 +20,12 @@ export class ReviewsService {
     platformId: number,
     { rate, comment }: CreateReviewDto,
   ) {
+    const existPlatform = this.platformRepository.findOne({
+      where: { id: platformId },
+    });
+
+    if (_.isNil(existPlatform)) throw new NotFoundException();
+
     const review = this.reviewsRepository.save({
       userId,
       platformId,
