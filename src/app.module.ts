@@ -11,7 +11,7 @@ import { NotificationsModule } from './notification/notifications.module';
 import { UserSubscriptionsModule } from './user/user-subscriptions.module';
 import { SubscriptionHistoriesModule } from './user/subscription-histories.module';
 import { PlatformsModule } from './platform/platforms.module';
-import { CategoriesModule } from './category/categories.module';
+import { CategoriesModule } from './categorie/categories.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 
 const typeOrmModuleOptions = {

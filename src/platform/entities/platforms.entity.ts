@@ -1,4 +1,4 @@
-import { Category } from '../../category/entities/category.entity';
+import { Categories } from 'src/categorie/entities/category.entity';
 import {
   Column,
   Entity,
@@ -43,9 +43,9 @@ export class Platform {
   @OneToOne(() => Reviews, (review) => review.platform)
   review: Reviews;
 
-  @ManyToOne(() => Category, (category) => category.platforms, {
+  @ManyToOne(() => Categories, (category) => category.platform, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'category_id' })
-  category: Category;
+  category: Categories;
 }
