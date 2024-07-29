@@ -12,5 +12,3 @@ export class Category {
   @OneToMany(() => Platform, (platform) => platform.category)
   platforms: Platform[];
 }
-
-//
