@@ -29,7 +29,8 @@ export class AuthController {
    */
   @Post('/sign-up')
   async signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto> {
-    const data = await this.authService.signUp(signUpDto);
+    // const data =
+    await this.authService.signUp(signUpDto);
     return new ResponseDto();
   }
 
@@ -45,9 +46,7 @@ export class AuthController {
     @Body() signInDto: SignInDto,
   ): Promise<ResponseDto<SignInDataVo>> {
     const data = await this.authService.signIn(signInDto);
-    const signInData = new SignInDataVo(data);
 
-    return new ResponseDto(signInData);
+    return new ResponseDto(data);
   }
 }
-//로그아웃, 회원탈퇴 어떻게 할건지
