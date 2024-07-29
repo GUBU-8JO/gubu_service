@@ -70,7 +70,7 @@ export class ReviewsController {
    */
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Get('platformId/:platformId')
+  @Get('platform/:platformId')
   async findPlatformReview(
     @Param('platformId') platformId: number,
   ): Promise<ResponseDto<ReadAllReviewVo[]>> {
