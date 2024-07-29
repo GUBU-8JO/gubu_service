@@ -78,8 +78,15 @@ export class ReviewsController {
     return new ResponseDto(data);
   }
 
+  /**
+   * 리뷰삭제
+   * @param req
+   * @returns
+   */
   @Delete(':reviewId')
-  remove(@Param() id: number) {
+  async deleteReview(@Param('reviewId') id: number) {
+    const data = await this.reviewsService.deleteReview(id);
+
     return { message: '리뷰를 성공적으로 삭제하였습니다.' };
   }
 }
