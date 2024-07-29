@@ -36,7 +36,7 @@ export class ReviewsService {
     return review;
   }
 
-  async findMe(userId): Promise<ReadReviewVo[]> {
+  async findMyReview(userId): Promise<ReadReviewVo[]> {
     const review = this.reviewsRepository.find({
       where: { userId },
       select: ['id', 'rate', 'comment'],

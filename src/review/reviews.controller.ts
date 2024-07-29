@@ -53,9 +53,9 @@ export class ReviewsController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('/me')
-  async findMe(@Req() req): Promise<ResponseDto<ReadReviewVo[]>> {
+  async findMyReview(@Req() req): Promise<ResponseDto<ReadReviewVo[]>> {
     const userId = req.user.id;
-    const data = await this.reviewsService.findMe(userId);
+    const data = await this.reviewsService.findMyReview(userId);
 
     if (_.isNil(data)) throw new NotFoundException('작성하신 리뷰가 없습니다.');
 
