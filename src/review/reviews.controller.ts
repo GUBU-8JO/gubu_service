@@ -64,7 +64,7 @@ export class ReviewsController {
   }
 
   /**
-   * 플랫폿 리뷰 전체 조회
+   * 플랫폼 리뷰 전체 조회
    * @param req
    * @returns
    */
