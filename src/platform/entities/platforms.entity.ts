@@ -12,7 +12,7 @@ import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
 import { Reviews } from 'src/review/entities/review.entity';
 
 @Entity()
-export class Platforms {
+export class Platform {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
