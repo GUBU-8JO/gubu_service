@@ -37,10 +37,10 @@ export class AuthService {
       password: hashedPassword,
     });
     // delete user.password;
-    user.password = undefined;
-    //typeorm 방법 => 프리즈마
-    delete user.createdAt;
-    delete user.updatedAt;
+    // user.password = undefined;
+    // //typeorm 방법 => 프리즈마
+    // delete user.createdAt;
+    // delete user.updatedAt;
 
     return user;
   }

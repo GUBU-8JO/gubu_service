@@ -29,7 +29,6 @@ export class AuthController {
    */
   @Post('/sign-up')
   async signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto> {
-    console.log(typeof SignUpDataVo);
     const data = await this.authService.signUp(signUpDto);
     return new ResponseDto();
   }
