@@ -1,4 +1,4 @@
-import { Categories } from 'src/categorie/entities/category.entity';
+import { Category } from 'src/categorie/entities/category.entity';
 import {
   Column,
   Entity,
@@ -8,11 +8,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
-import { Reviews } from 'src/review/entities/review.entity';
+import { UserSubscription } from 'src/user/entities/user-subscription.entity';
+import { Review } from 'src/review/entities/review.entity';
 
 @Entity()
-export class Platforms {
+export class Platform {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
@@ -35,17 +35,17 @@ export class Platforms {
   period: number;
 
   @OneToMany(
-    () => UserSubscriptions,
+    () => UserSubscription,
     (userSubscription) => userSubscription.platform,
   )
-  userSubscription: UserSubscriptions[];
+  userSubscription: UserSubscription[];
 
-  @OneToOne(() => Reviews, (review) => review.platform)
-  review: Reviews;
+  @OneToOne(() => Review, (review) => review.platform)
+  review: Review;
 
-  @ManyToOne(() => Categories, (category) => category.platform, {
+  @ManyToOne(() => Category, (category) => category.platform, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'category_id' })
-  category: Categories;
+  category: Category;
 }

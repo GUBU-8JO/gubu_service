@@ -1,4 +1,4 @@
-import { UserSubscriptions } from 'src/user/entities/user-subscription.entity';
+import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Notifications {
+export class Notification {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
@@ -38,9 +38,9 @@ export class Notifications {
   user: User;
 
   @ManyToOne(
-    () => UserSubscriptions,
+    () => UserSubscription,
     (userSubscription) => userSubscription.notification,
   )
   @JoinColumn({ name: 'user_subscription_id' })
-  userSubscription: UserSubscriptions;
+  userSubscription: UserSubscription;
 }

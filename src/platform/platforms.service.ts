@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Platforms } from './entities/platforms.entity';
+import { Platform } from './entities/platforms.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PlatformsService {
   constructor(
-    @InjectRepository(Platforms)
-    private platformRepositoty: Repository<Platforms>,
+    @InjectRepository(Platform)
+    private platformRepositoty: Repository<Platform>,
   ) {}
 
-  async findById(id: number): Promise<Platforms> {
+  async findById(id: number): Promise<Platform> {
     const platform = await this.platformRepositoty.findOne({
       where: { id },
       select: ['id', 'title', 'price'],

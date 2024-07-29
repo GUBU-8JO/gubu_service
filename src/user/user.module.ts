@@ -5,11 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { User } from './entities/user.entity';
-import { UserSubscriptions } from './entities/user-subscription.entity';
+import { UserSubscription } from './entities/user-subscription.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserSubscriptions]),
+    TypeOrmModule.forFeature([User, UserSubscription]),
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET_KEY'),
