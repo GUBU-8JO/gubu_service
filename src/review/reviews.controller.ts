@@ -18,8 +18,9 @@ import { ResponseDto } from 'src/common/response.dto';
 import { CreateReviewVo } from './dto/vo/create-review-vo.dto';
 import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 import _ from 'lodash';
+import { ReadAllReviewVo } from './dto/vo/readAll-review-vo.dto';
 
-@ApiTags('review')
+@ApiTags('리뷰')
 @Controller('reviwes')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
@@ -30,7 +31,7 @@ export class ReviewsController {
    */
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post('platformId/:platformId')
+  @Post('platform/:platformId')
   async create(
     @Req() req,
     @Param('platformId') platformId: number,
@@ -62,9 +63,19 @@ export class ReviewsController {
     return new ResponseDto(data);
   }
 
-  @Get()
-  findAll(@Body('serviceId') findReviewDto: FindReviewDto) {
-    return { message: '리뷰를 성공적으로 조회했습니다.' };
+  /**
+   * 플랫폼 리뷰 전체 조회
+   * @param req
+   * @returns
+   */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('platform/:platformId')
+  async findPlatformReview(
+    @Param('platformId') platformId: number,
+  ): Promise<ResponseDto<ReadAllReviewVo[]>> {
+    const data = await this.reviewsService.findPlatformReview(platformId);
+    return new ResponseDto(data);
   }
 
   @Delete(':reviewId')
