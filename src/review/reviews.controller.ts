@@ -6,18 +6,40 @@ import {
   Delete,
   Req,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { FindReviewDto } from './dto/find-review.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ResponseDto } from 'src/common/response.dto';
+import { CreateReviewDtoVo } from './dto/vo/create-reivew-vo.dto';
 
+@ApiTags('review')
 @Controller('reviwes')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
-  //jwt로 req.user.id 받아올꺼임
-  @Post()
-  create(@Req() req: number, @Body() createReviewDto: CreateReviewDto) {
-    return { message: '리뷰를 성공적으로 등록했습니다.' };
+  /**
+   * 리뷰등록
+   * @param req
+   * @returns
+   */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('platformId/:platformId')
+  async create(
+    @Req() req,
+    @Param('platformId') platformId: number,
+    @Body() createReviewDto: CreateReviewDto,
+  ): Promise<ResponseDto<CreateReviewDtoVo>> {
+    const userId = req.user.id;
+    const data = await this.reviewsService.create(
+      userId,
+      platformId,
+      createReviewDto,
+    );
+    return new ResponseDto(data);
   }
 
   @Get()
