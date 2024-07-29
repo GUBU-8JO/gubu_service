@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Categories } from './entities/category.entity';
+import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CategoriesService {
   constructor(
-    @InjectRepository(Categories)
-    private categoriesRepository: Repository<Categories>,
+    @InjectRepository(Category)
+    private categoriesRepository: Repository<Category>,
   ) {}
 
   async findAll(sortField: string, sortOrder: string) {

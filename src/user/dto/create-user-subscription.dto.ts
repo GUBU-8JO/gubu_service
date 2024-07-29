@@ -1,7 +1,7 @@
 import { PickType } from '@nestjs/swagger';
-import { UserSubscriptions } from '../entities/user-subscription.entity';
+import { UserSubscription } from '../entities/user-subscription.entity';
 
-export class CreateUserSubscriptionDto extends PickType(UserSubscriptions, [
+export class CreateUserSubscriptionDto extends PickType(UserSubscription, [
   'startedDate',
   'paymentMethod',
   'period',
