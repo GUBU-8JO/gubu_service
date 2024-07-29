@@ -15,6 +15,8 @@ import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UserSubscriptionsContVo } from './dto/user-subscription-responseDto/create-control-subscription-response.dto';
+import { ResponseDto } from 'src/common/response.dto';
 
 @ApiTags('유저구독정보 API')
 @Controller('user-subscriptions')
@@ -36,18 +38,14 @@ export class UserSubscriptionsController {
     @Req() req,
     @Param('platformId') platformId: number,
     @Body() createUserSubscriptionDto: CreateUserSubscriptionDto,
-  ) {
+  ): Promise<ResponseDto<UserSubscriptionsContVo>> {
     const userId = req.user.id;
     const data = await this.userSubscriptionsService.create(
       createUserSubscriptionDto,
       userId,
       platformId,
     );
-    return {
-      status: HttpStatus.CREATED,
-      message: '정상적으로 생성이 완료되었습니다.',
-      data,
-    };
+    return new ResponseDto(data);
   }
 
   /**
