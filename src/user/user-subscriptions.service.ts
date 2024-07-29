@@ -10,7 +10,7 @@ import { UserSubscriptions } from './entities/user-subscription.entity';
 import { Repository } from 'typeorm';
 import { Platforms } from 'src/platform/entities/platforms.entity';
 import _ from 'lodash';
-import { UserSubscriptionsContVo } from './dto/user-subscription-responseDto/create-service-subscription-response.dto';
+import { UserSubscriptionsSerVo } from './dto/user-subscription-responseDto/create-service-subscription-response.dto';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -31,7 +31,7 @@ export class UserSubscriptionsService {
     }: CreateUserSubscriptionDto,
     userId: number,
     platformId: number,
-  ): Promise<UserSubscriptionsContVo> {
+  ): Promise<UserSubscriptionsSerVo> {
     const existPlatform = await this.platformRepository.findOne({
       where: { id: platformId },
     });
@@ -51,7 +51,7 @@ export class UserSubscriptionsService {
       userId,
       platformId,
     });
-    return new UserSubscriptionsContVo(
+    return new UserSubscriptionsSerVo(
       data.startedDate,
       data.paymentMethod,
       data.period,

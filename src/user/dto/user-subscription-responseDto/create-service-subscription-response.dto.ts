@@ -1,4 +1,4 @@
-export class UserSubscriptionsContVo {
+export class UserSubscriptionsSerVo {
   startedDate: string;
   paymentMethod: string;
   period: number;
