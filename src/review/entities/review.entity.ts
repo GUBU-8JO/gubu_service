@@ -13,7 +13,7 @@ import { Platform } from '../../platform/entities/platforms.entity';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
 @Entity()
-export class Reviews {
+export class Review {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 

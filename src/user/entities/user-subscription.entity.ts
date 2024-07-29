@@ -6,9 +6,9 @@ import {
   IsString,
   Matches,
 } from 'class-validator';
-import { Notifications } from 'src/notification/entities/notification.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
 import { Platform } from 'src/platform/entities/platforms.entity';
-import { SubscriptionHistories } from 'src/user/entities/subscription-histories.entity';
+import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -23,7 +23,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class UserSubscriptions {
+export class UserSubscription {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
@@ -78,16 +78,16 @@ export class UserSubscriptions {
   deletedAt: Date;
 
   @OneToMany(
-    () => SubscriptionHistories,
+    () => SubscriptionHistory,
     (subscriptionHistory) => subscriptionHistory.userSubscription,
   )
-  subscriptionHistory: SubscriptionHistories[];
+  subscriptionHistory: SubscriptionHistory[];
 
   @OneToMany(
-    () => Notifications,
+    () => Notification,
     (notification) => notification.userSubscription,
   )
-  notification: Notifications[];
+  notification: Notification[];
 
   @ManyToOne(() => Platform, (platform) => platform.userSubscription)
   @JoinColumn({ name: 'platform_id' })
