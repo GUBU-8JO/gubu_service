@@ -1,4 +1,10 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -19,11 +25,13 @@ export class UserController {
    */
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/me')
-  async findMe(@userInfo() user: User): Promise<ResponseDto<UserMeVo>> {
+  async findById(@userInfo() user: User): Promise<ResponseDto<UserMeVo>> {
     const userId = user.id;
-    const data = await this.userService.findById(userId);
-    return new ResponseDto(data);
+    // const data = await this.userService.findById(userId);
+    return new ResponseDto(await this.userService.findById(userId));
+    // return new ResponseDto(UserMeVo);
   }
 }
 //회원탈퇴 할지말지 고민중

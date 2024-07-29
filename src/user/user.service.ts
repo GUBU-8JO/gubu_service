@@ -18,8 +18,6 @@ export class UserService {
   //사용자정보조회 id로 할 때
   async findById(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
-    delete user.createdAt;
-    delete user.updatedAt;
     return user;
   }
 }

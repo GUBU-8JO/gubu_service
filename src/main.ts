@@ -25,6 +25,7 @@ async function bootstrap() {
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }) // JWT 사용을 위한 설정
     .build();
 
+  //이거 왜 중복인가요?
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

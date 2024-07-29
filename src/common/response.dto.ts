@@ -1,19 +1,20 @@
 import { HttpException } from '@nestjs/common';
 
 export class ResponseDto<T> {
-  error: boolean;
+  success: boolean;
   data: T;
   errorMessage: string;
-  statusCode: number;
+  //   statusCode: number;
 
-  constructor(data: T, error: boolean = false, exception?: HttpException) {
+  constructor(data: T, exception?: HttpException) {
+    this.success = !exception;
     this.data = data;
-    if (error) {
-      this.error = error;
-    }
+    // if (error) {
+    //   this.error = error;
+    // }
     if (exception) {
       this.errorMessage = exception.message;
-      this.statusCode = exception.getStatus();
+      //   this.statusCode = exception.getStatus();
     }
   }
 }

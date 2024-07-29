@@ -31,8 +31,8 @@ export class AuthController {
   async signUp(
     @Body() signUpDto: SignUpDto,
   ): Promise<ResponseDto<SignUpDataVo>> {
+    console.log(typeof SignUpDataVo);
     const data = await this.authService.signUp(signUpDto);
-    console.log(typeof data);
     return new ResponseDto(data);
   }
 
@@ -49,8 +49,7 @@ export class AuthController {
   ): Promise<ResponseDto<SignInDataVo>> {
     const data = await this.authService.signIn(signInDto);
     const signInData = new SignInDataVo(data);
-    console.log(typeof data);
-    console.log(typeof signInData);
+
     return new ResponseDto(signInData);
   }
 }
