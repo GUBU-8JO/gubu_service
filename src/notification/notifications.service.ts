@@ -1,11 +1,11 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { Repository } from 'typeorm';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import _ from 'lodash';
+import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 
 @Injectable()
 export class NotificationsService {
@@ -17,6 +17,8 @@ export class NotificationsService {
     private userSubscriptionsRepository: Repository<UserSubscription>,
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
+    @InjectRepository(SubscriptionHistory)
+    private subscriptionHistoriesRepository: Repository<SubscriptionHistory>,
   ) {}
 
   /** 알림 목록 조회 */
@@ -44,7 +46,7 @@ export class NotificationsService {
     });
 
     if (!notReadNotifications && readNotifications) {
-      throw new NotFoundException('알림 목록이 존재하지 않습니다.');
+      throw new NotFoundException('알림 목록이 존재하지 않습니다');
     }
 
     // 전체 알림 목록 만들기
@@ -84,40 +86,5 @@ export class NotificationsService {
     }
 
     return count;
-  }
-
-  @Cron('00 53 14 * * *')
-  async handleCron() {
-    this.logger.debug('알림 테스트');
-
-    // 구독 정보 가져오기
-    const userSubscription = await this.userSubscriptionsRepository.find({
-      relations: ['user'],
-    });
-    console.log(userSubscription);
-
-    // today 설정
-    const today = new Date();
-    // 날짜만 필요해서 시간은 초기화
-    today.setHours(0, 0, 0, 0);
-    console.log('today', today);
-    // 유저의 구독정보를 돌면서 결제 시작일 가져오기
-    userSubscription.forEach((userSubscription) => {
-      // 결제일 설정(일단, 결제 시작일)
-      const payDate = userSubscription.startedDate;
-      console.log('payDate', payDate);
-      // 알람일 설정(결제일 -1)
-      const notifyingDate = new Date(payDate);
-      notifyingDate.setDate(notifyingDate.getDate() - 1);
-      notifyingDate.setHours(0, 0, 0, 0);
-      console.log('notifyingDate', notifyingDate);
-
-      // today와 notifyingDate 비교
-      if (notifyingDate.getDate() == today.getDate()) {
-        const message = '결제일 1일 전입니다.';
-        console.log(message);
-        return message;
-      }
-    });
   }
 }

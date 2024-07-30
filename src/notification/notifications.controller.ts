@@ -5,7 +5,6 @@ import {
   Param,
   ParseIntPipe,
   Req,
-  Request,
   UseGuards,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
@@ -27,7 +26,7 @@ export class NotificationsController {
   @Get()
   async GetMyNotifications(@Req() req) {
     const userId = Number(req.user.id);
-    console.log('아이디', userId)
+    console.log('아이디', userId);
     const notifications = await this.notificationsService.findAll(userId);
     console.log(userId);
 
