@@ -1,0 +1,81 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  background-color: #ffffff;
+  font-family: 'Jua', sans-serif;
+  /* font-family: 'Poor Story', system-ui; */
+}
+/* 컨테이너 스타일 */
+.container {
+  text-align: center;
+  /* background-color: #fff; */
+  background: linear-gradient(45deg, #f3e5f5, #ffffff);
+
+  width: 380px;
+  height: 600px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+/* 로고 스타일 */
+.logo .logo {
+  margin-top: 20px;
+  width: 250px;
+  height: 130px;
+}
+
+/*소개멘트*/
+.introMent {
+  font-size: 24px;
+  font-weight: lighter;
+  margin: 0 10px;
+}
+.emailTextBox {
+  width: 300px;
+  height: 40px;
+  margin: 100px auto 10px auto;
+  text-align: center;
+  align-content: center;
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: none;
+}
+
+.passwordTextBox {
+  width: 300px;
+  height: 40px;
+  margin: 10px auto 10px auto;
+  text-align: center;
+  align-content: center;
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: none;
+}
+
+/* 옵션 박스 스타일:가입멘트 */
+.option {
+  font-size: 20px;
+  font-weight: lighter;
+}
+/* 버튼 스타일 */
+.btn {
+  background-color: #a46ff5; /* 버튼 배경색 */
+  color: white;
+  border: none;
+  margin-top: 40px;
+  padding: 15px 30px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+}
+.btn:hover {
+  color: #a66bff; /* 버튼 호버 색상 */
+  background-color: #ebdffc;
+  box-shadow: 0 4px 8px #a569ff(0, 0, 0, 3);
+}
