@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
@@ -34,14 +33,17 @@ export class Platform {
   @Column({ type: 'int' })
   period: number;
 
+  @Column({ type: 'int', nullable: true })
+  rating?: number;
+
   @OneToMany(
     () => UserSubscription,
     (userSubscription) => userSubscription.platform,
   )
   userSubscription: UserSubscription[];
 
-  @OneToOne(() => Review, (review) => review.platform)
-  review: Review;
+  @OneToMany(() => Review, (review) => review.platform)
+  review: Review[];
 
   @ManyToOne(() => Category, (category) => category.platform, {
     onDelete: 'CASCADE',
