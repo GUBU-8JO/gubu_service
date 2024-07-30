@@ -60,12 +60,16 @@ export class NotificationsService {
 
   /** 알림 한가지 조회 */
   async findOne(userId: number, notificationId: number) {
-    const notification = await this.notificationRepository.findOne({
-      where: {
-        userId,
-        id: notificationId,
-      },
-    });
+    const notification = await this.notificationRepository
+      .createQueryBuilder('notification')
+      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
+      .where('notification.userId = :userId', { userId })
+      .andWhere('notification.id = :notificationId', { notificationId })
+      .getOne();
     if (!notification) {
       throw new NotFoundException('알림이 존재하지 않습니다.');
     }
