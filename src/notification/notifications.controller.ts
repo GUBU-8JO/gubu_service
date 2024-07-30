@@ -10,6 +10,9 @@ import {
 import { NotificationsService } from './notifications.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ResponseDto } from 'src/common/response.dto';
+import { NotificationVo } from './dto/notificationVo';
+import { CountVo } from './dto/countVo';
 
 @ApiTags('알림')
 @ApiBearerAuth()
@@ -24,15 +27,9 @@ export class NotificationsController {
    * @returns
    */
   @Get()
-  async GetMyNotifications(@Req() req) {
+  async GetMyNotifications(@Req() req): Promise<ResponseDto<NotificationVo[]>> {
     const userId = Number(req.user.id);
-    const notifications = await this.notificationsService.findAll(userId);
-
-    return {
-      status: HttpStatus.OK,
-      message: '알림 목록 조회에 성공했습니다.',
-      data: notifications,
-    };
+    return new ResponseDto(await this.notificationsService.findAll(userId));
   }
 
   /**
@@ -41,16 +38,14 @@ export class NotificationsController {
    * @returns
    */
   @Get('count')
-  async countNotReadNotifications(@Req() req: any) {
+  async countNotReadNotifications(
+    @Req() req: any,
+  ): Promise<ResponseDto<CountVo>> {
     const userId = Number(req.user.id);
-    const notReadNotifications =
-      await this.notificationsService.countNotifications(userId);
 
-    return {
-      status: HttpStatus.OK,
-      message: '미확인 알림 갯수 조회에 성공했습니다.',
-      data: notReadNotifications,
-    };
+    return new ResponseDto(
+      await this.notificationsService.countNotifications(userId),
+    );
   }
 
   /**
@@ -62,17 +57,10 @@ export class NotificationsController {
   async GetNotificationById(
     @Param('notificationId', ParseIntPipe) notificationId: number,
     @Req() req: any,
-  ) {
+  ): Promise<ResponseDto<NotificationVo>> {
     const userId = Number(req.user.id);
-    const notification = await this.notificationsService.findOne(
-      userId,
-      notificationId,
+    return new ResponseDto(
+      await this.notificationsService.findOne(userId, notificationId),
     );
-
-    return {
-      status: HttpStatus.OK,
-      message: '알림 상세조회에 성공했습니다.',
-      data: notification,
-    };
   }
 }

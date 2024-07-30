@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -6,11 +6,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import _ from 'lodash';
 import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
+import { NotificationVo } from './dto/notificationVo';
+import { CountVo } from './dto/countVo';
 
 @Injectable()
 export class NotificationsService {
-  private readonly logger = new Logger(NotificationsService.name);
-
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserSubscription)
@@ -22,7 +22,7 @@ export class NotificationsService {
   ) {}
 
   /** 알림 목록 조회 */
-  async findAll(userId: number) {
+  async findAll(userId: number): Promise<NotificationVo[]> {
     // 미확인 알림 조회
     const notReadNotifications = await this.notificationRepository
       .createQueryBuilder('notification')
@@ -55,11 +55,22 @@ export class NotificationsService {
 
     // 전체 알림 목록 만들기
     const notifications = [...notReadNotifications, ...readNotifications];
-    return notifications;
+    return notifications.map(
+      (notification) =>
+        new NotificationVo(
+          notification.id,
+          notification.title,
+          notification.isRead,
+          [notification.userSubscription],
+        ),
+    );
   }
 
   /** 알림 한가지 조회 */
-  async findOne(userId: number, notificationId: number) {
+  async findOne(
+    userId: number,
+    notificationId: number,
+  ): Promise<NotificationVo> {
     const notification = await this.notificationRepository
       .createQueryBuilder('notification')
       .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
@@ -73,11 +84,16 @@ export class NotificationsService {
     if (!notification) {
       throw new NotFoundException('알림이 존재하지 않습니다.');
     }
-    return notification;
+    return new NotificationVo(
+      notification.id,
+      notification.title,
+      notification.isRead,
+      [notification.userSubscription],
+    );
   }
 
   /** 미확인 알림 카운트 */
-  async countNotifications(userId: number) {
+  async countNotifications(userId: number): Promise<CountVo> {
     const countNotifications = await this.notificationRepository.findAndCountBy(
       {
         user: {
@@ -93,6 +109,6 @@ export class NotificationsService {
       throw new NotFoundException('모든 알림을 확인하셨습니다.');
     }
 
-    return count;
+    return new CountVo(count);
   }
 }
