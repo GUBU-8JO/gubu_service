@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies # step의 이름 지정 (선택 사항)
         run: |
 
-          # yarn.lock 파일에 저장 된 버전 정보와 동일하게 설치
+#           yarn.lock 파일에 저장 된 버전 정보와 동일하게 설치
 #          yarn --frozen-lockfile
 #
 #           package-lock.json 파일에 저장 된 버전 정보와 동일하게 설치
