@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import _ from 'lodash';
 import { UserSubscriptionsSerVo } from './dto/user-subscription-responseDto/create-service-subscription-response.dto';
+import { SubscriptionHistory } from './entities/subscription-histories.entity';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -19,6 +20,8 @@ export class UserSubscriptionsService {
     private readonly userSubscriptionRepository: Repository<UserSubscription>,
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
+    @InjectRepository(SubscriptionHistory)
+    private readonly subscriptionHistory: Repository<SubscriptionHistory>,
   ) {}
 
   async create(
@@ -42,6 +45,12 @@ export class UserSubscriptionsService {
         message: '등록되지않는 플랫폼입니다.',
       });
 
+    // platform 가격 가져오기
+    const platformPrice = existPlatform.price;
+
+    // startedDate를 Date 객체로 변환
+    const startedDateObj = new Date(startedDate);
+
     const data = await this.userSubscriptionRepository.save({
       startedDate,
       paymentMethod,
@@ -51,6 +60,18 @@ export class UserSubscriptionsService {
       userId,
       platformId,
     });
+
+    const nextDate = this.calculateNextDate(startedDateObj, period);
+
+    const subscriptionHistory = await this.subscriptionHistory.save({
+      userSubscriptionId: data.id,
+      startedDate: startedDateObj,
+      nextDate,
+      price: platformPrice,
+      stopDate: null,
+      userSubscription: data,
+    });
+
     return new UserSubscriptionsSerVo(
       data.startedDate,
       data.paymentMethod,
@@ -60,6 +81,12 @@ export class UserSubscriptionsService {
       data.userId,
       data.platformId,
     );
+  }
+  // 다음 날짜 계산 함수 (월 단위로 증가)
+  private calculateNextDate(startedDate: Date, period: number): Date {
+    const nextDate = new Date(startedDate);
+    nextDate.setMonth(nextDate.getMonth() + period); // period 만큼 월 증가
+    return nextDate;
   }
 
   async findAllMe(userId: number) {
