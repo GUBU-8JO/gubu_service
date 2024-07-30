@@ -11,7 +11,7 @@ import { NotificationsModule } from './notification/notifications.module';
 import { UserSubscriptionsModule } from './user/user-subscriptions.module';
 import { SubscriptionHistoriesModule } from './user/subscription-histories.module';
 import { PlatformsModule } from './platform/platforms.module';
-import { CategoriesModule } from './categorie/categories.module';
+import { CategoryModule } from './category/category.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 
 const typeOrmModuleOptions = {
@@ -47,9 +47,10 @@ const typeOrmModuleOptions = {
     UserSubscriptionsModule,
     SubscriptionHistoriesModule,
     PlatformsModule,
-    CategoriesModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+//리스폰 디티오 넣기
