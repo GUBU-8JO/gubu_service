@@ -53,4 +53,3 @@ const typeOrmModuleOptions = {
   providers: [AppService],
 })
 export class AppModule {}
-//리스폰 디티오 넣기
