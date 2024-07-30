@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GuBu</title>
-    <link rel="stylesheet" href="gubu.css">
+    <link rel="stylesheet" href="/front/css/signup.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
@@ -17,18 +17,20 @@
 <body>
     <div class="container">
         <div class="logo">
+            <img src="/front/mainlogo.png" class="logo"="Logo">
             <h1 class="introMent">간편한 구독관리 서비스</h1>
-            <img src="mainlogo.png" class="logo"="Logo">
+
         </div>
+
+        <input type="text" id="emailTextBox" placeholder="EMAIL" class="emailTextBox">
+        <input type="text" id="nicknameTextBox" placeholder="NICKNAME" class="nicknameTextBox">
+        <input type="text" id="passwordTextBox" placeholder="PASSWORD" class="passwordTextBox">
+        <input type="text" id="repasswordTextBox" placeholder="REPASSWORD" class="repasswordTextBox">
         <!-- <h1 class="title">GuBu</h1> -->
-        <div class="gap"></div>
+
         <div class="option">
-            <p>아직 가입하지 않으셨다면</p>
-            <button class="btn">Sign Up</button>
-        </div>
-        <div class="option">
-            <p>이미 가입하셨다면</p>
-            <button class="btn">Sign In</button>
+
+            <button class="btn">회원가입</button>
         </div>
     </div>
     <script src="gubu.js"></script>
