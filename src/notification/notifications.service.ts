@@ -24,26 +24,30 @@ export class NotificationsService {
   /** 알림 목록 조회 */
   async findAll(userId: number) {
     // 미확인 알림 조회
-    const notReadNotifications = await this.notificationRepository.find({
-      where: {
-        userId,
-        isRead: false,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    const notReadNotifications = await this.notificationRepository
+      .createQueryBuilder('notification')
+      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
+      .where('notification.userId = :userId', { userId })
+      .andWhere('notification.isRead = :isRead', { isRead: false })
+      .orderBy('notification.createdAt', 'DESC')
+      .getMany();
 
     // 확인 알림 조회
-    const readNotifications = await this.notificationRepository.find({
-      where: {
-        userId,
-        isRead: true,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    const readNotifications = await this.notificationRepository
+      .createQueryBuilder('notification')
+      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
+      .where('notification.userId = :userId', { userId })
+      .andWhere('notification.isRead = :isRead', { isRead: true })
+      .orderBy('notification.createdAt', 'DESC')
+      .getMany();
 
     if (!notReadNotifications && readNotifications) {
       throw new NotFoundException('알림 목록이 존재하지 않습니다');

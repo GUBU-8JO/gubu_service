@@ -26,9 +26,7 @@ export class NotificationsController {
   @Get()
   async GetMyNotifications(@Req() req) {
     const userId = Number(req.user.id);
-    console.log('아이디', userId);
     const notifications = await this.notificationsService.findAll(userId);
-    console.log(userId);
 
     return {
       status: HttpStatus.OK,
