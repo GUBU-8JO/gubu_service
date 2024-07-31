@@ -27,7 +27,4 @@ jobs:
 #      - name: Run test # step의 이름 지정 (선택 사항)
 #        run: |
 #          yarn test
-#           npm run test
-
-
-## Ci 수정 ( 브랜치 )
+#          npm run test
