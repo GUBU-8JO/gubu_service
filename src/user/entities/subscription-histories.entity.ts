@@ -24,14 +24,9 @@ export class SubscriptionHistory {
   @Column()
   price: number;
 
-<<<<<<< HEAD
-  @Column({ nullable: true }) // stopDate를 nullable로 설정하고 null 허용하도록 수정
-  stopDate: Date | null;
-=======
   @Column({ nullable: true })
   stopDate?: Date;
 
->>>>>>> 7f6f5e3b263590a43a70b1217d6028e1c93c2d9a
   @ManyToOne(
     () => UserSubscription,
     (userSubscription) => userSubscription.subscriptionHistory,
