@@ -1,0 +1,135 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
+    font-family: 'Jua', sans-serif;
+}
+
+.container {
+    text-align: left;
+    background: linear-gradient(45deg, #f3e5f5, #ffffff);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    max-width: 100%;
+    min-width: 300px; /* 최소 너비 설정 */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.dropdown {
+    background-color: #a46ff5;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.platform-list .platform-item {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.platform-logo {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.platform-logo img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.platform-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 90px);
+    margin-left: 10px;
+    box-sizing: border-box;
+}
+
+.platform-details {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-grow: 1;
+}
+
+.platform-name {
+    font-size: 20px;
+    margin-right: 10px;
+    min-width: 90px;
+}
+
+.platform-price {
+    font-size: 16px;
+    color: #ff0000;
+    margin-right: 10px;
+    min-width: 60px;
+}
+
+.platform-rating {
+    font-size: 14px;
+    color: #f5a623;
+    margin-right: 10px; /* 간격을 줄임 */
+}
+
+
+/*.platform-rating img {*/
+/*    width: 100px; !* 별점 이미지의 너비 *!*/
+/*    height: auto;*/
+/*    display: block;*/
+/*}*/
+
+.platform-rating img {
+    width: 80px; /* 별점 이미지의 고정 너비 */
+    height: 16px; /* 별점 이미지의 고정 높이 */
+    object-fit: contain; /* 이미지가 컨테이너에 맞게 조정 */
+    display: block;
+}
+
+
+.view-review-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.view-review {
+    background-color: #a46ff5;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 70px;
+    white-space: nowrap;
+    text-align: center;
+}
