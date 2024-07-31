@@ -19,6 +19,8 @@ import { UserSubscriptionsContVo } from './dto/user-subscription-responseDto/cre
 import { ResponseDto } from 'src/common/response.dto';
 
 @ApiTags('05. 유저 구독정보')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('user-subscriptions')
 export class UserSubscriptionsController {
   constructor(
@@ -30,8 +32,6 @@ export class UserSubscriptionsController {
    * @param req
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @ApiParam({ name: 'platformId', description: '플랫폼 ID', required: true })
   @Post('platform/:platformId')
   async create(
@@ -49,12 +49,10 @@ export class UserSubscriptionsController {
   }
 
   /**
-   * 유저구독 나의정보 조회
+   * 나의구독정보 조회
    * @param req
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('/me')
   async findAllMe(@Req() req) {
     const userId = req.user.id;
@@ -73,7 +71,6 @@ export class UserSubscriptionsController {
   @Get('/:subscriptionId')
   async findOne(@Param('subscriptionId') id: number) {
     const data = await this.userSubscriptionsService.findOne(id);
-
     return {
       status: HttpStatus.OK,
       message: '특정 구독정보 조회가 완료되었습니다.',
@@ -94,7 +91,6 @@ export class UserSubscriptionsController {
       id,
       updateUserSubscriptionDto,
     );
-
     return {
       status: HttpStatus.OK,
       message: '정상적으로 수정 완료되었습니다.',
@@ -109,7 +105,6 @@ export class UserSubscriptionsController {
   @Delete(':subscriptionId')
   async remove(@Param('subscriptionId') id: number) {
     await this.userSubscriptionsService.remove(id);
-
     return {
       status: HttpStatus.OK,
       message: '정상적으로 삭제되었습니다.',

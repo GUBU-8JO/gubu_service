@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import _ from 'lodash';
 import { UserSubscriptionsSerVo } from './dto/user-subscription-responseDto/create-service-subscription-response.dto';
+import { number } from 'joi';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -40,6 +41,18 @@ export class UserSubscriptionsService {
       throw new NotFoundException({
         status: 404,
         message: '등록되지않는 플랫폼입니다.',
+      });
+
+    const existingSubscription = await this.userSubscriptionRepository.findOne({
+      where: {
+        userId: userId,
+        platformId: platformId,
+      },
+    });
+
+    if (existingSubscription)
+      throw new BadRequestException({
+        message: '이미 구독중인 플랫폼 입니다.',
       });
 
     const data = await this.userSubscriptionRepository.save({
@@ -78,6 +91,11 @@ export class UserSubscriptionsService {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },
     });
+
+    if (!data)
+      throw new NotFoundException({
+        message: '해당하는 구독정보가 없습니다.',
+      });
     return data;
   }
 
