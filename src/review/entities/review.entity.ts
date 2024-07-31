@@ -6,7 +6,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Platform } from '../../platform/entities/platforms.entity';
@@ -38,7 +37,7 @@ export class Review {
   @DeleteDateColumn({ type: 'datetime' })
   DeletedAt: number;
 
-  @OneToOne(() => Platform, (platform) => platform.review)
+  @ManyToOne(() => Platform, (platform) => platform.review)
   @JoinColumn({ name: 'platform_id' })
   platform: Platform;
 
