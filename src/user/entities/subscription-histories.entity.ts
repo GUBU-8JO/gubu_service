@@ -24,8 +24,8 @@ export class SubscriptionHistory {
   @Column()
   price: number;
 
-  @Column()
-  stopDate: Date;
+  @Column({ nullable: true })
+  stopDate?: Date;
 
   @ManyToOne(
     () => UserSubscription,
