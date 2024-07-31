@@ -18,7 +18,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserSubscriptionsContVo } from './dto/user-subscription-responseDto/create-control-subscription-response.dto';
 import { ResponseDto } from 'src/common/response.dto';
 
-@ApiTags('유저구독정보 API')
+@ApiTags('05. 유저 구독정보')
 @Controller('user-subscriptions')
 export class UserSubscriptionsController {
   constructor(
