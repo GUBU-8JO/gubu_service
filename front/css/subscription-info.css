@@ -107,3 +107,86 @@
   outline: none;
   padding: 2px 3px 2px 3px;
 }
+.card-group {
+  background-color: #ffffff;
+  border: none;
+  outline: none;
+}
+.card {
+  display: flex;
+  flex-wrap: wrap; /* 요소들을 여러 줄로 나누도록 설정 */
+  gap: 10px; /* 카드 요소들 사이에 간격 추가 */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.card-body {
+  flex: 1 1 calc(25% - 10px); /* 한 줄에 4개씩 배치되도록 설정 */
+  box-sizing: border-box; /* 패딩과 보더를 포함하여 너비 계산 */
+  text-align: center;
+  padding: 2px;
+  /* border: 1px solid #ccc; */
+  border-radius: 8px;
+  background-color: transparent;
+  height: 60px;
+  /* Ensure minimum width to fit exactly 4 items in a row */
+  min-width: 0; /* Optional: Ensures the card does not shrink too much */
+}
+
+.logo-top {
+  margin: 0;
+  width: 80px;
+  text-align: center;
+}
+
+.logo-text {
+  margin-right: 50px;
+  width: 80px;
+  text-align: center;
+}
+.info-btn {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  background-color: #f3dbfa;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+.info-btn:hover {
+  color: #a66bff; /* 버튼 호버 색상 */
+  background-color: #ebdffc;
+  box-shadow: 0 4px 8px #a569ff(0, 0, 0, 3);
+}
+.input-btn {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  background-color: #f3dbfa;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+.input-btn:hover {
+  color: #a66bff; /* 버튼 호버 색상 */
+  background-color: #ebdffc;
+  box-shadow: 0 4px 8px #a569ff(0, 0, 0, 3);
+}
+.comment-section {
+  max-height: 300px; /* 최대 높이 설정 */
+  overflow-y: auto; /* 세로 스크롤이 필요할 때만 나타나도록 설정 */
+  border: 1px solid #ccc; /* 경계선을 추가하여 시각적으로 구분 */
+  padding: 10px;
+}
+.history {
+  max-height: 150px; /* 최대 높이를 설정합니다 */
+  overflow-y: auto; /* 내용이 많아지면 세로 스크롤이 나타나도록 설정합니다 */
+  border: 1px solid #ccc; /* 시각적인 구분을 위해 경계선을 추가합니다 */
+  padding: 10px;
+  background-color: #ffffff;
+}
+
+.history div {
+  margin-bottom: 5px; /* 각 항목 사이에 간격을 추가합니다 */
+}
