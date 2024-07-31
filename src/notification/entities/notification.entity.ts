@@ -24,14 +24,14 @@ export class Notification {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ default: false })
   isRead: boolean;
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
-  readedAt: Date;
+  @UpdateDateColumn({ type: 'datetime', nullable: true })
+  readedAt?: Date;
 
   @ManyToOne(() => User, (user) => user.notification, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })

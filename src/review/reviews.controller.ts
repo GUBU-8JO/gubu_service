@@ -21,7 +21,7 @@ import _ from 'lodash';
 import { ReadAllReviewVo } from './dto/vo/readAll-review-vo.dto';
 
 @ApiTags('리뷰')
-@Controller('reviwes')
+@Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
   /**
