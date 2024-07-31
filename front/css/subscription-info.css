@@ -1,0 +1,109 @@
+.body3 {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ffffff;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+.container3 {
+  text-align: center;
+  background: linear-gradient(45deg, #f3e5f5, #ffffff);
+  width: 380px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 24px;
+  color: #66b2b2;
+  margin: 0;
+}
+
+.header img {
+  width: 24px;
+  height: 24px;
+}
+
+.subscription-info,
+.account-info,
+.comment-section,
+.history {
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.subscription-info img {
+  width: 50px;
+  height: 50px;
+}
+
+.subscription-info div,
+.account-info div {
+  margin-bottom: 10px;
+}
+
+.sub-info {
+  display: flex;
+}
+
+.comment-section .comment-input {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.comment-section textarea,
+.comment-section input {
+  width: 100%;
+  padding: 5px;
+  margin-left: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.buttons button {
+  background-color: #dbb7e9;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.history {
+  background-color: #e6f2f2;
+  padding: 10px;
+  border-radius: 5px;
+}
+.logo3 {
+  width: 30px;
+}
+.homebtn {
+  font-size: 13px;
+  background-color: #f3dbfa;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  padding: 2px 3px 2px 3px;
+}
