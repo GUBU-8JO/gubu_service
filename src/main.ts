@@ -29,8 +29,8 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('GuBu Service')
-    .setDescription('내 구독을 부탁해~')
-    .setVersion('1.0')
+    .setDescription('구독부자')
+    .setVersion('2.0')
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
     .build();
 
