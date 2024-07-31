@@ -29,19 +29,7 @@ export class NotificationsController {
   @Get()
   async GetMyNotifications(@Req() req): Promise<ResponseDto<NotificationVo[]>> {
     const userId = Number(req.user.id);
-<<<<<<< HEAD
-    console.log('아이디', userId);
-    const notifications = await this.notificationsService.findAll(userId);
-    console.log(userId);
-
-    return {
-      status: HttpStatus.OK,
-      message: '알림 목록 조회에 성공했습니다.',
-      data: notifications,
-    };
-=======
     return new ResponseDto(await this.notificationsService.findAll(userId));
->>>>>>> 7f6f5e3b263590a43a70b1217d6028e1c93c2d9a
   }
 
   /**
