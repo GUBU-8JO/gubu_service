@@ -59,11 +59,7 @@ export class UserSubscriptionsController {
   async findAllMe(@Req() req) {
     const userId = req.user.id;
     const data = await this.userSubscriptionsService.findAllMe(userId);
-    return {
-      status: HttpStatus.OK,
-      message: '자기구독정보 조회가 완료되었습니다.',
-      data,
-    };
+    return new ResponseDto(data);
   }
 
   /**
