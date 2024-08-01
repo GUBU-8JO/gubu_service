@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,7 +11,8 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import _ from 'lodash';
 import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
-import { ReadAllReviewVo } from './dto/vo/readAll-review-vo.dto';
+import { ReadAllReviewVo } from './dto/vo/readAll-review-vo';
+import { CreateReviewVo } from './dto/vo/create-review-vo';
 
 @Injectable()
 export class ReviewsService {
@@ -25,19 +27,27 @@ export class ReviewsService {
     userId: number,
     platformId: number,
     { rate, comment }: CreateReviewDto,
-  ) {
+  ): Promise<CreateReviewVo> {
     const existPlatform = await this.platformRepository.findOne({
       where: { id: platformId },
     });
     if (_.isNil(existPlatform)) throw new NotFoundException();
-    const review = this.reviewsRepository.save({
+    const existReview = await this.reviewsRepository.findOne({
+      where: { userId, platformId },
+    });
+    if (existReview) {
+      throw new ConflictException({
+        message: '리뷰는 하나만 작성할 수 있습니다.',
+      });
+    }
+    const review = await this.reviewsRepository.save({
       userId,
       platformId,
       rate,
       comment,
     });
 
-    return review;
+    return new CreateReviewVo(review.id, review.rate, review.comment);
   }
 
   async findMyReview(userId: number): Promise<ReadReviewVo[]> {
@@ -47,7 +57,6 @@ export class ReviewsService {
       select: ['id', 'rate', 'comment', 'user'], // 'user' 관계 선택
     });
 
-    // return review;
     return review.map(
       (review) =>
         new ReadReviewVo(
@@ -62,11 +71,21 @@ export class ReviewsService {
   async findPlatformReview(platformId: number): Promise<ReadAllReviewVo[]> {
     const data = await this.reviewsRepository.find({
       where: { platformId },
-      select: ['id', 'rate', 'comment'],
+      relations: ['user'],
+      select: ['id', 'user', 'rate', 'comment'],
     });
     if (!data.length)
       throw new NotFoundException('해당 플랫폼에 리뷰가 존재하지 않습니다.');
-    return data;
+
+    return data.map(
+      (review) =>
+        new ReadAllReviewVo(
+          review.id,
+          review.user.nickname,
+          review.comment,
+          review.rate,
+        ),
+    );
   }
 
   async deleteReview(id: number) {

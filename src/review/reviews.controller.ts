@@ -15,10 +15,10 @@ import { FindReviewDto } from './dto/find-review.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ResponseDto } from 'src/common/response.dto';
-import { CreateReviewVo } from './dto/vo/create-review-vo.dto';
+import { CreateReviewVo } from './dto/vo/create-review-vo';
 import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 import _ from 'lodash';
-import { ReadAllReviewVo } from './dto/vo/readAll-review-vo.dto';
+import { ReadAllReviewVo } from './dto/vo/readAll-review-vo';
 
 @ApiTags('리뷰')
 @ApiBearerAuth()
