@@ -21,6 +21,22 @@ async function bootstrap() {
     }),
   );
 
+  //액시오스 연결쪽인듯
+  // app.enableCors({
+  //   origin: 'http://localhost:5500', // 프론트엔드의 URL을 설정합니다
+  //   methods: ['GET', 'POST'],
+  //   allowedHeaders: ['Content-Type,Authorization'],
+  // });
+
+  //////
+  app.enableCors({
+    origin: 'http://localhost:5500', // 프론트엔드 URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
+  //////모라고 해야해.... js 관련
+
   const config = new DocumentBuilder()
     .setTitle('GuBu Service')
     .setDescription('내 구독을 부탁해~')
@@ -29,11 +45,11 @@ async function bootstrap() {
     .build();
 
   //이거 왜 중복인가요?
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  );
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     transform: true,
+  //   }),
+  // );
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {

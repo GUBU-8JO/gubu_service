@@ -17,7 +17,7 @@ body {
   background: linear-gradient(45deg, #f3e5f5, #ffffff);
 
   width: 380px;
-  height: 600px;
+  height: 100vh;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
@@ -44,8 +44,9 @@ body {
   font-size: 20px;
   font-weight: lighter;
 }
+
 /* 버튼 스타일 */
-.btn {
+.signupbtn {
   background-color: #a46ff5; /* 버튼 배경색 */
   color: white;
   border: none;
@@ -55,7 +56,23 @@ body {
   border-radius: 20px;
   transition: background-color 0.3s;
 }
-.btn:hover {
+.signupbtn:hover {
+  color: #a66bff; /* 버튼 호버 색상 */
+  background-color: #ebdffc;
+  box-shadow: 0 4px 8px #a569ff(0, 0, 0, 3);
+}
+/* 버튼 스타일 */
+.signinbtn {
+  background-color: #a46ff5; /* 버튼 배경색 */
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+}
+.signinbtn:hover {
   color: #a66bff; /* 버튼 호버 색상 */
   background-color: #ebdffc;
   box-shadow: 0 4px 8px #a569ff(0, 0, 0, 3);

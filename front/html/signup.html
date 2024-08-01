@@ -17,15 +17,15 @@
 <body>
     <div class="container">
         <div class="logo">
-            <img src="/front/mainlogo.png" class="logo"="Logo">
+            <img src="/front/mainlogo.png" class="logo">
             <h1 class="introMent">간편한 구독관리 서비스</h1>
 
         </div>
 
-        <input type="text" id="emailTextBox" placeholder="EMAIL" class="emailTextBox">
-        <input type="text" id="nicknameTextBox" placeholder="NICKNAME" class="nicknameTextBox">
-        <input type="text" id="passwordTextBox" placeholder="PASSWORD" class="passwordTextBox">
-        <input type="text" id="repasswordTextBox" placeholder="REPASSWORD" class="repasswordTextBox">
+        <input type="text" id="emailTextBox" placeholder="EMAIL" class="emailTextBox" required>
+        <input type="text" id="nicknameTextBox" placeholder="NICKNAME" class="nicknameTextBox" required>
+        <input type="text" id="passwordTextBox" placeholder="PASSWORD" class="passwordTextBox" required>
+        <input type="text" id="repasswordTextBox" placeholder="REPASSWORD" class="repasswordTextBox" required>
         <!-- <h1 class="title">GuBu</h1> -->
 
         <div class="option">
@@ -33,7 +33,9 @@
             <button class="btn">회원가입</button>
         </div>
     </div>
-    <script src="gubu.js"></script>
+    <script src="signup.js"></script>
+    <!-- <script type="module" src="index.js"></script> -->
+
 </body>
 
 </html>
