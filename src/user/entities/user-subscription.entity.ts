@@ -74,8 +74,8 @@ export class UserSubscription {
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'datetime' })
-  deletedAt: Date;
+  @DeleteDateColumn({ type: 'datetime', nullable: true })
+  deletedAt: Date | null;
 
   @OneToMany(
     () => SubscriptionHistory,

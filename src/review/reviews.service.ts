@@ -30,7 +30,6 @@ export class ReviewsService {
       where: { id: platformId },
     });
     if (_.isNil(existPlatform)) throw new NotFoundException();
-
     const review = this.reviewsRepository.save({
       userId,
       platformId,
@@ -41,13 +40,23 @@ export class ReviewsService {
     return review;
   }
 
-  async findMyReview(userId): Promise<ReadReviewVo[]> {
+  async findMyReview(userId: number): Promise<ReadReviewVo[]> {
     const review = await this.reviewsRepository.find({
       where: { userId },
-      select: ['id', 'rate', 'comment'],
+      relations: ['user'], // 'user' 관계를 명시적으로 로드
+      select: ['id', 'rate', 'comment', 'user'], // 'user' 관계 선택
     });
 
-    return review;
+    // return review;
+    return review.map(
+      (review) =>
+        new ReadReviewVo(
+          review.id,
+          review.rate,
+          review.comment,
+          review.user.nickname,
+        ),
+    );
   }
 
   async findPlatformReview(platformId: number): Promise<ReadAllReviewVo[]> {

@@ -10,8 +10,9 @@ import { UserSubscription } from './entities/user-subscription.entity';
 import { Repository } from 'typeorm';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import _ from 'lodash';
-import { UserSubscriptionsSerVo } from './dto/user-subscription-responseDto/create-service-subscription-response.dto';
+import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubscriptionVo';
 import { number } from 'joi';
+import { UserSubscriptionUpdateVo } from './dto/userSubscriptionUpdateVo';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -21,7 +22,6 @@ export class UserSubscriptionsService {
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
   ) {}
-
   async create(
     {
       startedDate,
@@ -32,7 +32,7 @@ export class UserSubscriptionsService {
     }: CreateUserSubscriptionDto,
     userId: number,
     platformId: number,
-  ): Promise<UserSubscriptionsSerVo> {
+  ): Promise<UserSubscriptionVo> {
     const existPlatform = await this.platformRepository.findOne({
       where: { id: platformId },
     });
@@ -59,44 +59,71 @@ export class UserSubscriptionsService {
       startedDate,
       paymentMethod,
       period,
+      platformId,
       accountId,
       accountPw,
       userId,
-      platformId,
     });
-    return new UserSubscriptionsSerVo(
+    return new UserSubscriptionVo(
+      data.id,
       data.startedDate,
-      data.paymentMethod,
       data.period,
+      data.platformId,
+      data.paymentMethod,
       data.accountId,
       data.accountPw,
       data.userId,
-      data.platformId,
     );
   }
 
-  async findAllMe(userId: number) {
+  async findAllMe(userId: number): Promise<UserSubscriptionVo[]> {
     const data = await this.userSubscriptionRepository.find({
       where: { userId },
+      select: ['id', 'startedDate', 'period', 'platformId'],
+      relations: ['platform'],
     });
     if (!data.length)
       throw new NotFoundException({
         status: 404,
         message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
       });
-    return data;
-  }
 
-  async findOne(id: number) {
+    // return data;
+    return data.map(
+      (subscription) =>
+        new UserSubscriptionVo(
+          subscription.id,
+          subscription.startedDate,
+          subscription.platformId,
+          subscription.period,
+        ),
+    );
+  }
+  async findOne(id: number): Promise<UserSubscriptionVo> {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },
+      select: [
+        'id',
+        'startedDate',
+        'paymentMethod',
+        'period',
+        'platformId',
+        'accountId',
+        'accountPw',
+      ],
     });
-
-    if (!data)
-      throw new NotFoundException({
-        message: '해당하는 구독정보가 없습니다.',
-      });
-    return data;
+    if (!data) {
+      throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
+    }
+    return new UserSubscriptionVo(
+      data.id,
+      data.startedDate,
+      data.period,
+      data.platformId,
+      data.paymentMethod,
+      data.accountId,
+      data.accountPw,
+    );
   }
 
   async update(
@@ -108,7 +135,7 @@ export class UserSubscriptionsService {
       accountId,
       accountPw,
     }: UpdateUserSubscriptionDto,
-  ) {
+  ): Promise<UserSubscriptionUpdateVo> {
     const existUserSubscription = await this.userSubscriptionRepository.findOne(
       {
         where: { id },
@@ -117,7 +144,15 @@ export class UserSubscriptionsService {
 
     if (!existUserSubscription)
       throw new NotFoundException({ message: '등록되지않는 구독정보입니다.' });
-
+    const newdata =
+      existUserSubscription.startedDate === startedDate &&
+      existUserSubscription.paymentMethod === paymentMethod &&
+      existUserSubscription.period === period &&
+      existUserSubscription.accountId === accountId &&
+      existUserSubscription.accountPw === accountPw;
+    if (!newdata) {
+      throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
+    }
     await this.userSubscriptionRepository.update(
       { id },
       {
@@ -133,19 +168,27 @@ export class UserSubscriptionsService {
       where: { id },
     });
 
-    return data;
+    return new UserSubscriptionUpdateVo(
+      data.startedDate,
+      data.paymentMethod,
+      data.period,
+      data.accountId,
+      data.accountPw,
+    );
   }
 
   async remove(id: number) {
-    await this.userSubscriptionRepository.delete({ id });
-    const existData = this.userSubscriptionRepository.findOne({
+    const existData = await this.userSubscriptionRepository.findOne({
       where: { id },
+      withDeleted: false,
     });
-    console.log(existData);
     if (_.isNil(existData))
       throw new BadRequestException({
-        message: 'data가 정상적으로 삭제되지 않았습니다.',
+        message: '데이터가 존재하지 않습니다.',
       });
+
+    await this.userSubscriptionRepository.softDelete(id);
+
     return true;
   }
 }

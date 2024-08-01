@@ -15,8 +15,8 @@ import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { UserSubscriptionsContVo } from './dto/user-subscription-responseDto/create-control-subscription-response.dto';
 import { ResponseDto } from 'src/common/response.dto';
+import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubscriptionVo';
 
 @ApiTags('05. 유저 구독정보')
 @UseGuards(JwtAuthGuard)
@@ -38,7 +38,7 @@ export class UserSubscriptionsController {
     @Req() req,
     @Param('platformId') platformId: number,
     @Body() createUserSubscriptionDto: CreateUserSubscriptionDto,
-  ): Promise<ResponseDto<UserSubscriptionsContVo>> {
+  ): Promise<ResponseDto<UserSubscriptionVo>> {
     const userId = req.user.id;
     const data = await this.userSubscriptionsService.create(
       createUserSubscriptionDto,
@@ -54,14 +54,15 @@ export class UserSubscriptionsController {
    * @returns
    */
   @Get('/me')
-  async findAllMe(@Req() req) {
+  async findAllMe(@Req() req): Promise<ResponseDto<UserSubscriptionVo[]>> {
     const userId = req.user.id;
     const data = await this.userSubscriptionsService.findAllMe(userId);
-    return {
-      status: HttpStatus.OK,
-      message: '자기구독정보 조회가 완료되었습니다.',
-      data,
-    };
+    return new ResponseDto(data);
+    // return {
+    //   status: HttpStatus.OK,
+    //   message: '자기구독정보 조회가 완료되었습니다.',
+    //   data,
+    // };
   }
 
   /**

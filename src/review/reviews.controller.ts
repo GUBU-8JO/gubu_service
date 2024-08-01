@@ -21,6 +21,8 @@ import _ from 'lodash';
 import { ReadAllReviewVo } from './dto/vo/readAll-review-vo.dto';
 
 @ApiTags('리뷰')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
@@ -29,8 +31,6 @@ export class ReviewsController {
    * @param req
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Post('platform/:platformId')
   async create(
     @Req() req,
@@ -51,8 +51,6 @@ export class ReviewsController {
    * 나의리뷰조회
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('/me')
   async findMyReview(@Req() req): Promise<ResponseDto<ReadReviewVo[]>> {
     const userId = req.user.id;
@@ -68,8 +66,6 @@ export class ReviewsController {
    * @param req
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('platform/:platformId')
   async findPlatformReview(
     @Param('platformId') platformId: number,
