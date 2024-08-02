@@ -1,10 +1,18 @@
-import { PickType } from '@nestjs/swagger';
-import { UserSubscription } from '../entities/user-subscription.entity';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
-export class UpdateUserSubscriptionDto extends PickType(UserSubscription, [
-  'startedDate',
-  'paymentMethod',
-  'period',
-  'accountId',
-  'accountPw',
-]) {}
+export class UpdateUserSubscriptionDto {
+  @IsOptional()
+  startedDate: string;
+
+  @IsOptional()
+  paymentMethod: string;
+
+  @IsOptional()
+  period: number;
+
+  @IsOptional()
+  accountId: string;
+
+  @IsOptional()
+  accountPw: string;
+}

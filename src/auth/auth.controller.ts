@@ -17,7 +17,7 @@ import { ResponseDto } from 'src/common/response.dto';
 import { SignUpDataVo } from 'src/auth/dto/sign-up.data.vo';
 import { SignInDataVo } from 'src/auth/dto/sign-in.data.vo';
 
-@ApiTags('인증')
+@ApiTags('01. 인증')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
