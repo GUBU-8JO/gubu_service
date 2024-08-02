@@ -22,6 +22,8 @@ export class UserSubscriptionsService {
     private readonly userSubscriptionRepository: Repository<UserSubscription>,
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
+    @InjectRepository(SubscriptionHistory)
+    private readonly subscriptionHistory: Repository<SubscriptionHistory>,
   ) {}
   async create(
     {
@@ -55,6 +57,13 @@ export class UserSubscriptionsService {
       throw new BadRequestException({
         message: '이미 구독중인 플랫폼 입니다.',
       });
+      
+    // platform 가격 가져오기
+    const platformPrice = existPlatform.price;
+
+    // startedDate를 Date 객체로 변환
+    const startedDateObj = new Date(startedDate);
+
 
     const data = await this.userSubscriptionRepository.save({
       startedDate,
@@ -65,8 +74,22 @@ export class UserSubscriptionsService {
       accountPw,
       userId,
     });
+      
     return new UserSubscriptionVo(
       data.id,
+
+    const nextDate = this.calculateNextDate(startedDateObj, period);
+
+    const subscriptionHistory = await this.subscriptionHistory.save({
+      userSubscriptionId: data.id,
+      startedDate: startedDateObj,
+      nextDate,
+      price: platformPrice,
+      stopDate: null,
+      userSubscription: data,
+    });
+
+    return new UserSubscriptionsSerVo(
       data.startedDate,
       data.period,
       data.platformId,
@@ -75,6 +98,12 @@ export class UserSubscriptionsService {
       data.accountPw,
       data.userId,
     );
+  }
+  // 다음 날짜 계산 함수 (월 단위로 증가)
+  private calculateNextDate(startedDate: Date, period: number): Date {
+    const nextDate = new Date(startedDate);
+    nextDate.setMonth(nextDate.getMonth() + period); // period 만큼 월 증가
+    return nextDate;
   }
 
   // const latestSubscriptionHistory = subscription.subscriptionHistory?.[0];
