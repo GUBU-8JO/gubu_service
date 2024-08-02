@@ -68,6 +68,9 @@ export class UserSubscription {
   @IsOptional()
   accountPw: string;
 
+  @Column({ comment: '구독 가격' })
+  price: number;
+
   @CreateDateColumn({ type: 'datetime', comment: '구독 추가일' })
   createdAt: Date;
 

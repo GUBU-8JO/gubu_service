@@ -21,8 +21,10 @@ export class SubscriptionHistory {
 
   @Column({ comment: '결제 가격' })
   price: number;
+
   @Column({ type: 'date', nullable: true, comment: '구독 중지일' })
   stopRequestAt?: Date;
+
   @ManyToOne(
     () => UserSubscription,
     (userSubscription) => userSubscription.subscriptionHistory,

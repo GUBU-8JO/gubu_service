@@ -92,8 +92,8 @@ export class UserSubscriptionsService {
       });
 
     return data.map((subscription) => {
-      const price =
-        subscription.subscriptionHistory?.map((history) => history.price) ?? [];
+      // const price =
+      // subscription.subscriptionHistory?.map((history) => history.price) ?? [];
       return new UserSubscriptionVo(
         subscription.id,
         subscription.startedDate,
@@ -103,7 +103,7 @@ export class UserSubscriptionsService {
         subscription.accountId,
         subscription.accountPw,
         subscription.userId,
-        price, // price 배열 전달
+        // price, // price 배열 전달
       );
     });
   }
@@ -111,6 +111,7 @@ export class UserSubscriptionsService {
   async findOne(id: number): Promise<UserSubscriptionVo> {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },
+      relations: { subscriptionHistory: true },
       select: [
         'id',
         'startedDate',
@@ -120,15 +121,15 @@ export class UserSubscriptionsService {
         'accountId',
         'accountPw',
       ],
-      relations: ['subscriptionHistory'],
     });
     if (!data) {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    // const price = data.subscriptionHistory?.[0]?.price ?? null;
-    const price =
-      data.subscriptionHistory?.map((history) => history.price) ?? [];
+    const price = data.subscriptionHistory?.[0]?.price ?? null;
+    console.log(data.subscriptionHistory);
+    // const price =
+    // data.subscriptionHistory?.map((history) => history.price) ?? [];
     return new UserSubscriptionVo(
       data.id,
       data.startedDate,
@@ -138,7 +139,7 @@ export class UserSubscriptionsService {
       data.accountId,
       data.accountPw,
       data.userId,
-      price,
+      data.subscriptionHistory,
     );
   }
 
