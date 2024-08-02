@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserSubscription } from './entities/user-subscription.entity';
 import { Repository } from 'typeorm';
 import { Platform } from 'src/platform/entities/platforms.entity';
+import { SubscriptionHistory } from './entities/subscription-histories.entity';
 import _ from 'lodash';
 import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubscriptionVo';
 import { number } from 'joi';
@@ -76,11 +77,13 @@ export class UserSubscriptionsService {
     );
   }
 
+  // const latestSubscriptionHistory = subscription.subscriptionHistory?.[0];
+  // const price = latestSubscriptionHistory?.price ?? null;
   async findAllMe(userId: number): Promise<UserSubscriptionVo[]> {
     const data = await this.userSubscriptionRepository.find({
       where: { userId },
       select: ['id', 'startedDate', 'period', 'platformId'],
-      relations: ['platform'],
+      relations: ['subscriptionHistory', 'platform'],
     });
     if (!data.length)
       throw new NotFoundException({
@@ -88,17 +91,23 @@ export class UserSubscriptionsService {
         message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
       });
 
-    // return data;
-    return data.map(
-      (subscription) =>
-        new UserSubscriptionVo(
-          subscription.id,
-          subscription.startedDate,
-          subscription.platformId,
-          subscription.period,
-        ),
-    );
+    return data.map((subscription) => {
+      const price =
+        subscription.subscriptionHistory?.map((history) => history.price) ?? [];
+      return new UserSubscriptionVo(
+        subscription.id,
+        subscription.startedDate,
+        subscription.period,
+        subscription.platformId,
+        subscription.paymentMethod,
+        subscription.accountId,
+        subscription.accountPw,
+        subscription.userId,
+        price, // price 배열 전달
+      );
+    });
   }
+
   async findOne(id: number): Promise<UserSubscriptionVo> {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },
@@ -111,10 +120,15 @@ export class UserSubscriptionsService {
         'accountId',
         'accountPw',
       ],
+      relations: ['subscriptionHistory'],
     });
     if (!data) {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
+
+    // const price = data.subscriptionHistory?.[0]?.price ?? null;
+    const price =
+      data.subscriptionHistory?.map((history) => history.price) ?? [];
     return new UserSubscriptionVo(
       data.id,
       data.startedDate,
@@ -123,6 +137,8 @@ export class UserSubscriptionsService {
       data.paymentMethod,
       data.accountId,
       data.accountPw,
+      data.userId,
+      price,
     );
   }
 

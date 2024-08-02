@@ -7,7 +7,7 @@ export class UserSubscriptionVo {
   accountId?: string;
   accountPw?: string;
   userId?: number;
-  price?: number;
+  price?: number[];
 
   constructor(
     id: number,
@@ -18,7 +18,7 @@ export class UserSubscriptionVo {
     accountId?: string,
     accountPw?: string,
     userId?: number,
-    price?: number,
+    price?: number[],
   ) {
     this.id = id;
     this.startedDate = startedDate;
