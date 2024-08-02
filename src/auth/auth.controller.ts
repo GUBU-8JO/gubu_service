@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { userInfo } from 'src/auth/decorators/userInfo.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { ResponseDto } from 'src/common/response.dto';
+// tutor: 제거
 import { SignUpDataVo } from 'src/auth/dto/sign-up.data.vo';
 import { SignInDataVo } from 'src/auth/dto/sign-in.data.vo';
 

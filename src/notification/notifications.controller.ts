@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  // tutor: 사용하지 않는 import 제거
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -41,6 +42,7 @@ export class NotificationsController {
   async countNotReadNotifications(
     @Req() req: any,
   ): Promise<ResponseDto<CountVo>> {
+    // tutor : 질문 : user entity 가 req 에 담겨져있으면 id 는 숫자 아닌가요?
     const userId = Number(req.user.id);
 
     return new ResponseDto(

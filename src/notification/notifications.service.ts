@@ -23,6 +23,8 @@ export class NotificationsService {
 
   /** 알림 목록 조회 */
   async findAll(userId: number): Promise<NotificationVo[]> {
+    // tutor: queryBuilder 사용하진 이유가 있나요? 쿼리 빌더로 이렇게 사용하실거면 repository 파일 별도로 생성하셔서 작성하는것이 좋습니다. 아래 모든 함수 포함
+
     // 미확인 알림 조회
     const notReadNotifications = await this.notificationRepository
       .createQueryBuilder('notification')
@@ -105,6 +107,7 @@ export class NotificationsService {
 
     const [_, count] = countNotifications;
 
+    // tutor: 이건 에러가 아니고 그냥 CountVo(0) 해도 됩니다 즉 if 문 로직이 불필요합니다. 왜냐면 알림을 다본것은 에러가 아니니깐요
     if (count === 0) {
       throw new NotFoundException('모든 알림을 확인하셨습니다.');
     }

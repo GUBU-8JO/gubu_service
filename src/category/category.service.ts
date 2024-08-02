@@ -13,6 +13,7 @@ export class CategoryService {
   ) {}
 
   async findAllCategory(): Promise<CategoryVo[]> {
+    // tutor: CategoryVo를 만들어서 반환해야 합니다.
     return await this.categoryRepository.find();
   }
 
