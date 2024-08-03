@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
@@ -14,7 +15,9 @@ import _ from 'lodash';
 import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubscriptionVo';
 import { UserSubscriptionUpdateVo } from './dto/userSubscriptionUpdateVo';
 import { SubscriptionHistoryVo } from './dto/user-subscription-responseDto/subscriptionHistoryVo';
-import { PlatformVo } from "../category/dto/platformVo";
+import { PlatformVo } from '../category/dto/platformVo';
+import bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -25,6 +28,8 @@ export class UserSubscriptionsService {
     private readonly platformRepository: Repository<Platform>,
     @InjectRepository(SubscriptionHistory)
     private readonly subscriptionHistory: Repository<SubscriptionHistory>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
   async create(
     {
@@ -77,12 +82,12 @@ export class UserSubscriptionsService {
       price,
     });
 
-    const nextDate = this.calculateNextDate(startedDateObj, period);
+    const nextPayAt = this.calculateNextDate(startedDateObj, period);
 
     await this.subscriptionHistory.save({
       userSubscriptionId: data.id,
-      startedDate: startedDateObj,
-      nextDate,
+      startAt: startedDateObj,
+      nextPayAt: nextPayAt,
       price: data.price,
       stopDate: null,
       userSubscription: data,
@@ -170,7 +175,6 @@ export class UserSubscriptionsService {
       platform.rating,
     );
 
-
     const subscriptionHistoryVos = data.subscriptionHistory.map(
       (history) =>
         new SubscriptionHistoryVo(
@@ -194,10 +198,42 @@ export class UserSubscriptionsService {
       data.accountPw,
       data.userId,
       subscriptionHistoryVos,
-      platformVo
+      platformVo,
     );
   }
-  // platform / history 릴레이션으로 전체 다 출력하기
+  async findInfo(id: number, password: string) {
+    const subscriptionInfo = await this.userSubscriptionRepository.findOne({
+      where: { id },
+      relations: ['user'],
+      select: {
+        user: {
+          password: true,
+        },
+      },
+    });
+    if (!subscriptionInfo) {
+      throw new UnauthorizedException('해당하는 구독정보가 없습니다.');
+    }
+
+    const user = subscriptionInfo.user;
+
+    const isPasswordValid = await this.comparePasswords(
+      password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+    return subscriptionInfo;
+  }
+
+  //입력한 비밀번호와 해시된 비밀번호 비교하는 함수
+  private async comparePasswords(
+    rePassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(rePassword, hashedPassword);
+  }
 
   async update(
     id: number,

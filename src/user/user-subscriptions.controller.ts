@@ -17,6 +17,7 @@ import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ResponseDto } from 'src/common/response.dto';
 import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubscriptionVo';
+import { SubscriptionInfoDto } from './dto/subscriptionInfo.dto';
 
 @ApiTags('05. 유저 구독정보')
 @UseGuards(JwtAuthGuard)
@@ -79,6 +80,24 @@ export class UserSubscriptionsController {
     };
   }
 
+  /**
+   * 구독정보 계정조회
+   * @returns
+   */
+  @Post('/:subscriptionId/info')
+  async findInfo(
+    @Param('subscriptionId') id: number,
+    @Body() subscriptionInfoDto: SubscriptionInfoDto,
+  ) {
+    const { password } = subscriptionInfoDto;
+    const data = await this.userSubscriptionsService.findInfo(id, password);
+    const userInfo = { accountId: data.accountId, accountPw: data.accountPw };
+    return {
+      status: HttpStatus.OK,
+      message: '구독 계정정보 조회가 완료되었습니다.',
+      userInfo,
+    };
+  }
   /**
    * 유저구독정보 수정
    * @returns
