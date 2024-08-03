@@ -11,7 +11,16 @@ export class PlatformsService {
     private platformRepositoty: Repository<Platform>,
   ) {}
 
-  async findById(id: number): Promise<PlatformVo> {
+  async findAllPlatforms(): Promise<PlatformVo[]> {
+    const platforms = await this.platformRepositoty.find({
+      select: ['id', 'title', 'price'],
+    });
+    return platforms.map(
+      (platform) => new PlatformVo(platform.id, platform.title, platform.price),
+    );
+  }
+
+  async findOnePlatformById(id: number): Promise<PlatformVo> {
     const platform = await this.platformRepositoty.findOne({
       where: { id },
       select: ['id', 'title', 'price'],
@@ -22,14 +31,5 @@ export class PlatformsService {
       });
     }
     return new PlatformVo(platform.id, platform.title, platform.price);
-  }
-
-  async findMany(): Promise<PlatformVo[]> {
-    const platforms = await this.platformRepositoty.find({
-      select: ['id', 'title', 'price'],
-    });
-    return platforms.map(
-      (platform) => new PlatformVo(platform.id, platform.title, platform.price),
-    );
   }
 }

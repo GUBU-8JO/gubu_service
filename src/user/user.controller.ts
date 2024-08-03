@@ -13,7 +13,7 @@ import { User } from './entities/user.entity';
 import { ResponseDto } from 'src/common/response.dto';
 import { UserMeVo } from './dto/user-me.response.vo';
 
-@ApiTags('사용자')
+@ApiTags('02. 사용자')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
