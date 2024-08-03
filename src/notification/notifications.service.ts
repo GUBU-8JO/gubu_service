@@ -21,40 +21,32 @@ export class NotificationsService {
     private subscriptionHistoriesRepository: Repository<SubscriptionHistory>,
   ) {}
 
-  /** 알림 목록 조회 */
   async findAll(userId: number): Promise<NotificationVo[]> {
-    // 미확인 알림 조회
-    const notReadNotifications = await this.notificationRepository
-      .createQueryBuilder('notification')
-      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
-      .leftJoinAndSelect(
-        'userSubscription.subscriptionHistory',
-        'subscriptionHistory',
-      )
-      .where('notification.userId = :userId', { userId })
-      .andWhere('notification.isRead = :isRead', { isRead: false })
-      .orderBy('notification.createdAt', 'DESC')
-      .getMany();
+    const notReadNotifications = await this.notificationRepository.find({
+      where: { userId, isRead: false },
+      relations: ['userSubscription', 'userSubscription.subscriptionHistory'],
+      select: ['id', 'title', 'isRead', 'userSubscription'],
+      order: { createdAt: 'DESC' },
+    });
 
-    // 확인 알림 조회
-    const readNotifications = await this.notificationRepository
-      .createQueryBuilder('notification')
-      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
-      .leftJoinAndSelect(
-        'userSubscription.subscriptionHistory',
-        'subscriptionHistory',
-      )
-      .where('notification.userId = :userId', { userId })
-      .andWhere('notification.isRead = :isRead', { isRead: true })
-      .orderBy('notification.createdAt', 'DESC')
-      .getMany();
+    const readNotifications = await this.notificationRepository.find({
+      where: { userId, isRead: true },
+      relations: ['userSubscription', 'userSubscription.subscriptionHistory'],
+      select: ['id', 'title', 'isRead', 'userSubscription'],
+      order: { createdAt: 'DESC' },
+    });
 
-    if (!notReadNotifications && readNotifications) {
-      throw new NotFoundException('알림 목록이 존재하지 않습니다');
+    const notifications = [...notReadNotifications, ...readNotifications];
+
+    if (!notifications.length) {
+      throw new NotFoundException('아직 알림이 존재하지 않습니다.');
     }
 
-    // 전체 알림 목록 만들기
-    const notifications = [...notReadNotifications, ...readNotifications];
+    await this.notificationRepository.update(
+      { isRead: false },
+      { isRead: true },
+    );
+
     return notifications.map(
       (notification) =>
         new NotificationVo(
@@ -62,6 +54,7 @@ export class NotificationsService {
           notification.title,
           notification.isRead,
           [notification.userSubscription],
+          notification.userSubscription.subscriptionHistory,
         ),
     );
   }

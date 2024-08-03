@@ -97,7 +97,6 @@ export class ReviewsService {
       where: { platformId },
       relations: ['user'],
       select: ['id', 'rate', 'comment', 'user', 'platformId', 'createdAt'],
-      order: { createdAt: 'DESC' },
     });
 
     const myReview = data.map(
