@@ -41,15 +41,12 @@ export class AuthService {
     password,
     rePassword,
   }: SignUpDto): Promise<void> {
-    // const passwordMatched = ;
     if (password !== rePassword) {
       throw new BadRequestException('비밀번호가 일치하지 않습니다.');
     }
     await this.checkUserExist(email);
-
     try {
       const hashedPassword = await this.encryptPassword(password);
-
       await this.userRepository.save({
         email,
         nickname,
