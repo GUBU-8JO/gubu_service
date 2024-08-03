@@ -20,6 +20,16 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
+
+  private async checkUserExist(email: string) {
+    const existUser = await this.userRepository.findOneBy({ email });
+    if (existUser) {
+      throw new BadRequestException(
+        '이미 해당 이메일로 가입된 사용자가 있습니다!',
+      );
+    }
+  }
+
   async signUp({
     email,
     nickname,
@@ -31,12 +41,8 @@ export class AuthService {
       throw new BadRequestException('비밀번호가 일치하지 않습니다.');
     }
 
-    const existedUser = await this.userRepository.findOneBy({ email });
-    if (existedUser) {
-      throw new BadRequestException(
-        '이미 해당 이메일로 가입된 사용자가 있습니다!',
-      );
-    }
+    await this.checkUserExist(email);
+
     try {
       const hashRounds = this.configService.get<number>('HASH_ROUNDS');
       const hashedPassword = bcrypt.hashSync(password, hashRounds);
