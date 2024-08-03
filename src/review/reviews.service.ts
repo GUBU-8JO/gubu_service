@@ -53,16 +53,17 @@ export class ReviewsService {
   async findMyReview(userId: number): Promise<ReadReviewVo[]> {
     const review = await this.reviewsRepository.find({
       where: { userId },
-      relations: ['user'], // 'user' 관계를 명시적으로 로드
-      select: ['id', 'rate', 'comment', 'user'], // 'user' 관계 선택
+      relations: ['user'],
+      select: ['id', 'rate', 'comment', 'user', 'platformId'],
     });
 
     return review.map(
       (review) =>
         new ReadReviewVo(
           review.id,
-          review.rate,
+          review.platformId,
           review.comment,
+          review.rate,
           review.user.nickname,
         ),
     );
@@ -72,7 +73,7 @@ export class ReviewsService {
     const data = await this.reviewsRepository.find({
       where: { platformId },
       relations: ['user'],
-      select: ['id', 'user', 'rate', 'comment'],
+      select: ['id', 'rate', 'comment', 'user', 'platformId'],
     });
     if (!data.length)
       throw new NotFoundException('해당 플랫폼에 리뷰가 존재하지 않습니다.');
@@ -81,9 +82,10 @@ export class ReviewsService {
       (review) =>
         new ReadAllReviewVo(
           review.id,
-          review.user.nickname,
+          review.platformId,
           review.comment,
           review.rate,
+          review.user.nickname,
         ),
     );
   }
