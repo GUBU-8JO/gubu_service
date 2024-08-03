@@ -15,12 +15,14 @@ import { FindReviewDto } from './dto/find-review.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ResponseDto } from 'src/common/response.dto';
-import { CreateReviewVo } from './dto/vo/create-review-vo.dto';
+import { CreateReviewVo } from './dto/vo/create-review-vo';
 import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 import _ from 'lodash';
-import { ReadAllReviewVo } from './dto/vo/readAll-review-vo.dto';
+import { ReadAllReviewVo } from './dto/vo/readAll-review-vo';
 
-@ApiTags('리뷰')
+@ApiTags('06. 리뷰')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
@@ -29,8 +31,6 @@ export class ReviewsController {
    * @param req
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Post('platform/:platformId')
   async create(
     @Req() req,
@@ -51,8 +51,6 @@ export class ReviewsController {
    * 나의리뷰조회
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('/me')
   async findMyReview(@Req() req): Promise<ResponseDto<ReadReviewVo[]>> {
     const userId = req.user.id;
@@ -64,12 +62,23 @@ export class ReviewsController {
   }
 
   /**
+   * 내 리뷰 하나 조회 ( 플랫폼 ID )
+   * @param req
+   * @returns
+   */
+  @Get('me/:platformId')
+  async findMyPlatformReview(
+    @Param('platformId') platformId: number,
+  ): Promise<ResponseDto<ReadAllReviewVo>> {
+    const data = await this.reviewsService.findMyPlatformReview(platformId);
+    return new ResponseDto(data);
+  }
+
+  /**
    * 플랫폼 리뷰 전체 조회
    * @param req
    * @returns
    */
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('platform/:platformId')
   async findPlatformReview(
     @Param('platformId') platformId: number,

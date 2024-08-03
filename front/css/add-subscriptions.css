@@ -36,17 +36,16 @@ body {
   text-align: center;
 }
 
-.method{
+.method {
   text-align: center;
 }
 
-button{
+button {
   margin-top: 5px;
   background-color: #a46ff5;
   color: white;
   border-radius: 20px;
   border: none;
-
 }
 
 button:hover {
@@ -54,5 +53,3 @@ button:hover {
   background-color: #ebdffc;
   box-shadow: 0 4px 8px #a569ff(0, 0, 0, 3);
 }
-
-

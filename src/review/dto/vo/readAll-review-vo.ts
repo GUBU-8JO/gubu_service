@@ -1,17 +1,19 @@
 import { CreateReviewVo } from './create-review-vo';
 
-export class ReadReviewVo extends CreateReviewVo {
+export class ReadAllReviewVo extends CreateReviewVo {
   id: number;
   platformId: number;
   comment: string;
   rate: number;
   nickname: string;
+  createdAt: Date;
   constructor(
     id: number,
     platformId: number,
     comment: string,
     rate: number,
     nickname: string,
+    createdAt: Date,
   ) {
     super(platformId, rate, comment);
     this.id = id;
@@ -19,5 +21,6 @@ export class ReadReviewVo extends CreateReviewVo {
     this.comment = comment;
     this.rate = rate;
     this.nickname = nickname;
+    this.createdAt = createdAt;
   }
 }

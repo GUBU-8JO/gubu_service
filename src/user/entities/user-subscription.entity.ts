@@ -24,18 +24,18 @@ import {
 
 @Entity()
 export class UserSubscription {
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn({ type: 'int', comment: '사용자 구독id' })
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', comment: '사용자 id' })
   @ApiProperty({ example: 1 })
   userId: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', comment: '플랫폼 id' })
   @ApiProperty({ example: 1 })
   platformId: number;
 
-  @Column()
+  @Column({ comment: '구독 시작일' })
   @ApiProperty({ example: '2014-06-18' })
   @IsString()
   @IsNotEmpty({ message: '구독시작일을 입력해주세요.' })
@@ -44,38 +44,45 @@ export class UserSubscription {
   })
   startedDate: string;
 
-  @Column()
+  @Column({ comment: '결제 수단' })
   @ApiProperty({ example: '신한' })
   @IsString()
   @IsNotEmpty({ message: '결제수단을 입력해주세요.' })
   paymentMethod: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', comment: '결제 주기' })
   @ApiProperty({ example: 1 })
   @IsNumber()
   @IsNotEmpty({ message: '결제주기를 입력해주세요.' })
   period: number;
 
-  @Column()
+  @Column({ comment: '구독 계정 아이디' })
   @ApiProperty({ example: 'example01@exapmple.com' })
   @IsString()
   @IsOptional()
   accountId: string;
 
-  @Column()
+  @Column({ comment: '구독 계정 패스워드' })
   @ApiProperty({ example: '!1234ASdf' })
   @IsString()
   @IsOptional()
   accountPw: string;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @Column({ comment: '구독 가격' })
+  price: number;
+
+  @CreateDateColumn({ type: 'datetime', comment: '구독 추가일' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'datetime', comment: '구독 내용 수정일' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'datetime' })
-  deletedAt: Date;
+  @DeleteDateColumn({
+    type: 'datetime',
+    nullable: true,
+    comment: '구독 중지일',
+  })
+  deletedAt: Date | null;
 
   @OneToMany(
     () => SubscriptionHistory,
