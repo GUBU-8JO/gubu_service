@@ -13,7 +13,7 @@ import { ResponseDto } from 'src/common/response.dto';
 import { NotificationVo } from './dto/notificationVo';
 import { CountVo } from './dto/countVo';
 
-@ApiTags('알림')
+@ApiTags('07. 알림')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('notifications')

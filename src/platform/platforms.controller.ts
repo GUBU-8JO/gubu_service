@@ -21,6 +21,17 @@ export class PlatformsController {
   }
 
   /**
+   * 전체 플랫폼 별점 Top5 조회
+   *
+   *
+   */
+  @Get('topRated')
+  @HttpCode(200)
+  async getTopRatedPlatforms(): Promise<ResponseDto<PlatformVo[]>> {
+    return new ResponseDto(await this.platformService.getTopRatedPlatforms());
+  }
+
+  /**
    * 플랫폼 ID로 상세조회
    *
    */
