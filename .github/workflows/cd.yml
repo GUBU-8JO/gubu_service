@@ -27,6 +27,8 @@ jobs:
 
             cd /home/8Jo/gubu_service
 
+            sudo su
+
             git switch main
 
             git pull
