@@ -87,6 +87,7 @@ export class ReviewsService {
         ),
     );
   }
+  // createAt 기준으로 내림차순으로 최신순 > 구형순
 
   async deleteReview(id: number) {
     const existData = await this.reviewsRepository.findOne({ where: { id } });

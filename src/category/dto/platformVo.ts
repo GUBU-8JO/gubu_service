@@ -5,6 +5,7 @@ export class PlatformVo {
   image?: string;
   purchaseLink?: string;
   period?: number;
+  rating?: number;
 
   constructor(
     id: number,
@@ -13,6 +14,7 @@ export class PlatformVo {
     image?: string,
     purchaseLink?: string,
     period?: number,
+    rating?: number,
   ) {
     this.id = id;
     this.title = title;
@@ -20,5 +22,6 @@ export class PlatformVo {
     this.image = image;
     this.purchaseLink = purchaseLink;
     this.period = period;
+    this.rating = rating;
   }
 }

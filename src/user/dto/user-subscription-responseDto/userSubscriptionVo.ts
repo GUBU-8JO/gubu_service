@@ -1,33 +1,42 @@
+import { SubscriptionHistoryVo } from './subscriptionHistoryVo';
+import { PlatformVo } from "../../../category/dto/platformVo";
+
 export class UserSubscriptionVo {
   id: number;
-  startedDate: string;
-  period: number;
   platformId: number;
-  paymentMethod?: string;
+  period: number;
+  price: number;
+  paymentMethod: string;
+  startedDate: string;
   accountId?: string;
   accountPw?: string;
   userId?: number;
-  price?: number;
+  subscriptionHistory: SubscriptionHistoryVo[];
+  platformVo: PlatformVo;
 
   constructor(
     id: number,
-    startedDate: string,
-    period: number,
     platformId: number,
-    paymentMethod?: string,
+    period: number,
+    price: number,
+    paymentMethod: string,
+    startedDate: string,
     accountId?: string,
     accountPw?: string,
     userId?: number,
-    price?: number,
+    subscriptionHistory?: SubscriptionHistoryVo[],
+    platformVo?: PlatformVo,
   ) {
     this.id = id;
-    this.startedDate = startedDate;
-    this.paymentMethod = paymentMethod;
-    this.period = period;
     this.platformId = platformId;
+    this.period = period;
+    this.price = price;
+    this.paymentMethod = paymentMethod;
+    this.startedDate = startedDate;
     this.accountId = accountId;
     this.accountPw = accountPw;
     this.userId = userId;
-    this.price = price;
+    this.subscriptionHistory = subscriptionHistory;
+    this.platformVo = platformVo;
   }
 }
