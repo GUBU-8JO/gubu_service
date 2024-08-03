@@ -62,6 +62,19 @@ export class ReviewsController {
   }
 
   /**
+   * 내 리뷰 하나 조회 ( 플랫폼 ID )
+   * @param req
+   * @returns
+   */
+  @Get('me/:platformId')
+  async findMyPlatformReview(
+    @Param('platformId') platformId: number,
+  ): Promise<ResponseDto<ReadAllReviewVo>> {
+    const data = await this.reviewsService.findMyPlatformReview(platformId);
+    return new ResponseDto(data);
+  }
+
+  /**
    * 플랫폼 리뷰 전체 조회
    * @param req
    * @returns
