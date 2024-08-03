@@ -20,6 +20,24 @@ export class PlatformsService {
     );
   }
 
+  async getTopRatedPlatforms(): Promise<PlatformVo[]> {
+    const platforms = await this.platformRepositoty.find({
+      select: ['id', 'title', 'price', 'rating', 'image'],
+      order: { rating: 'DESC' },
+      take: 5,
+    });
+    return platforms.map(
+      (platform) =>
+        new PlatformVo(
+          platform.id,
+          platform.title,
+          platform.price,
+          platform.rating,
+          platform.image,
+        ),
+    );
+  }
+
   async findOnePlatformById(id: number): Promise<PlatformVo> {
     const platform = await this.platformRepositoty.findOne({
       where: { id },
@@ -33,3 +51,5 @@ export class PlatformsService {
     return new PlatformVo(platform.id, platform.title, platform.price);
   }
 }
+
+// 레이팅으로 order 하고, skip 0 부터 take 4 까지 하면될듯?

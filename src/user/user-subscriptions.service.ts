@@ -12,8 +12,9 @@ import { Platform } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistory } from './entities/subscription-histories.entity';
 import _ from 'lodash';
 import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubscriptionVo';
-import { number } from 'joi';
 import { UserSubscriptionUpdateVo } from './dto/userSubscriptionUpdateVo';
+import { SubscriptionHistoryVo } from './dto/user-subscription-responseDto/subscriptionHistoryVo';
+import { PlatformVo } from "../category/dto/platformVo";
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -32,6 +33,7 @@ export class UserSubscriptionsService {
       period,
       accountId,
       accountPw,
+      price,
     }: CreateUserSubscriptionDto,
     userId: number,
     platformId: number,
@@ -43,7 +45,7 @@ export class UserSubscriptionsService {
     if (!existPlatform)
       throw new NotFoundException({
         status: 404,
-        message: '등록되지않는 플랫폼입니다.',
+        message: '등록되지않은 플랫폼입니다.',
       });
 
     const existingSubscription = await this.userSubscriptionRepository.findOne({
@@ -57,13 +59,12 @@ export class UserSubscriptionsService {
       throw new BadRequestException({
         message: '이미 구독중인 플랫폼 입니다.',
       });
-      
+
     // platform 가격 가져오기
-    const platformPrice = existPlatform.price;
+    // const platformPrice = existPlatform.price;
 
     // startedDate를 Date 객체로 변환
     const startedDateObj = new Date(startedDate);
-
 
     const data = await this.userSubscriptionRepository.save({
       startedDate,
@@ -73,27 +74,27 @@ export class UserSubscriptionsService {
       accountId,
       accountPw,
       userId,
+      price,
     });
-      
-    return new UserSubscriptionVo(
-      data.id,
 
     const nextDate = this.calculateNextDate(startedDateObj, period);
 
-    const subscriptionHistory = await this.subscriptionHistory.save({
+    await this.subscriptionHistory.save({
       userSubscriptionId: data.id,
       startedDate: startedDateObj,
       nextDate,
-      price: platformPrice,
+      price: data.price,
       stopDate: null,
       userSubscription: data,
     });
 
-    return new UserSubscriptionsSerVo(
-      data.startedDate,
-      data.period,
+    return new UserSubscriptionVo(
+      data.id,
       data.platformId,
+      data.period,
+      data.price,
       data.paymentMethod,
+      data.startedDate,
       data.accountId,
       data.accountPw,
       data.userId,
@@ -106,13 +107,18 @@ export class UserSubscriptionsService {
     return nextDate;
   }
 
-  // const latestSubscriptionHistory = subscription.subscriptionHistory?.[0];
-  // const price = latestSubscriptionHistory?.price ?? null;
   async findAllMe(userId: number): Promise<UserSubscriptionVo[]> {
     const data = await this.userSubscriptionRepository.find({
       where: { userId },
-      select: ['id', 'startedDate', 'period', 'platformId'],
-      relations: ['subscriptionHistory', 'platform'],
+      select: [
+        'id',
+        'platformId',
+        'period',
+        'price',
+        'startedDate',
+        'paymentMethod',
+      ],
+      relations: ['platform'],
     });
     if (!data.length)
       throw new NotFoundException({
@@ -121,56 +127,77 @@ export class UserSubscriptionsService {
       });
 
     return data.map((subscription) => {
-      // const price =
-      // subscription.subscriptionHistory?.map((history) => history.price) ?? [];
       return new UserSubscriptionVo(
         subscription.id,
-        subscription.startedDate,
-        subscription.period,
         subscription.platformId,
+        subscription.period,
+        subscription.price,
+        subscription.startedDate,
         subscription.paymentMethod,
-        subscription.accountId,
-        subscription.accountPw,
-        subscription.userId,
-        // price, // price 배열 전달
       );
     });
   }
+  // platform / history 릴레이션으로 전체 다 출력하기
 
   async findOne(id: number): Promise<UserSubscriptionVo> {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },
-      relations: { subscriptionHistory: true },
       select: [
         'id',
-        'startedDate',
-        'paymentMethod',
-        'period',
         'platformId',
+        'period',
+        'price',
+        'paymentMethod',
+        'startedDate',
         'accountId',
         'accountPw',
+        'userId',
       ],
+      relations: ['platform', 'subscriptionHistory'],
     });
     if (!data) {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    const price = data.subscriptionHistory?.[0]?.price ?? null;
-    console.log(data.subscriptionHistory);
-    // const price =
-    // data.subscriptionHistory?.map((history) => history.price) ?? [];
+    const platform = data.platform; // 단일 Platform 객체
+    const platformVo = new PlatformVo(
+      platform.id,
+      platform.title,
+      platform.price,
+      platform.image,
+      platform.purchaseLink,
+      platform.period,
+      platform.rating,
+    );
+
+
+    const subscriptionHistoryVos = data.subscriptionHistory.map(
+      (history) =>
+        new SubscriptionHistoryVo(
+          history.id,
+          history.userSubscriptionId,
+          history.price,
+          history.startAt,
+          history.nextPayAt,
+          history.stopRequestAt,
+        ),
+    );
+
     return new UserSubscriptionVo(
       data.id,
-      data.startedDate,
-      data.period,
       data.platformId,
+      data.period,
+      data.price,
       data.paymentMethod,
+      data.startedDate,
       data.accountId,
       data.accountPw,
       data.userId,
-      data.subscriptionHistory,
+      subscriptionHistoryVos,
+      platformVo
     );
   }
+  // platform / history 릴레이션으로 전체 다 출력하기
 
   async update(
     id: number,

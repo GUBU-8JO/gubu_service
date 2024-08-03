@@ -20,7 +20,7 @@ import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 import _ from 'lodash';
 import { ReadAllReviewVo } from './dto/vo/readAll-review-vo';
 
-@ApiTags('리뷰')
+@ApiTags('06. 리뷰')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('reviews')
