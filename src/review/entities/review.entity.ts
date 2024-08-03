@@ -32,10 +32,10 @@ export class Review {
   comment: string;
 
   @CreateDateColumn({ type: 'datetime', comment: '후기 생성 날짜' })
-  createdAt: number;
+  createdAt: Date;
 
   @DeleteDateColumn({ type: 'datetime', comment: '후기 삭제 날짜' })
-  DeletedAt: number;
+  DeletedAt: Date;
 
   @ManyToOne(() => Platform, (platform) => platform.review)
   @JoinColumn({ name: 'platform_id' })

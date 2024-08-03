@@ -6,12 +6,14 @@ export class ReadAllReviewVo extends CreateReviewVo {
   comment: string;
   rate: number;
   nickname: string;
+  createdAt: Date;
   constructor(
     id: number,
     platformId: number,
     comment: string,
     rate: number,
     nickname: string,
+    createdAt: Date,
   ) {
     super(platformId, rate, comment);
     this.id = id;
@@ -19,5 +21,6 @@ export class ReadAllReviewVo extends CreateReviewVo {
     this.comment = comment;
     this.rate = rate;
     this.nickname = nickname;
+    this.createdAt = createdAt;
   }
 }

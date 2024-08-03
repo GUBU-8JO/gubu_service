@@ -73,7 +73,8 @@ export class ReviewsService {
     const data = await this.reviewsRepository.find({
       where: { platformId },
       relations: ['user'],
-      select: ['id', 'rate', 'comment', 'user', 'platformId'],
+      select: ['id', 'rate', 'comment', 'user', 'platformId', 'createdAt'],
+      order: { createdAt: 'DESC' },
     });
     if (!data.length)
       throw new NotFoundException('해당 플랫폼에 리뷰가 존재하지 않습니다.');
@@ -86,10 +87,32 @@ export class ReviewsService {
           review.comment,
           review.rate,
           review.user.nickname,
+          review.createdAt,
         ),
     );
   }
-  // createAt 기준으로 내림차순으로 최신순 > 구형순
+
+  async findMyPlatformReview(platformId: number): Promise<ReadAllReviewVo> {
+    const data = await this.reviewsRepository.find({
+      where: { platformId },
+      relations: ['user'],
+      select: ['id', 'rate', 'comment', 'user', 'platformId', 'createdAt'],
+    });
+
+    const myReview = data.map(
+      (review) =>
+        new ReadAllReviewVo(
+          review.id,
+          review.platformId,
+          review.comment,
+          review.rate,
+          review.user.nickname,
+          review.createdAt,
+        ),
+    );
+
+    return myReview[0];
+  }
 
   async deleteReview(id: number) {
     const existData = await this.reviewsRepository.findOne({ where: { id } });

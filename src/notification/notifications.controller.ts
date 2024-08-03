@@ -28,7 +28,7 @@ export class NotificationsController {
    */
   @Get()
   async GetMyNotifications(@Req() req): Promise<ResponseDto<NotificationVo[]>> {
-    const userId = Number(req.user.id);
+    const userId = req.user.id;
     return new ResponseDto(await this.notificationsService.findAll(userId));
   }
 
