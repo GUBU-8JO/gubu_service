@@ -30,22 +30,25 @@ export class AuthService {
     }
   }
 
+  private async encryptPassword(password: string) {
+    const hashRounds = this.configService.get<number>('HASH_ROUNDS');
+    return bcrypt.hashSync(password, hashRounds);
+  }
+
   async signUp({
     email,
     nickname,
     password,
     rePassword,
   }: SignUpDto): Promise<void> {
-    const passwordMatched = password === rePassword;
-    if (!passwordMatched) {
+    // const passwordMatched = ;
+    if (password !== rePassword) {
       throw new BadRequestException('비밀번호가 일치하지 않습니다.');
     }
-
     await this.checkUserExist(email);
 
     try {
-      const hashRounds = this.configService.get<number>('HASH_ROUNDS');
-      const hashedPassword = bcrypt.hashSync(password, hashRounds);
+      const hashedPassword = await this.encryptPassword(password);
 
       await this.userRepository.save({
         email,
