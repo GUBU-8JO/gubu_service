@@ -1,4 +1,4 @@
-name: GuBu CI
+name: GuBu-Service CI
 
 on:
   workflow_dispatch:
