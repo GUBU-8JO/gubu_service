@@ -243,6 +243,7 @@ export class UserSubscriptionsService {
       period,
       accountId,
       accountPw,
+      price,
     }: UpdateUserSubscriptionDto,
   ): Promise<UserSubscriptionUpdateVo> {
     const existUserSubscription = await this.userSubscriptionRepository.findOne(
@@ -254,11 +255,12 @@ export class UserSubscriptionsService {
     if (!existUserSubscription)
       throw new NotFoundException({ message: '등록되지않는 구독정보입니다.' });
     const newdata =
-      existUserSubscription.startedDate === startedDate &&
-      existUserSubscription.paymentMethod === paymentMethod &&
-      existUserSubscription.period === period &&
-      existUserSubscription.accountId === accountId &&
-      existUserSubscription.accountPw === accountPw;
+      existUserSubscription.startedDate !== startedDate ||
+      existUserSubscription.paymentMethod !== paymentMethod ||
+      existUserSubscription.period !== period ||
+      existUserSubscription.accountId !== accountId ||
+      existUserSubscription.accountPw !== accountPw ||
+      existUserSubscription.price !== price;
     if (!newdata) {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
@@ -270,6 +272,7 @@ export class UserSubscriptionsService {
         period,
         accountId,
         accountPw,
+        price,
       },
     );
 
@@ -283,6 +286,7 @@ export class UserSubscriptionsService {
       data.period,
       data.accountId,
       data.accountPw,
+      price,
     );
   }
 

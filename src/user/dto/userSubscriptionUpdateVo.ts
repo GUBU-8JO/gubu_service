@@ -4,6 +4,7 @@ export class UserSubscriptionUpdateVo {
   period: number;
   accountId?: string;
   accountPw?: string;
+  price?: number;
 
   constructor(
     startedDate: string,
@@ -11,11 +12,13 @@ export class UserSubscriptionUpdateVo {
     period: number,
     accountId?: string,
     accountPw?: string,
+    price?: number,
   ) {
     this.startedDate = startedDate;
     this.paymentMethod = paymentMethod;
     this.period = period;
     this.accountId = accountId;
     this.accountPw = accountPw;
+    this.price = price;
   }
 }

@@ -15,4 +15,7 @@ export class UpdateUserSubscriptionDto {
 
   @IsOptional()
   accountPw: string;
+
+  @IsOptional()
+  price: number;
 }
