@@ -18,6 +18,7 @@ import { SubscriptionHistoryVo } from './dto/user-subscription-responseDto/subsc
 import { PlatformVo } from '../category/dto/platformVo';
 import bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
+import { MySubscriptionVo } from './dto/mySubscriptionVo';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -112,7 +113,7 @@ export class UserSubscriptionsService {
     return nextDate;
   }
 
-  async findAllMe(userId: number): Promise<UserSubscriptionVo[]> {
+  async findAllMe(userId: number): Promise<MySubscriptionVo[]> {
     const data = await this.userSubscriptionRepository.find({
       where: { userId },
       select: [
@@ -123,8 +124,9 @@ export class UserSubscriptionsService {
         'startedDate',
         'paymentMethod',
       ],
-      relations: ['platform'],
+      relations: ['platform', 'subscriptionHistory'],
     });
+
     if (!data.length)
       throw new NotFoundException({
         status: 404,
@@ -132,13 +134,15 @@ export class UserSubscriptionsService {
       });
 
     return data.map((subscription) => {
-      return new UserSubscriptionVo(
+      return new MySubscriptionVo(
         subscription.id,
         subscription.platformId,
         subscription.period,
         subscription.price,
-        subscription.startedDate,
         subscription.paymentMethod,
+        subscription.startedDate,
+        subscription.subscriptionHistory[0].nextPayAt,
+        subscription.platform.image,
       );
     });
   }
@@ -255,12 +259,12 @@ export class UserSubscriptionsService {
     if (!existUserSubscription)
       throw new NotFoundException({ message: '등록되지않는 구독정보입니다.' });
     const newdata =
-      existUserSubscription.startedDate !== startedDate ||
-      existUserSubscription.paymentMethod !== paymentMethod ||
-      existUserSubscription.period !== period ||
-      existUserSubscription.accountId !== accountId ||
-      existUserSubscription.accountPw !== accountPw ||
-      existUserSubscription.price !== price;
+      existUserSubscription.startedDate === startedDate &&
+      existUserSubscription.paymentMethod === paymentMethod &&
+      existUserSubscription.period === period &&
+      existUserSubscription.accountId === accountId &&
+      existUserSubscription.accountPw === accountPw &&
+      existUserSubscription.price === price;
     if (!newdata) {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
