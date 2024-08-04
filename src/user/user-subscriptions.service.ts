@@ -18,6 +18,7 @@ import { SubscriptionHistoryVo } from './dto/user-subscription-responseDto/subsc
 import { PlatformVo } from '../category/dto/platformVo';
 import bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
+import { MySubscriptionVo } from './dto/mySubscriptionVo';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -112,7 +113,7 @@ export class UserSubscriptionsService {
     return nextDate;
   }
 
-  async findAllMe(userId: number): Promise<UserSubscriptionVo[]> {
+  async findAllMe(userId: number): Promise<MySubscriptionVo[]> {
     const data = await this.userSubscriptionRepository.find({
       where: { userId },
       select: [
@@ -123,22 +124,26 @@ export class UserSubscriptionsService {
         'startedDate',
         'paymentMethod',
       ],
-      relations: ['platform'],
+      relations: ['platform', 'subscriptionHistory'],
     });
+
     if (!data.length)
       throw new NotFoundException({
         status: 404,
         message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
       });
 
+    console.log(data[0].subscriptionHistory[0].nextPayAt);
     return data.map((subscription) => {
-      return new UserSubscriptionVo(
+      return new MySubscriptionVo(
         subscription.id,
         subscription.platformId,
         subscription.period,
         subscription.price,
-        subscription.startedDate,
         subscription.paymentMethod,
+        subscription.startedDate,
+        subscription.subscriptionHistory[0].nextPayAt,
+        subscription.platform.image,
       );
     });
   }
