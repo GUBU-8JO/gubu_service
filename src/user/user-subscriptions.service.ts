@@ -259,12 +259,12 @@ export class UserSubscriptionsService {
     if (!existUserSubscription)
       throw new NotFoundException({ message: '등록되지않는 구독정보입니다.' });
     const newdata =
-      existUserSubscription.startedDate !== startedDate ||
-      existUserSubscription.paymentMethod !== paymentMethod ||
-      existUserSubscription.period !== period ||
-      existUserSubscription.accountId !== accountId ||
-      existUserSubscription.accountPw !== accountPw ||
-      existUserSubscription.price !== price;
+      existUserSubscription.startedDate === startedDate &&
+      existUserSubscription.paymentMethod === paymentMethod &&
+      existUserSubscription.period === period &&
+      existUserSubscription.accountId === accountId &&
+      existUserSubscription.accountPw === accountPw &&
+      existUserSubscription.price === price;
     if (!newdata) {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
