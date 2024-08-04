@@ -133,7 +133,6 @@ export class UserSubscriptionsService {
         message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
       });
 
-    console.log(data[0].subscriptionHistory[0].nextPayAt);
     return data.map((subscription) => {
       return new MySubscriptionVo(
         subscription.id,
