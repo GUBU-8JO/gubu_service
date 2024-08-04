@@ -47,6 +47,7 @@ export class Platform {
 
   @ManyToOne(() => Category, (category) => category.platform, {
     onDelete: 'CASCADE',
+    createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'category_id' })
   category: Category;
