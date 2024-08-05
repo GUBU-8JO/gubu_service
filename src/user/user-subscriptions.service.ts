@@ -266,7 +266,7 @@ export class UserSubscriptionsService {
       existUserSubscription.accountId === accountId &&
       existUserSubscription.accountPw === accountPw &&
       existUserSubscription.price === price;
-    if (!newdata) {
+    if (newdata) {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
     await this.userSubscriptionRepository.update(
