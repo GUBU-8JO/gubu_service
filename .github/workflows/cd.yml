@@ -33,12 +33,12 @@ jobs:
 
             echo "${{ secrets.SERVER_ENV }}" > .env
 
-            # npm ci
+            npm ci
 
-            # npm run build
+            npm run build
 
-            # pm2 delete gubu-service || true
+            pm2 delete gubu-service || true
 
-            # pm2 start dist/main.js --name gubu-service
+            pm2 start dist/main.js --name gubu-service
 
-            # pm2 save
+            pm2 save
