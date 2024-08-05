@@ -1,4 +1,4 @@
-name: GuBu CD
+name: GuBu-Service CD
 
 on:
   workflow_dispatch:
@@ -41,6 +41,4 @@ jobs:
 
             pm2 start dist/main.js --name gubu-service
 
-            pm2 save --force
-
-            pm2 startup
+            pm2 save
