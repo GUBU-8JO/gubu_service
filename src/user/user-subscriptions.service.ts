@@ -127,11 +127,12 @@ export class UserSubscriptionsService {
       relations: ['platform', 'subscriptionHistory'],
     });
 
-    if (!data.length)
+    if (!data.length) {
       throw new NotFoundException({
         status: 404,
         message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
       });
+    }
 
     return data.map((subscription) => {
       return new MySubscriptionVo(
@@ -143,11 +144,11 @@ export class UserSubscriptionsService {
         subscription.startedDate,
         subscription.subscriptionHistory[0].nextPayAt,
         subscription.platform.image,
+        undefined,
+        new PlatformVo(undefined, subscription.platform.title, undefined),
       );
     });
   }
-  // platform / history 릴레이션으로 전체 다 출력하기
-
   async findOne(id: number): Promise<UserSubscriptionVo> {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },
@@ -168,7 +169,7 @@ export class UserSubscriptionsService {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    const platform = data.platform; // 단일 Platform 객체
+    const platform = data.platform;
     const platformVo = new PlatformVo(
       platform.id,
       platform.title,
@@ -305,6 +306,11 @@ export class UserSubscriptionsService {
       });
 
     await this.userSubscriptionRepository.softDelete(id);
+
+    await this.subscriptionHistory.update(
+      { userSubscriptionId: id },
+      { stopRequestAt: new Date() },
+    );
 
     return true;
   }
