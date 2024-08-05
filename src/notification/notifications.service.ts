@@ -46,7 +46,7 @@ export class NotificationsService {
       { isRead: false },
       { isRead: true },
     );
-
+    
     return notifications.map(
       (notification) =>
         new NotificationVo(
