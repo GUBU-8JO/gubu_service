@@ -13,7 +13,16 @@ export class PlatformsService {
 
   async findAllPlatforms(): Promise<PlatformVo[]> {
     const platforms = await this.platformRepositoty.find({
-      select: ['id', 'title', 'price', 'rating', 'image'],
+      select: [
+        'id',
+        'title',
+        'price',
+        'rating',
+        'image',
+        'categoryId',
+        'purchaseLink',
+        'period',
+      ],
     });
     return platforms.map(
       (platform) =>
@@ -23,6 +32,9 @@ export class PlatformsService {
           platform.price,
           platform.rating,
           platform.image,
+          platform.categoryId,
+          platform.purchaseLink,
+          platform.period,
         ),
     );
   }
@@ -48,7 +60,16 @@ export class PlatformsService {
   async findOnePlatformById(id: number): Promise<PlatformVo> {
     const platform = await this.platformRepositoty.findOne({
       where: { id },
-      select: ['id', 'title', 'price', 'rating', 'image'],
+      select: [
+        'id',
+        'title',
+        'price',
+        'rating',
+        'image',
+        'categoryId',
+        'purchaseLink',
+        'period',
+      ],
     });
     if (!platform) {
       throw new NotFoundException({
@@ -61,8 +82,9 @@ export class PlatformsService {
       platform.price,
       platform.rating,
       platform.image,
+      platform.categoryId,
+      platform.purchaseLink,
+      platform.period,
     );
   }
 }
-
-// 레이팅으로 order 하고, skip 0 부터 take 4 까지 하면될듯?
