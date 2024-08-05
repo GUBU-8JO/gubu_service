@@ -22,11 +22,12 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             # Load nvm and node environment
-            export NVM_DIR="/home/ubuntu/.nvm"
+            # export NVM_DIR="/home/ubuntu/.nvm"
+            # export NVM_DIR="/root/.nvm"            
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-            cd /home/ubuntu/8JO/gubu_service
+            cd /home/8JO/gubu_service
 
             git switch main
 
