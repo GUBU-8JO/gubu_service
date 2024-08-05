@@ -38,10 +38,6 @@ export class NotificationsService {
 
     const notifications = [...notReadNotifications, ...readNotifications];
 
-    if (!notifications.length) {
-      throw new NotFoundException('아직 알림이 존재하지 않습니다.');
-    }
-
     await this.notificationRepository.update(
       { isRead: false },
       { isRead: true },
