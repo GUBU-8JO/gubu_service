@@ -306,6 +306,11 @@ export class UserSubscriptionsService {
 
     await this.userSubscriptionRepository.softDelete(id);
 
+    await this.subscriptionHistory.update(
+      { userSubscriptionId: id },
+      { stopRequestAt: new Date() },
+    );
+
     return true;
   }
 }
