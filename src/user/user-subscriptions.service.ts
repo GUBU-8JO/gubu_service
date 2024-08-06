@@ -87,7 +87,6 @@ export class UserSubscriptionsService {
     const encryptedPassword = Buffer.concat([iv, encryptedText]).toString(
       'hex',
     );
-    console.log('encryptedPassword', encryptedPassword);
 
     // platform 가격 가져오기
     // const platformPrice = existPlatform.price;
@@ -199,7 +198,6 @@ export class UserSubscriptionsService {
     const encryptedText = encryptedBufferFromHex.slice(16);
 
     const password = this.configService.get('CRYPTO_PASSWORD');
-    console.log('password', password);
     const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
     const decipher = createDecipheriv('aes-256-ctr', key, iv);
 
@@ -209,7 +207,6 @@ export class UserSubscriptionsService {
     ]);
 
     const decryptedAccountPw = decryptedText.toString();
-    console.log(decryptedAccountPw);
 
     const platform = data.platform;
     const platformVo = new PlatformVo(
