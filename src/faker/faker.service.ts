@@ -78,13 +78,61 @@ export class FakerService {
       else return faker.number.int({ min: 4, max: 5 });
     };
 
+    const reviewTemplates = [
+      '정말 편리해서 계속 이용할 듯해요.',
+      '새 기능이 자주 추가돼 만족해요.',
+      '사용이 간단해서 좋습니다.',
+      '품질이 좋아 계속 사용해요.',
+      '가격 대비 좋은 서비스예요.',
+      '업데이트로 더 편리해졌어요.',
+      '여러 기기에서 이용할 수 있어요.',
+      '매일 유용하게 활용 중입니다.',
+      '고객 지원이 빨라 좋았습니다.',
+      '새로운 기능이 흥미를 줍니다.',
+      '안정적이고 문제없어요.',
+      'UI가 직관적이라 편리해요.',
+      '새로운 경험을 제공합니다.',
+      '매끄럽게 작동합니다.',
+      '더 유용해졌어요.',
+      '믿음이 가는 서비스입니다.',
+      '오래 사용해도 질리지 않아요.',
+      '필요에 맞게 사용 가능해요.',
+      '발전하는 서비스입니다.',
+      '매일 잘 이용하고 있어요.',
+      '다양한 콘텐츠가 있어요.',
+      '사용료가 아깝지 않아요.',
+      '매달 만족감을 줍니다.',
+      '볼거리가 많아 좋습니다.',
+      '가족이 함께 즐겨요.',
+      '끊김 없이 잘 됩니다.',
+      '계속 흥미를 느낍니다.',
+      '기능이 늘어났어요.',
+      '사용이 정말 간편해요.',
+      '품질과 안정성이 좋아요.',
+      '문제가 빠르게 해결돼요.',
+      '기능들이 유용해요.',
+      '다양한 경험을 줍니다.',
+      '서비스가 점점 좋아져요.',
+      '일상에 큰 도움이 돼요.',
+      '유익한 기능이 많아요.',
+      '맞춤형 경험을 제공해요.',
+      '알찬 구성입니다.',
+      '접근성이 좋아요.',
+      '서비스가 안정적입니다.',
+    ];
+
+    const generateCustomComment = (): string => {
+      return faker.helpers.arrayElement(reviewTemplates);
+    };
+
     for (let i = 0; i < count; i++) {
       let userId: number;
       let platformId: number;
       // const rate: number = faker.number.int({ min: 1, max: 5 });
       const rate: number = generateRandomRating();
       // const comment: string = fakerKO.lorem.paragraphs(2);
-      const comment: string = faker.lorem.sentence(3);
+      const comment: string = generateCustomComment();
+      // const comment: string = faker.lorem.sentence(3);
 
       const createdAt: string = faker.date
         .betweens({
