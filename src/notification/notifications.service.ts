@@ -25,14 +25,14 @@ export class NotificationsService {
     const notReadNotifications = await this.notificationRepository.find({
       where: { userId, isRead: false },
       relations: ['userSubscription', 'userSubscription.subscriptionHistory'],
-      select: ['id', 'title', 'isRead', 'userSubscription'],
+      select: ['id', 'title', 'isRead', 'userSubscription', 'createdAt'],
       order: { createdAt: 'DESC' },
     });
 
     const readNotifications = await this.notificationRepository.find({
       where: { userId, isRead: true },
       relations: ['userSubscription', 'userSubscription.subscriptionHistory'],
-      select: ['id', 'title', 'isRead', 'userSubscription'],
+      select: ['id', 'title', 'isRead', 'userSubscription', 'createdAt'],
       order: { createdAt: 'DESC' },
     });
 
@@ -53,6 +53,7 @@ export class NotificationsService {
           notification.id,
           notification.title,
           notification.isRead,
+          notification.createdAt,
           [notification.userSubscription],
           notification.userSubscription.subscriptionHistory,
         ),
@@ -81,6 +82,7 @@ export class NotificationsService {
       notification.id,
       notification.title,
       notification.isRead,
+      notification.createdAt,
       [notification.userSubscription],
     );
   }

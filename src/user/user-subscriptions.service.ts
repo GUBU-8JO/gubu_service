@@ -141,7 +141,7 @@ export class UserSubscriptionsService {
         subscription.price,
         subscription.paymentMethod,
         subscription.startedDate,
-        subscription.subscriptionHistory[0].nextPayAt,
+        subscription.subscriptionHistory[0]?.nextPayAt,
         subscription.platform.image,
       );
     });
