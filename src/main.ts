@@ -29,8 +29,8 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('GuBu Service')
-    .setDescription('내 구독을 부탁해~')
-    .setVersion('1.0')
+    .setDescription('구독부자')
+    .setVersion('2.0')
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
     .build();
 
@@ -39,7 +39,7 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true, // 새로고침 시에도 JWT 유지하기
       tagsSorter: 'alpha', // API 그룹 정렬을 알파벳 순으로.
-      operationsSorter: 'alpha', // API 그룹 내 정렬을 알파벳 순으로
+      // operationsSorter: 'alpha', // API 그룹 내 정렬을 알파벳 순으로
     },
   });
 

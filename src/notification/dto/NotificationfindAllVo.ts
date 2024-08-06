@@ -1,7 +1,7 @@
-import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
+import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 
-export class NotificationVo {
+export class NotificationfindAllVo {
   id: number;
   title: string;
   isRead: boolean;

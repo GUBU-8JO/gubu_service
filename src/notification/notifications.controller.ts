@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Req,
@@ -14,7 +13,7 @@ import { ResponseDto } from 'src/common/response.dto';
 import { NotificationVo } from './dto/notificationVo';
 import { CountVo } from './dto/countVo';
 
-@ApiTags('알림')
+@ApiTags('07. 알림')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('notifications')
@@ -28,7 +27,7 @@ export class NotificationsController {
    */
   @Get()
   async GetMyNotifications(@Req() req): Promise<ResponseDto<NotificationVo[]>> {
-    const userId = Number(req.user.id);
+    const userId = req.user.id;
     return new ResponseDto(await this.notificationsService.findAll(userId));
   }
 

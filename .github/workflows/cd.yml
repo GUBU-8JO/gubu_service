@@ -1,11 +1,11 @@
-name: GuBu CD
+name: GuBu-Service CD
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: [ 'GuBu CI' ]
-    types: [ completed ]
-    branches: [ main ]
+    workflows: ['GuBu-Service CI']
+    types: [completed]
+    branches: [main]
 
 jobs:
   deploy:
@@ -21,24 +21,24 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             # Load nvm and node environment
-            export NVM_DIR="$HOME/.nvm"
+            export NVM_DIR="/home/ubuntu/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-            cd /home/8JO/gubu_service
+            cd /home/ubuntu/8JO/gubu_service
 
             git switch main
-            
+
             git pull
 
             echo "${{ secrets.SERVER_ENV }}" > .env
 
             npm ci
-            
+
             npm run build
 
-            pm2 delete gubu || true
-            
-            pm2 start dist/main.js --name gubu
-            
+            pm2 delete gubu-service || true
+
+            pm2 start dist/main.js --name gubu-service
+
             pm2 save

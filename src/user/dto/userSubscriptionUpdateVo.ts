@@ -1,26 +1,24 @@
-export class UserSubscriptionsSerVo {
+export class UserSubscriptionUpdateVo {
   startedDate: string;
   paymentMethod: string;
   period: number;
-  accountId: string;
-  accountPw: string;
-  userId: number;
-  platformId: number;
+  accountId?: string;
+  accountPw?: string;
+  price?: number;
+
   constructor(
     startedDate: string,
     paymentMethod: string,
     period: number,
-    accountId: string,
-    accountPw: string,
-    userId: number,
-    platformId: number,
+    accountId?: string,
+    accountPw?: string,
+    price?: number,
   ) {
     this.startedDate = startedDate;
     this.paymentMethod = paymentMethod;
     this.period = period;
     this.accountId = accountId;
     this.accountPw = accountPw;
-    this.userId = userId;
-    this.platformId = platformId;
+    this.price = price;
   }
 }
