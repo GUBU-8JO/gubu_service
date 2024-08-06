@@ -72,13 +72,19 @@ export class FakerService {
   // 페이크 리뷰 생성
   async generateFakeReview(count: number) {
     const fakeReviews = [];
-    const generateRandomRating = (): number => {
+    const generateRandomRating = (isPositive: boolean): number => {
       const random = Math.random();
-      if (random < 0.8) return faker.number.int({ min: 1, max: 3 });
-      else return faker.number.int({ min: 4, max: 5 });
+      if (isPositive) {
+        // 긍정적인 리뷰: 90% 확률로 3~4점, 10% 확률로 5점
+        if (random < 0.9) return faker.number.int({ min: 3, max: 4 });
+        else return 5;
+      } else {
+        // 부정적인 리뷰: 1~3점
+        return faker.number.int({ min: 1, max: 3 });
+      }
     };
 
-    const reviewTemplates = [
+    const positiveReviews = [
       '정말 편리해서 계속 이용할 듯해요.',
       '새 기능이 자주 추가돼 만족해요.',
       '사용이 간단해서 좋습니다.',
@@ -121,19 +127,66 @@ export class FakerService {
       '서비스가 안정적입니다.',
     ];
 
-    const generateCustomComment = (): string => {
-      return faker.helpers.arrayElement(reviewTemplates);
+    const negativeReviews = [
+      '사용 중 자주 끊겨서 불편해요.',
+      '기능이 제대로 작동하지 않아요.',
+      '고객 지원이 느리고 불친절해요.',
+      '가격 대비 품질이 별로에요.',
+      '업데이트 후 불안정해졌어요.',
+      '사용법이 복잡하고 헷갈려요.',
+      '콘텐츠가 다양하지 않아요.',
+      '가끔 오류가 발생해요.',
+      '새로운 기능이 불필요해요.',
+      '서비스 개선이 필요해요.',
+      '앱이 자주 충돌합니다.',
+      '기능들이 쓸모가 없어요.',
+      '문제가 해결되지 않아요.',
+      '사용자 경험이 좋지 않아요.',
+      '요금이 비싸요.',
+      '사용 중 불편함이 많아요.',
+      '기대에 미치지 못해요.',
+      '화질이 안 좋아요.',
+      '서비스가 자주 중단돼요.',
+      '응답 속도가 느려요.',
+      '사용이 복잡해서 불편합니다.',
+      '기대보다 품질이 낮아요.',
+      '가격 대비 기능이 부족해요.',
+      '업데이트가 자주 없어요.',
+      '지연이 자주 발생합니다.',
+      '고객 지원이 느려요.',
+      '인터페이스가 직관적이지 않아요.',
+      '자주 끊겨서 불편합니다.',
+      '기능이 제한적이에요.',
+      '서비스 안정성이 떨어집니다.',
+      '새로운 기능이 별로 없어요.',
+      '문제가 자주 발생합니다.',
+      '업데이트 후 문제가 생겼어요.',
+      '유저 친화적이지 않아요.',
+      '필요한 기능이 부족해요.',
+      '비슷한 서비스보다 떨어집니다.',
+      '가격이 비싸요.',
+      '사용 중 불편함이 많아요.',
+      '설정이 복잡해서 어렵습니다.',
+      '광고가 너무 많아요.',
+    ];
+
+    const generateCustomCommentAndRating = (): {
+      comment: string;
+      rate: number;
+    } => {
+      const isPositive = Math.random() < 0.7; // 70% 확률로 긍정적인 리뷰 선택
+      const comment = isPositive
+        ? faker.helpers.arrayElement(positiveReviews)
+        : faker.helpers.arrayElement(negativeReviews);
+      const rate = generateRandomRating(isPositive);
+      return { comment, rate };
     };
 
     for (let i = 0; i < count; i++) {
       let userId: number;
       let platformId: number;
-      // const rate: number = faker.number.int({ min: 1, max: 5 });
-      const rate: number = generateRandomRating();
-      // const comment: string = fakerKO.lorem.paragraphs(2);
-      const comment: string = generateCustomComment();
-      // const comment: string = faker.lorem.sentence(3);
 
+      const { comment, rate } = generateCustomCommentAndRating();
       const createdAt: string = faker.date
         .betweens({
           from: new Date('2024-05-30'),
