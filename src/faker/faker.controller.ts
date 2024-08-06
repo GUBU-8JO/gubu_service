@@ -60,12 +60,20 @@ export class FakerController {
    *
    */
   @Get('/fakeReview')
-  async generateFakeReview() {
-    const fakeReview = await this.fakerService.generateFakeReview();
+  @ApiQuery({
+    name: 'count',
+    required: false,
+    description: '생성할 구독의 개수',
+    type: String,
+  })
+  async generateFakeReview(@Query('count') count?: string) {
+    const fakeReviewCount = parseInt(count, 10) || 1;
+    const fakeReview =
+      await this.fakerService.generateFakeReview(fakeReviewCount);
     return new ResponseDto(
       fakeReview,
       null,
-      '1개의 페이크 리뷰 생성에 성공했습니다.',
+      `${fakeReviewCount}개의 페이크 리뷰 생성에 성공했습니다.`,
     );
   }
 }
