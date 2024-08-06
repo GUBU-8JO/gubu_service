@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 import { NotificationVo } from './dto/notificationVo';
 import { CountVo } from './dto/countVo';
-import { notContains } from 'class-validator';
 
 @Injectable()
 export class NotificationsService {
