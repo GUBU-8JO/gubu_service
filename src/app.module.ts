@@ -13,6 +13,7 @@ import { SubscriptionHistoriesModule } from './user/subscription-histories.modul
 import { PlatformsModule } from './platform/platforms.module';
 import { CategoryModule } from './category/category.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
+import { FakerModule } from './faker/faker.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -48,6 +49,7 @@ const typeOrmModuleOptions = {
     SubscriptionHistoriesModule,
     PlatformsModule,
     CategoryModule,
+    FakerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
