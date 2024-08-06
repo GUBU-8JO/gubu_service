@@ -39,7 +39,7 @@ export class NotificationsService {
 
     const notifications = [...notReadNotifications, ...readNotifications];
 
-    if (!notifications.length) {
+    if (!notifications.length || !notifications) {
       return [];
     }
 
