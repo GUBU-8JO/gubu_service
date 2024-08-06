@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -54,5 +58,21 @@ export class ReviewsService {
     if (!data.length)
       throw new NotFoundException('해당 플랫폼에 리뷰가 존재하지 않습니다.');
     return data;
+  }
+
+  async deleteReview(id: number) {
+    const existData = await this.reviewsRepository.findOne({ where: { id } });
+    if (_.isNil(existData))
+      throw new NotFoundException('존재하는 데이터가 없습니다.');
+
+    await this.reviewsRepository.delete({ id });
+
+    const data = await this.reviewsRepository.findOne({ where: { id } });
+
+    if (_.isNil(data)) {
+      return true;
+    } else {
+      throw new BadRequestException('삭제가 이루어지지 않았습니다.');
+    }
   }
 }

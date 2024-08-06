@@ -4,38 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GuBu</title>
+    <title>회원가입</title>
     <link rel="stylesheet" href="/front/css/signup.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
     <div class="container">
         <div class="logo">
-            <img src="/front/mainlogo.png" class="logo">
+            <img src="/front/img/mainlogo.png" class="logo"="Logo">
             <h1 class="introMent">간편한 구독관리 서비스</h1>
-
         </div>
 
         <input type="text" id="emailTextBox" placeholder="EMAIL" class="emailTextBox" required>
         <input type="text" id="nicknameTextBox" placeholder="NICKNAME" class="nicknameTextBox" required>
-        <input type="text" id="passwordTextBox" placeholder="PASSWORD" class="passwordTextBox" required>
-        <input type="text" id="repasswordTextBox" placeholder="REPASSWORD" class="repasswordTextBox" required>
-        <!-- <h1 class="title">GuBu</h1> -->
+        <input type="password" id="passwordTextBox" placeholder="PASSWORD" class="passwordTextBox" required>
+        <input type="password" id="repasswordTextBox" placeholder="REPASSWORD" class="repasswordTextBox" required>
 
         <div class="option">
-
-            <button class="btn">회원가입</button>
+            <button id="signupBtn" class="btn">회원가입</button>
         </div>
     </div>
-    <script src="signup.js"></script>
-    <!-- <script type="module" src="index.js"></script> -->
-
+    <script src="/front/js/signup.js"></script> <!-- JavaScript 파일 경로 -->
 </body>
 
 </html>

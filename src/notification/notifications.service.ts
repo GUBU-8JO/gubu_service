@@ -1,73 +1,99 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import _ from 'lodash';
+import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
+import { NotificationVo } from './dto/notificationVo';
+import { CountVo } from './dto/countVo';
 
 @Injectable()
 export class NotificationsService {
-  private readonly logger = new Logger(NotificationsService.name);
-
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserSubscription)
     private userSubscriptionsRepository: Repository<UserSubscription>,
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
+    @InjectRepository(SubscriptionHistory)
+    private subscriptionHistoriesRepository: Repository<SubscriptionHistory>,
   ) {}
 
   /** 알림 목록 조회 */
-  async findAll(userId: number) {
+  async findAll(userId: number): Promise<NotificationVo[]> {
     // 미확인 알림 조회
-    const notReadNotifications = await this.notificationRepository.find({
-      where: {
-        userId,
-        isRead: false,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    const notReadNotifications = await this.notificationRepository
+      .createQueryBuilder('notification')
+      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
+      .where('notification.userId = :userId', { userId })
+      .andWhere('notification.isRead = :isRead', { isRead: false })
+      .orderBy('notification.createdAt', 'DESC')
+      .getMany();
 
     // 확인 알림 조회
-    const readNotifications = await this.notificationRepository.find({
-      where: {
-        userId,
-        isRead: true,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    const readNotifications = await this.notificationRepository
+      .createQueryBuilder('notification')
+      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
+      .where('notification.userId = :userId', { userId })
+      .andWhere('notification.isRead = :isRead', { isRead: true })
+      .orderBy('notification.createdAt', 'DESC')
+      .getMany();
 
     if (!notReadNotifications && readNotifications) {
-      throw new NotFoundException('알림 목록이 존재하지 않습니다.');
+      throw new NotFoundException('알림 목록이 존재하지 않습니다');
     }
 
     // 전체 알림 목록 만들기
     const notifications = [...notReadNotifications, ...readNotifications];
-    return notifications;
+    return notifications.map(
+      (notification) =>
+        new NotificationVo(
+          notification.id,
+          notification.title,
+          notification.isRead,
+          [notification.userSubscription],
+        ),
+    );
   }
 
   /** 알림 한가지 조회 */
-  async findOne(userId: number, notificationId: number) {
-    const notification = await this.notificationRepository.findOne({
-      where: {
-        userId,
-        id: notificationId,
-      },
-    });
+  async findOne(
+    userId: number,
+    notificationId: number,
+  ): Promise<NotificationVo> {
+    const notification = await this.notificationRepository
+      .createQueryBuilder('notification')
+      .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
+      .where('notification.userId = :userId', { userId })
+      .andWhere('notification.id = :notificationId', { notificationId })
+      .getOne();
     if (!notification) {
       throw new NotFoundException('알림이 존재하지 않습니다.');
     }
-    return notification;
+    return new NotificationVo(
+      notification.id,
+      notification.title,
+      notification.isRead,
+      [notification.userSubscription],
+    );
   }
 
   /** 미확인 알림 카운트 */
-  async countNotifications(userId: number) {
+  async countNotifications(userId: number): Promise<CountVo> {
     const countNotifications = await this.notificationRepository.findAndCountBy(
       {
         user: {
@@ -83,41 +109,6 @@ export class NotificationsService {
       throw new NotFoundException('모든 알림을 확인하셨습니다.');
     }
 
-    return count;
-  }
-
-  @Cron('00 53 14 * * *')
-  async handleCron() {
-    this.logger.debug('알림 테스트');
-
-    // 구독 정보 가져오기
-    const userSubscription = await this.userSubscriptionsRepository.find({
-      relations: ['user'],
-    });
-    console.log(userSubscription);
-
-    // today 설정
-    const today = new Date();
-    // 날짜만 필요해서 시간은 초기화
-    today.setHours(0, 0, 0, 0);
-    console.log('today', today);
-    // 유저의 구독정보를 돌면서 결제 시작일 가져오기
-    userSubscription.forEach((userSubscription) => {
-      // 결제일 설정(일단, 결제 시작일)
-      const payDate = userSubscription.startedDate;
-      console.log('payDate', payDate);
-      // 알람일 설정(결제일 -1)
-      const notifyingDate = new Date(payDate);
-      notifyingDate.setDate(notifyingDate.getDate() - 1);
-      notifyingDate.setHours(0, 0, 0, 0);
-      console.log('notifyingDate', notifyingDate);
-
-      // today와 notifyingDate 비교
-      if (notifyingDate.getDate() == today.getDate()) {
-        const message = '결제일 1일 전입니다.';
-        console.log(message);
-        return message;
-      }
-    });
+    return new CountVo(count);
   }
 }
