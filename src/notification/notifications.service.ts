@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 import { NotificationVo } from './dto/notificationVo';
 import { CountVo } from './dto/countVo';
+import { notContains } from 'class-validator';
 
 @Injectable()
 export class NotificationsService {
@@ -38,11 +39,15 @@ export class NotificationsService {
 
     const notifications = [...notReadNotifications, ...readNotifications];
 
+    if (!notifications.length) {
+      return [];
+    }
+
     await this.notificationRepository.update(
       { isRead: false },
       { isRead: true },
     );
-    
+
     return notifications.map(
       (notification) =>
         new NotificationVo(
