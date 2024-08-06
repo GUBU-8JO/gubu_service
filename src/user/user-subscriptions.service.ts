@@ -17,8 +17,12 @@ import { UserSubscriptionUpdateVo } from './dto/userSubscriptionUpdateVo';
 import { SubscriptionHistoryVo } from './dto/user-subscription-responseDto/subscriptionHistoryVo';
 import { PlatformVo } from '../category/dto/platformVo';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto-js';
 import { User } from './entities/user.entity';
 import { MySubscriptionVo } from './dto/mySubscriptionVo';
+import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -31,6 +35,7 @@ export class UserSubscriptionsService {
     private readonly subscriptionHistory: Repository<SubscriptionHistory>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly configService: ConfigService,
   ) {}
   async create(
     {
@@ -66,6 +71,23 @@ export class UserSubscriptionsService {
         message: '이미 구독중인 플랫폼 입니다.',
       });
 
+    const iv = randomBytes(16);
+    const password = this.configService.get('CRYPTO_PASSWORD');
+    console.log('password', password);
+    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
+    const cipher = createCipheriv('aes-256-ctr', key, iv);
+
+    const textToEncrypt = accountPw;
+    const encryptedText = Buffer.concat([
+      cipher.update(textToEncrypt),
+      cipher.final(),
+    ]);
+
+    // iv를 암호화된 데이터 앞에 붙임
+    const encryptedPassword = Buffer.concat([iv, encryptedText]).toString(
+      'hex',
+    );
+
     // platform 가격 가져오기
     // const platformPrice = existPlatform.price;
 
@@ -78,7 +100,7 @@ export class UserSubscriptionsService {
       period,
       platformId,
       accountId,
-      accountPw,
+      accountPw: encryptedPassword,
       userId,
       price,
     });
@@ -127,11 +149,12 @@ export class UserSubscriptionsService {
       relations: ['platform', 'subscriptionHistory'],
     });
 
-    if (!data.length)
+    if (!data.length) {
       throw new NotFoundException({
         status: 404,
         message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
       });
+    }
 
     return data.map((subscription) => {
       return new MySubscriptionVo(
@@ -143,11 +166,11 @@ export class UserSubscriptionsService {
         subscription.startedDate,
         subscription.subscriptionHistory[0]?.nextPayAt,
         subscription.platform.image,
+        undefined,
+        new PlatformVo(undefined, subscription.platform.title, undefined),
       );
     });
   }
-  // platform / history 릴레이션으로 전체 다 출력하기
-
   async findOne(id: number): Promise<UserSubscriptionVo> {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },
@@ -168,7 +191,24 @@ export class UserSubscriptionsService {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    const platform = data.platform; // 단일 Platform 객체
+    const encryptedBufferFromHex = Buffer.from(data.accountPw, 'hex');
+
+    // 암호화된 데이터에서 iv를 추출
+    const iv = encryptedBufferFromHex.slice(0, 16);
+    const encryptedText = encryptedBufferFromHex.slice(16);
+
+    const password = this.configService.get('CRYPTO_PASSWORD');
+    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
+    const decipher = createDecipheriv('aes-256-ctr', key, iv);
+
+    const decryptedText = Buffer.concat([
+      decipher.update(encryptedText),
+      decipher.final(),
+    ]);
+
+    const decryptedAccountPw = decryptedText.toString();
+
+    const platform = data.platform;
     const platformVo = new PlatformVo(
       platform.id,
       platform.title,
@@ -199,7 +239,7 @@ export class UserSubscriptionsService {
       data.paymentMethod,
       data.startedDate,
       data.accountId,
-      data.accountPw,
+      decryptedAccountPw,
       data.userId,
       subscriptionHistoryVos,
       platformVo,
@@ -265,7 +305,7 @@ export class UserSubscriptionsService {
       existUserSubscription.accountId === accountId &&
       existUserSubscription.accountPw === accountPw &&
       existUserSubscription.price === price;
-    if (!newdata) {
+    if (newdata) {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
     await this.userSubscriptionRepository.update(
@@ -305,6 +345,11 @@ export class UserSubscriptionsService {
       });
 
     await this.userSubscriptionRepository.softDelete(id);
+
+    await this.subscriptionHistory.update(
+      { userSubscriptionId: id },
+      { stopRequestAt: new Date() },
+    );
 
     return true;
   }

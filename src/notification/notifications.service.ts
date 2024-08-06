@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 import { NotificationVo } from './dto/notificationVo';
 import { CountVo } from './dto/countVo';
+import { notContains } from 'class-validator';
 
 @Injectable()
 export class NotificationsService {
@@ -38,8 +39,8 @@ export class NotificationsService {
 
     const notifications = [...notReadNotifications, ...readNotifications];
 
-    if (!notifications.length) {
-      throw new NotFoundException('아직 알림이 존재하지 않습니다.');
+    if (!notifications.length || !notifications) {
+      return [];
     }
 
     await this.notificationRepository.update(

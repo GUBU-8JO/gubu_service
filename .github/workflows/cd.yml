@@ -1,4 +1,4 @@
-name: GuBu CD
+name: GuBu-Service CD
 
 on:
   workflow_dispatch:
@@ -17,15 +17,17 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_PEMKEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          # key: ${{ secrets.SERVER_PEMKEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
             # Load nvm and node environment
-            export NVM_DIR="/home/ubuntu/.nvm"
+            # export NVM_DIR="/home/ubuntu/.nvm"
+            # export NVM_DIR="/root/.nvm"            
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-            cd /home/ubuntu/8JO/gubu_service
+            cd /home/8JO/gubu_service
 
             git switch main
 
@@ -41,6 +43,5 @@ jobs:
 
             pm2 start dist/main.js --name gubu-service
 
-            pm2 save --force
-
-            pm2 startup
+            pm2 save
+            #
