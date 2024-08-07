@@ -20,6 +20,7 @@ import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubs
 import { SubscriptionInfoDto } from './dto/subscriptionInfo.dto';
 import { MySubscriptionVo } from './dto/mySubscriptionVo';
 
+//
 @ApiTags('05. 유저 구독정보')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

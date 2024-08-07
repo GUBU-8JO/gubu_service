@@ -63,7 +63,7 @@ export class FakerController {
   @ApiQuery({
     name: 'count',
     required: false,
-    description: '생성할 구독의 개수',
+    description: '생성할 리뷰의 개수',
     type: String,
   })
   async generateFakeReview(@Query('count') count?: string) {

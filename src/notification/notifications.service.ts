@@ -1,24 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { UserSubscription } from 'src/user/entities/user-subscription.entity';
-import { User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
-import _ from 'lodash';
-import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
-import { NotificationVo } from './dto/notificationVo';
 import { CountVo } from './dto/countVo';
+import { NotificationVo } from './dto/notificationVo';
+import _ from 'lodash';
 
 @Injectable()
 export class NotificationsService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(UserSubscription)
-    private userSubscriptionsRepository: Repository<UserSubscription>,
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
-    @InjectRepository(SubscriptionHistory)
-    private subscriptionHistoriesRepository: Repository<SubscriptionHistory>,
   ) {}
 
   async findAll(userId: number): Promise<NotificationVo[]> {
@@ -97,13 +89,10 @@ export class NotificationsService {
         isRead: false,
       },
     );
-
     const [_, count] = countNotifications;
-
     if (count === 0) {
       throw new NotFoundException('모든 알림을 확인하셨습니다.');
     }
-
     return new CountVo(count);
   }
 }

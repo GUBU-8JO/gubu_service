@@ -5,7 +5,6 @@ export class ResponseDto<T = void> {
   data?: T;
   message?: string;
   errorMessage: string;
-  //   statusCode: number;
 
   constructor(data?: T, exception?: HttpException, message?: string) {
     this.success = !exception;
@@ -14,7 +13,6 @@ export class ResponseDto<T = void> {
     }
     if (exception) {
       this.errorMessage = exception.message;
-      //   this.statusCode = exception.getStatus();
     }
 
     if (message) {

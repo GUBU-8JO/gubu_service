@@ -1,13 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { faker } from '@faker-js/faker';
-import { faker as fakerKO } from '@faker-js/faker/locale/ko';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 import { SubscriptionHistory } from 'src/user/entities/subscription-histories.entity';
 import { Review } from 'src/review/entities/review.entity';
+import { faker } from '@faker-js/faker';
+import { faker as fakerKO } from '@faker-js/faker/locale/ko';
 import bcrypt from 'bcrypt';
 import _ from 'lodash';
 
@@ -43,7 +43,6 @@ export class FakerService {
       let lastName = fakerKO.person.lastName();
       let nickname = lastName + firstName;
       let password = await this.encryptPassword(faker.internet.password());
-
       const fakeUser = {
         email,
         nickname,
@@ -66,21 +65,18 @@ export class FakerService {
     return fakeUsers;
   }
 
-  // const startDate = new Date('2024-05-31');
-  // const startDate = new Date('2024-06-30'); > 마지막 날자로 가는지 쳌
-
   // 페이크 리뷰 생성
   async generateFakeReview(count: number) {
     const fakeReviews = [];
     const generateRandomRating = (isPositive: boolean): number => {
       const random = Math.random();
       if (isPositive) {
-        // 긍정적인 리뷰: 90% 확률로 3~4점, 10% 확률로 5점
-        if (random < 0.9) return faker.number.int({ min: 3, max: 4 });
-        else return 5;
+        // 긍정적인 리뷰: 90% 확률로 5~9점, 10% 확률로 10점
+        if (random < 0.9) return faker.number.int({ min: 5, max: 9 });
+        else return 10;
       } else {
-        // 부정적인 리뷰: 1~3점
-        return faker.number.int({ min: 1, max: 3 });
+        // 부정적인 리뷰: 1 ~ 5점
+        return faker.number.int({ min: 1, max: 4 });
       }
     };
 
@@ -185,7 +181,6 @@ export class FakerService {
     for (let i = 0; i < count; i++) {
       let userId: number;
       let platformId: number;
-
       const { comment, rate } = generateCustomCommentAndRating();
       const createdAt: string = faker.date
         .betweens({
@@ -206,7 +201,6 @@ export class FakerService {
         });
         if (!user) continue;
         platformId = faker.number.int({ min: 1, max: 25 });
-
         const existData = await this.reviewRepository.count({
           where: { userId, platformId },
         });
@@ -267,7 +261,6 @@ export class FakerService {
         });
         if (!user) continue;
         platformId = faker.number.int({ min: 1, max: 25 });
-
         const existData = await this.userSubscriptionRepository.count({
           where: { userId, platformId },
         });
@@ -279,11 +272,9 @@ export class FakerService {
           '페이크 구독 중복 검출에 실패했습니다.',
         );
       }
-
       let accountId = (
         await this.userRepository.findOne({ where: { id: userId } })
       ).email;
-
       const fakeSubscription = {
         userId,
         platformId,
@@ -298,7 +289,6 @@ export class FakerService {
       try {
         const savedSubscription =
           await this.userSubscriptionRepository.save(fakeSubscription);
-
         const startedDateObj = new Date(startedDate);
         const nextPayAt = this.calculateNextDate(startedDateObj, period);
         const subscriptionHistory =

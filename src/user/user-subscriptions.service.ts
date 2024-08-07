@@ -17,8 +17,6 @@ import { UserSubscriptionUpdateVo } from './dto/userSubscriptionUpdateVo';
 import { SubscriptionHistoryVo } from './dto/user-subscription-responseDto/subscriptionHistoryVo';
 import { PlatformVo } from '../category/dto/platformVo';
 import bcrypt from 'bcrypt';
-import crypto from 'crypto-js';
-import { User } from './entities/user.entity';
 import { MySubscriptionVo } from './dto/mySubscriptionVo';
 import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
@@ -33,8 +31,6 @@ export class UserSubscriptionsService {
     private readonly platformRepository: Repository<Platform>,
     @InjectRepository(SubscriptionHistory)
     private readonly subscriptionHistory: Repository<SubscriptionHistory>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     private readonly configService: ConfigService,
   ) {}
   async create(
@@ -73,7 +69,6 @@ export class UserSubscriptionsService {
 
     const iv = randomBytes(16);
     const password = this.configService.get('CRYPTO_PASSWORD');
-    console.log('password', password);
     const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
     const cipher = createCipheriv('aes-256-ctr', key, iv);
 
@@ -87,9 +82,6 @@ export class UserSubscriptionsService {
     const encryptedPassword = Buffer.concat([iv, encryptedText]).toString(
       'hex',
     );
-
-    // platform 가격 가져오기
-    // const platformPrice = existPlatform.price;
 
     // startedDate를 Date 객체로 변환
     const startedDateObj = new Date(startedDate);

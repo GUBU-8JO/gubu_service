@@ -41,7 +41,6 @@ export class NotificationsController {
     @Req() req: any,
   ): Promise<ResponseDto<CountVo>> {
     const userId = Number(req.user.id);
-
     return new ResponseDto(
       await this.notificationsService.countNotifications(userId),
     );

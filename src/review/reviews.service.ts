@@ -37,11 +37,13 @@ export class ReviewsService {
     });
     if (_.isNil(existPlatform)) throw new NotFoundException();
     const userSubscription = await this.userSubscriptionRepository.findOne({
-      where: {userId, platformId},
+      where: { userId, platformId },
     });
-    if(!userSubscription) throw new ForbiddenException({ 
-      message:'구독한 플랫폼에만 리뷰를 작성할 수 있습니다.'})
-      
+    if (!userSubscription)
+      throw new ForbiddenException({
+        message: '구독한 플랫폼에만 리뷰를 작성할 수 있습니다.',
+      });
+
     const existReview = await this.reviewsRepository.findOne({
       where: { userId, platformId },
     });
@@ -100,28 +102,6 @@ export class ReviewsService {
           review.createdAt,
         ),
     );
-  }
-
-  async findMyPlatformReview(platformId: number): Promise<ReadAllReviewVo> {
-    const data = await this.reviewsRepository.find({
-      where: { platformId },
-      relations: ['user'],
-      select: ['id', 'rate', 'comment', 'user', 'platformId', 'createdAt'],
-    });
-
-    const myReview = data.map(
-      (review) =>
-        new ReadAllReviewVo(
-          review.id,
-          review.platformId,
-          review.comment,
-          review.rate,
-          review.user.nickname,
-          review.createdAt,
-        ),
-    );
-
-    return myReview[0];
   }
 
   async deleteReview(id: number) {
