@@ -9,10 +9,10 @@ import { AuthModule } from './auth/auth.module';
 import { ReviewsModule } from './review/reviews.module';
 import { NotificationsModule } from './notification/notifications.module';
 import { UserSubscriptionsModule } from './user/user-subscriptions.module';
-import { SubscriptionHistoriesModule } from './user/subscription-histories.module';
 import { PlatformsModule } from './platform/platforms.module';
 import { CategoryModule } from './category/category.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
+import { FakerModule } from './faker/faker.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -45,9 +45,9 @@ const typeOrmModuleOptions = {
     ReviewsModule,
     NotificationsModule,
     UserSubscriptionsModule,
-    SubscriptionHistoriesModule,
     PlatformsModule,
     CategoryModule,
+    FakerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

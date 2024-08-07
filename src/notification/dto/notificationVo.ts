@@ -5,6 +5,7 @@ export class NotificationVo {
   id: number;
   title: string;
   isRead: boolean;
+  createdAt: Date;
   userSubscription: UserSubscription[];
   subscriptionHistory: SubscriptionHistory[];
 
@@ -12,12 +13,14 @@ export class NotificationVo {
     id: number,
     title: string,
     isRead: boolean,
+    createdAt: Date,
     userSubscription: UserSubscription[] = [],
     subscriptionHistory: SubscriptionHistory[] = [],
   ) {
     this.id = id;
     this.title = title;
     this.isRead = isRead;
+    this.createdAt = createdAt;
     this.userSubscription = userSubscription;
     this.subscriptionHistory = subscriptionHistory;
   }

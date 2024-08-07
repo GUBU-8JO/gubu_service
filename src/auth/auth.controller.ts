@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-
-  // Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -14,7 +7,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { userInfo } from 'src/auth/decorators/userInfo.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { ResponseDto } from 'src/common/response.dto';
-import { SignUpDataVo } from 'src/auth/dto/sign-up.data.vo';
 import { SignInDataVo } from 'src/auth/dto/sign-in.data.vo';
 
 @ApiTags('01. 인증')
@@ -29,7 +21,6 @@ export class AuthController {
    */
   @Post('/sign-up')
   async signUp(@Body() signUpDto: SignUpDto): Promise<ResponseDto> {
-    // const data =
     await this.authService.signUp(signUpDto);
     return new ResponseDto();
   }
