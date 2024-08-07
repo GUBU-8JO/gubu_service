@@ -3,15 +3,15 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import bcrypt from 'bcrypt';
+import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import { SignInDataVo } from './dto/sign-in.data.vo';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -58,7 +58,6 @@ export class AuthService {
   }
   async signIn(signInDto: SignInDto): Promise<SignInDataVo> {
     const { email } = signInDto;
-
     const user = await this.userRepository.findOne({
       where: { email },
     });

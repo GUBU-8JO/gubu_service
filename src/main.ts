@@ -21,12 +21,6 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors({
-    origin: 'http://127.0.0.1:5500', // 프론트엔드 URL
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
-
   const config = new DocumentBuilder()
     .setTitle('GuBu Service')
     .setDescription('구독부자')

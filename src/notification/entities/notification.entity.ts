@@ -12,6 +12,7 @@ import {
 
 @Entity()
 export class Notification {
+
   @PrimaryGeneratedColumn({ type: 'int', comment: '알림 id' })
   id: number;
 

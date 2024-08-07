@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import _ from 'lodash';
 import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 import { ReadAllReviewVo } from './dto/vo/readAll-review-vo';
 import { CreateReviewVo } from './dto/vo/create-review-vo';
+import { UserSubscription } from 'src/user/entities/user-subscription.entity';
 
 @Injectable()
 export class ReviewsService {
@@ -21,6 +23,8 @@ export class ReviewsService {
     private readonly reviewsRepository: Repository<Review>,
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
+    @InjectRepository(UserSubscription)
+    private readonly userSubscriptionRepository: Repository<UserSubscription>,
   ) {}
 
   async create(
@@ -32,6 +36,14 @@ export class ReviewsService {
       where: { id: platformId },
     });
     if (_.isNil(existPlatform)) throw new NotFoundException();
+    const userSubscription = await this.userSubscriptionRepository.findOne({
+      where: { userId, platformId },
+    });
+    if (!userSubscription)
+      throw new ForbiddenException({
+        message: '구독한 플랫폼에만 리뷰를 작성할 수 있습니다.',
+      });
+
     const existReview = await this.reviewsRepository.findOne({
       where: { userId, platformId },
     });
@@ -90,28 +102,6 @@ export class ReviewsService {
           review.createdAt,
         ),
     );
-  }
-
-  async findMyPlatformReview(platformId: number): Promise<ReadAllReviewVo> {
-    const data = await this.reviewsRepository.find({
-      where: { platformId },
-      relations: ['user'],
-      select: ['id', 'rate', 'comment', 'user', 'platformId', 'createdAt'],
-    });
-
-    const myReview = data.map(
-      (review) =>
-        new ReadAllReviewVo(
-          review.id,
-          review.platformId,
-          review.comment,
-          review.rate,
-          review.user.nickname,
-          review.createdAt,
-        ),
-    );
-
-    return myReview[0];
   }
 
   async deleteReview(id: number) {

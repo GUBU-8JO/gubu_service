@@ -18,7 +18,9 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ResponseDto } from 'src/common/response.dto';
 import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubscriptionVo';
 import { SubscriptionInfoDto } from './dto/subscriptionInfo.dto';
+import { MySubscriptionVo } from './dto/mySubscriptionVo';
 
+//
 @ApiTags('05. 유저 구독정보')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -55,7 +57,7 @@ export class UserSubscriptionsController {
    * @returns
    */
   @Get('/me')
-  async findAllMe(@Req() req): Promise<ResponseDto<UserSubscriptionVo[]>> {
+  async findAllMe(@Req() req): Promise<ResponseDto<MySubscriptionVo[]>> {
     const userId = req.user.id;
     const data = await this.userSubscriptionsService.findAllMe(userId);
     return new ResponseDto(data);

@@ -9,7 +9,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UserModule } from 'src/user/user.module';
-//users -> user
+
 @Module({
   imports: [
     UserModule,
@@ -34,4 +34,3 @@ import { UserModule } from 'src/user/user.module';
   ],
 })
 export class AuthModule {}
-//

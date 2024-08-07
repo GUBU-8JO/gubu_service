@@ -1,17 +1,16 @@
-import { SubscriptionHistoryVo } from './subscriptionHistoryVo';
-import { PlatformVo } from '../../../category/dto/platformVo';
+import { SubscriptionHistoryVo } from './user-subscription-responseDto/subscriptionHistoryVo';
+import { PlatformVo } from 'src/category/dto/platformVo';
 
-export class UserSubscriptionVo {
+export class MySubscriptionVo {
   id: number;
   platformId: number;
   period: number;
   price: number;
   paymentMethod: string;
   startedDate: string;
-  accountId?: string;
-  accountPw?: string;
-  userId?: number;
-  subscriptionHistory?: SubscriptionHistoryVo[];
+  nextPayAt: Date;
+  image: string;
+  subscriptionHistoryVo?: SubscriptionHistoryVo;
   platform?: PlatformVo;
 
   constructor(
@@ -21,10 +20,9 @@ export class UserSubscriptionVo {
     price: number,
     paymentMethod: string,
     startedDate: string,
-    accountId?: string,
-    accountPw?: string,
-    userId?: number,
-    subscriptionHistory?: SubscriptionHistoryVo[],
+    nextPayAt: Date,
+    image: string,
+    subscriptionHistoryVo?: SubscriptionHistoryVo,
     platform?: PlatformVo,
   ) {
     this.id = id;
@@ -33,10 +31,9 @@ export class UserSubscriptionVo {
     this.price = price;
     this.paymentMethod = paymentMethod;
     this.startedDate = startedDate;
-    this.accountId = accountId;
-    this.accountPw = accountPw;
-    this.userId = userId;
-    this.subscriptionHistory = subscriptionHistory;
+    this.nextPayAt = nextPayAt;
+    this.image = image;
+    this.subscriptionHistoryVo = subscriptionHistoryVo;
     this.platform = platform;
   }
 }
