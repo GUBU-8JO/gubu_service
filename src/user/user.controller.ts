@@ -31,7 +31,6 @@ export class UserController {
     const userId = user.id;
     const data = await this.userService.findById(userId);
     return new ResponseDto(new UserMeVo(data));
-    // return new ResponseDto(UserMeVo);
   }
 }
 //회원탈퇴 할지말지 고민중
