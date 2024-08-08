@@ -67,21 +67,30 @@ export class UserSubscriptionsService {
         message: '이미 구독중인 플랫폼 입니다.',
       });
 
-    const iv = randomBytes(16);
-    const password = this.configService.get('CRYPTO_PASSWORD');
-    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
-    const cipher = createCipheriv('aes-256-ctr', key, iv);
+    const Idiv = randomBytes(16);
+    const Pwiv = randomBytes(16);
+    const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
+    const key = (await promisify(scrypt)(cryptoPassword, 'salt', 32)) as Buffer;
+    const Idcipher = createCipheriv('aes-256-ctr', key, Idiv);
+    const Pwcipher = createCipheriv('aes-256-ctr', key, Pwiv);
 
-    const textToEncrypt = accountPw;
-    const encryptedText = Buffer.concat([
-      cipher.update(textToEncrypt),
-      cipher.final(),
+    const encryptedAccountId = Buffer.concat([
+      Idcipher.update(accountId),
+      Idcipher.final(),
     ]);
 
-    // iv를 암호화된 데이터 앞에 붙임
-    const encryptedPassword = Buffer.concat([iv, encryptedText]).toString(
+    const encryptedAccountPw = Buffer.concat([
+      Pwcipher.update(accountPw),
+      Pwcipher.final(),
+    ]);
+
+    const encryptedId = Buffer.concat([Idiv, encryptedAccountId]).toString(
       'hex',
     );
+    const encryptedPassword = Buffer.concat([
+      Pwiv,
+      encryptedAccountPw,
+    ]).toString('hex');
 
     // startedDate를 Date 객체로 변환
     const startedDateObj = new Date(startedDate);
@@ -91,7 +100,7 @@ export class UserSubscriptionsService {
       paymentMethod,
       period,
       platformId,
-      accountId,
+      accountId: encryptedId,
       accountPw: encryptedPassword,
       userId,
       price,
@@ -183,22 +192,30 @@ export class UserSubscriptionsService {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    const encryptedBufferFromHex = Buffer.from(data.accountPw, 'hex');
+    const encryptedIdBufferFromHex = Buffer.from(data.accountId, 'hex');
+    const encryptedPwBufferFromHex = Buffer.from(data.accountPw, 'hex');
 
-    // 암호화된 데이터에서 iv를 추출
-    const iv = encryptedBufferFromHex.slice(0, 16);
-    const encryptedText = encryptedBufferFromHex.slice(16);
+    const Idiv = encryptedIdBufferFromHex.slice(0, 16);
+    const encryptedId = encryptedIdBufferFromHex.slice(16);
+    const Pwiv = encryptedPwBufferFromHex.slice(0, 16);
+    const encryptedPw = encryptedPwBufferFromHex.slice(16);
 
     const password = this.configService.get('CRYPTO_PASSWORD');
     const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
-    const decipher = createDecipheriv('aes-256-ctr', key, iv);
+    const Iddecipher = createDecipheriv('aes-256-ctr', key, Idiv);
+    const Pwdecipher = createDecipheriv('aes-256-ctr', key, Pwiv);
 
-    const decryptedText = Buffer.concat([
-      decipher.update(encryptedText),
-      decipher.final(),
+    const decryptedId = Buffer.concat([
+      Iddecipher.update(encryptedId),
+      Iddecipher.final(),
+    ]);
+    const decryptedPw = Buffer.concat([
+      Pwdecipher.update(encryptedPw),
+      Pwdecipher.final(),
     ]);
 
-    const decryptedAccountPw = decryptedText.toString();
+    const decryptedAccountId = decryptedId.toString();
+    const decryptedAccountPw = decryptedPw.toString();
 
     const platform = data.platform;
     const platformVo = new PlatformVo(
@@ -230,7 +247,7 @@ export class UserSubscriptionsService {
       data.price,
       data.paymentMethod,
       data.startedDate,
-      data.accountId,
+      decryptedAccountId,
       decryptedAccountPw,
       data.userId,
       subscriptionHistoryVos,

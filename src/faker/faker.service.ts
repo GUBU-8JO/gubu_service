@@ -308,7 +308,7 @@ export class FakerService {
         );
       }
     }
-    return fakeSubscriptions;
+    return true;
   }
 
   // 비밀번호 해싱
