@@ -13,6 +13,7 @@ import { PlatformsModule } from './platform/platforms.module';
 import { CategoryModule } from './category/category.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 import { FakerModule } from './faker/faker.module';
+import { CacheModule } from './cache/cache.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -48,6 +49,7 @@ const typeOrmModuleOptions = {
     PlatformsModule,
     CategoryModule,
     FakerModule,
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [AppService],
