@@ -1,0 +1,16 @@
+config:
+  target: 'http://218.52.3.90:3000'
+  phases:
+    # 돌아가는 시간(sec)
+    - duration: 60
+      # 초당 몇번의 req줄건지
+      arrivalRate: 30
+      name: '8jo'
+
+scenarios:
+  - name: 'get 8jo'
+    flow:
+      - get:
+          url: '/api/platforms'
+          # headers:
+          #   Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwiaWF0IjoxNzIzNDMxMTI2LCJleHAiOjE3MjM0NzQzMjZ9.6V6hRiaKlatPhWBmdGM8TBNBpMJIpgASBKy30xGvhxo'
