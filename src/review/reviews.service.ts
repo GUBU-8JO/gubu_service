@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,12 +16,15 @@ import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 import { ReadAllReviewVo } from './dto/vo/readAll-review-vo';
 import { CreateReviewVo } from './dto/vo/create-review-vo';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewsRepository: Repository<Review>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
     @InjectRepository(UserSubscription)
@@ -82,16 +86,24 @@ export class ReviewsService {
   }
 
   async findPlatformReview(platformId: number): Promise<ReadAllReviewVo[]> {
+    const cacheKey = `platform_reviews_${platformId}`;
+    const cachedReviews =
+      await this.cacheManager.get<ReadAllReviewVo[]>(cacheKey);
+
+    if (cachedReviews) {
+      return cachedReviews;
+    }
+
     const data = await this.reviewsRepository.find({
       where: { platformId },
       relations: ['user'],
       select: ['id', 'rate', 'comment', 'user', 'platformId', 'createdAt'],
       order: { createdAt: 'DESC' },
     });
-    if (!data.length)
+    if (!data.length) {
       throw new NotFoundException('해당 플랫폼에 리뷰가 존재하지 않습니다.');
-
-    return data.map(
+    }
+    const reviews = data.map(
       (review) =>
         new ReadAllReviewVo(
           review.id,
@@ -102,6 +114,8 @@ export class ReviewsService {
           review.createdAt,
         ),
     );
+    await this.cacheManager.set(cacheKey, reviews, 600);
+    return reviews;
   }
 
   async deleteReview(id: number) {
