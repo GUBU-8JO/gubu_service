@@ -42,6 +42,3 @@ jobs:
             rm gubu-service.tar.gz
 
             pm2 save
-
-
-            ##
