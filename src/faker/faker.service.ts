@@ -195,12 +195,12 @@ export class FakerService {
       // 중복되지 않는 userId, platformId 검출
       while (attempts < maxAttempts) {
         attempts++;
-        userId = faker.number.int({ min: 1, max: 10000 });
+        userId = faker.number.int({ min: 1, max: 42307 });
         const user = await this.userRepository.count({
           where: { id: userId },
         });
         if (!user) continue;
-        platformId = faker.number.int({ min: 1, max: 25 });
+        platformId = faker.number.int({ min: 1, max: 289 });
         const existData = await this.reviewRepository.count({
           where: { userId, platformId },
         });
@@ -255,18 +255,18 @@ export class FakerService {
       // 중복되지 않는 userId, platformId 검출
       while (attempts < maxAttempts) {
         attempts++;
-        userId = faker.number.int({ min: 1, max: 10000 });
+        userId = faker.number.int({ min: 1, max: 42307 });
         const user = await this.userRepository.count({
           where: { id: userId },
         });
         if (!user) continue;
-        platformId = faker.number.int({ min: 1, max: 25 });
-        const existData = await this.userSubscriptionRepository.count({
+        platformId = faker.number.int({ min: 1, max: 289 });
+        const existData = await this.reviewRepository.count({
           where: { userId, platformId },
         });
         if (!existData) break;
       }
-
+      
       if (attempts === maxAttempts) {
         throw new InternalServerErrorException(
           '페이크 구독 중복 검출에 실패했습니다.',
