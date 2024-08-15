@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Platform } from './entities/platforms.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,7 +19,7 @@ export class PlatformsService {
     const data = await this.cacheService.getCache(cachekey);
     const jsonData = JSON.parse(data);
 
-    if (!jsonData) {
+    if (!data) {
       const platforms = await this.platformRepositoty.find({
         select: [
           'id',
@@ -76,7 +76,7 @@ export class PlatformsService {
   }
 
   async getTopRatedPlatforms(): Promise<PlatformVo[]> {
-    const cachekey = 'platformRating';
+    const cachekey = 'topPlatforms';
     const data = await this.cacheService.getCache(cachekey);
 
     const jsonData = JSON.parse(data);
