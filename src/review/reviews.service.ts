@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -16,15 +15,13 @@ import { ReadReviewVo } from './dto/vo/read-review-vo.dto';
 import { ReadAllReviewVo } from './dto/vo/readAll-review-vo';
 import { CreateReviewVo } from './dto/vo/create-review-vo';
 import { UserSubscription } from 'src/user/entities/user-subscription.entity';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewsRepository: Repository<Review>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
     @InjectRepository(UserSubscription)
@@ -86,14 +83,6 @@ export class ReviewsService {
   }
 
   async findPlatformReview(platformId: number): Promise<ReadAllReviewVo[]> {
-    const cacheKey = `platform_reviews_${platformId}`;
-    const cachedReviews =
-      await this.cacheManager.get<ReadAllReviewVo[]>(cacheKey);
-
-    if (cachedReviews) {
-      return cachedReviews;
-    }
-
     const data = await this.reviewsRepository.find({
       where: { platformId },
       relations: ['user'],
@@ -114,7 +103,7 @@ export class ReviewsService {
           review.createdAt,
         ),
     );
-    await this.cacheManager.set(cacheKey, reviews, 600);
+
     return reviews;
   }
 

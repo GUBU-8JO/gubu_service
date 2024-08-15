@@ -14,8 +14,7 @@ import { CategoryModule } from './category/category.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 import { FakerModule } from './faker/faker.module';
 import { ScheduleModule } from '@nestjs/schedule';
-// import { CacheModule } from '@nestjs/cache-manager';
-
+import { PlatformRepository } from './platform/platforms.repository';
 import { RedisModule } from '@nestjs-modules/ioredis';
 
 const typeOrmModuleOptions = {
@@ -44,6 +43,7 @@ const typeOrmModuleOptions = {
       validationSchema: ConfigModuleValidationSchema,
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
+    // TypeOrmModule.forFeature([PlatformRepository]),
     UserModule,
     AuthModule,
     ReviewsModule,
@@ -53,19 +53,16 @@ const typeOrmModuleOptions = {
     CategoryModule,
     FakerModule,
     ScheduleModule.forRoot(),
-
     RedisModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const url = `redis://:${configService.get('REDIS_PASSWORD')}@${configService.get('REDIS_HOST')}:${configService.get('REDIS_PORT')}/0`;
         return {
           type: 'single',
-          // url: configService.get('REDIS_HOST'),
+
           url,
         };
       },
-      //[:패스워드@]호스트[:포트][/DB번호][?필드=값] : 디비기본 0
-      //'redis://:xE9kzc66rIPGRmdoiIQ7qTNwpN9eM37k@redis-17544.c340.ap-northeast-2-1.ec2.redns.redis-cloud.com:17544/0'
       inject: [ConfigService],
     }),
   ],
@@ -73,3 +70,5 @@ const typeOrmModuleOptions = {
   providers: [AppService],
 })
 export class AppModule {}
+
+export { typeOrmModuleOptions };
