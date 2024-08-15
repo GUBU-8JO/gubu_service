@@ -21,6 +21,7 @@ import { MySubscriptionVo } from './dto/mySubscriptionVo';
 import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { ConfigService } from '@nestjs/config';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class UserSubscriptionsService {
@@ -32,6 +33,7 @@ export class UserSubscriptionsService {
     @InjectRepository(SubscriptionHistory)
     private readonly subscriptionHistory: Repository<SubscriptionHistory>,
     private readonly configService: ConfigService,
+    private readonly cacheService: CacheService,
   ) {}
   async create(
     {
@@ -172,6 +174,78 @@ export class UserSubscriptionsService {
       );
     });
   }
+
+  async findAllMeCache(userId: number): Promise<MySubscriptionVo[]> {
+    const userSubscriptionCacheKeyByUserId = `userSubscriptionByUserId:${userId}`;
+    const userSubscriptionCacheDataByUserId = await this.cacheService.getCache(
+      userSubscriptionCacheKeyByUserId,
+    );
+
+    if (_.isNil(userSubscriptionCacheDataByUserId)) {
+      const userSubscriptionDataByUserId =
+        await this.userSubscriptionRepository.find({
+          where: { userId },
+          select: [
+            'id',
+            'platformId',
+            'period',
+            'price',
+            'startedDate',
+            'paymentMethod',
+          ],
+          relations: ['platform', 'subscriptionHistory'],
+        });
+      if (_.isNil(userSubscriptionDataByUserId)) {
+        throw new NotFoundException({
+          status: 404,
+          message: '해당 유저에 대한 등록된 구독목록이 없습니다.',
+        });
+      }
+      const jsonUserSubscriptionCacheDataByUserId = JSON.stringify(
+        userSubscriptionDataByUserId,
+      );
+      await this.cacheService.setCache(
+        userSubscriptionCacheKeyByUserId,
+        jsonUserSubscriptionCacheDataByUserId,
+        { ttl: 3600 } as any,
+      );
+
+      return userSubscriptionDataByUserId.map((subscription) => {
+        return new MySubscriptionVo(
+          subscription.id,
+          subscription.platformId,
+          subscription.period,
+          subscription.price,
+          subscription.paymentMethod,
+          subscription.startedDate,
+          subscription.subscriptionHistory[0]?.nextPayAt,
+          subscription.platform.image,
+          undefined,
+          new PlatformVo(undefined, subscription.platform.title, undefined),
+        );
+      });
+    } else {
+      const jsonUserSubscriptionCacheDataByUserId = JSON.parse(
+        userSubscriptionCacheDataByUserId,
+      );
+
+      return jsonUserSubscriptionCacheDataByUserId.map((subscription) => {
+        return new MySubscriptionVo(
+          subscription.id,
+          subscription.platformId,
+          subscription.period,
+          subscription.price,
+          subscription.paymentMethod,
+          subscription.startedDate,
+          subscription.subscriptionHistory[0]?.nextPayAt,
+          subscription.platform.image,
+          undefined,
+          new PlatformVo(undefined, subscription.platform.title, undefined),
+        );
+      });
+    }
+  }
+
   async findOne(id: number): Promise<UserSubscriptionVo> {
     const data = await this.userSubscriptionRepository.findOne({
       where: { id },

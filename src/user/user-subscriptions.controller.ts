@@ -69,6 +69,23 @@ export class UserSubscriptionsController {
   }
 
   /**
+   * 나의구독정보 캐시조회
+   * @param req
+   * @returns
+   */
+  @Get('/me/cache')
+  async findAllMeCache(@Req() req): Promise<ResponseDto<MySubscriptionVo[]>> {
+    const userId = req.user.id;
+    const data = await this.userSubscriptionsService.findAllMeCache(userId);
+    return new ResponseDto(data);
+    // return {
+    //   status: HttpStatus.OK,
+    //   message: '자기구독정보 조회가 완료되었습니다.',
+    //   data,
+    // };
+  }
+
+  /**
    * 특정 구독정보 조회
    * @returns
    */
