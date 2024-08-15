@@ -1,15 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Platform } from './entities/platforms.entity';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PlatformVo } from './dto/platformVo';
 import { CacheService } from 'src/cache/cache.service';
+import { PlatformRepository } from './platforms.repository';
 
 @Injectable()
 export class PlatformsService {
   constructor(
-    @InjectRepository(Platform)
-    private platformRepositoty: Repository<Platform>,
+    @InjectRepository(PlatformRepository)
+    private platformRepository: PlatformRepository,
 
     private readonly cacheService: CacheService,
   ) {}
@@ -19,18 +18,7 @@ export class PlatformsService {
     const platformList = await this.cacheService.getCache(cachekey);
     const platforms = platformList
       ? JSON.parse(platformList)
-      : await this.platformRepositoty.find({
-          select: [
-            'id',
-            'title',
-            'price',
-            'rating',
-            'image',
-            'categoryId',
-            'purchaseLink',
-            'period',
-          ],
-        });
+      : await this.platformRepository.findPlatforms();
 
     if (!platformList && platforms.length > 0) {
       await this.cacheService.setCache(cachekey, platforms, {
@@ -58,7 +46,7 @@ export class PlatformsService {
     const topPlatforms = await this.cacheService.getCache(cachekey);
     const platforms = topPlatforms
       ? JSON.parse(topPlatforms)
-      : await this.platformRepositoty.find({
+      : await this.platformRepository.find({
           select: ['id', 'title', 'price', 'rating', 'image'],
           order: { rating: 'DESC' },
           take: 10,
@@ -83,19 +71,7 @@ export class PlatformsService {
   }
 
   async findOnePlatformById(id: number): Promise<PlatformVo> {
-    const platform = await this.platformRepositoty.findOne({
-      where: { id },
-      select: [
-        'id',
-        'title',
-        'price',
-        'rating',
-        'image',
-        'categoryId',
-        'purchaseLink',
-        'period',
-      ],
-    });
+    const platform = await this.platformRepository.platformById(id);
     if (!platform) {
       throw new NotFoundException({
         message: '해당 플랫폼이 존재하지 않습니다.',
