@@ -14,6 +14,7 @@ import { CategoryModule } from './category/category.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 import { FakerModule } from './faker/faker.module';
 import { CacheModule } from './cache/cache.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -41,6 +42,7 @@ const typeOrmModuleOptions = {
       validationSchema: ConfigModuleValidationSchema,
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
+    ScheduleModule.forRoot(),
     UserModule,
     AuthModule,
     ReviewsModule,
