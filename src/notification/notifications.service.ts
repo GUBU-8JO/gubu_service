@@ -1,43 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notification } from './entities/notification.entity';
-import { CountVo } from './dto/countVo';
+import { NotificationRepository } from './notification.repository';
 import { NotificationVo } from './dto/notificationVo';
-import _ from 'lodash';
+import { CountVo } from './dto/countVo';
 
 @Injectable()
 export class NotificationsService {
   constructor(
-    @InjectRepository(Notification)
-    private notificationRepository: Repository<Notification>,
+    @InjectRepository(NotificationRepository)
+    private readonly notificationRepository: NotificationRepository,
   ) {}
 
   async findAll(userId: number): Promise<NotificationVo[]> {
-    const notReadNotifications = await this.notificationRepository.find({
-      where: { userId, isRead: false },
-      relations: ['userSubscription', 'userSubscription.subscriptionHistory'],
-      select: ['id', 'title', 'isRead', 'userSubscription', 'createdAt'],
-      order: { createdAt: 'DESC' },
-    });
+    const unreadNotifications = await this.notificationRepository.findUnreadNotifications(userId);
+    const readNotifications = await this.notificationRepository.findReadNotifications(userId);
 
-    const readNotifications = await this.notificationRepository.find({
-      where: { userId, isRead: true },
-      relations: ['userSubscription', 'userSubscription.subscriptionHistory'],
-      select: ['id', 'title', 'isRead', 'userSubscription', 'createdAt'],
-      order: { createdAt: 'DESC' },
-    });
+    const notifications = [...unreadNotifications, ...readNotifications];
 
-    const notifications = [...notReadNotifications, ...readNotifications];
-
-    if (!notifications.length || !notifications) {
+    if (!notifications.length) {
       return [];
     }
 
-    await this.notificationRepository.update(
-      { isRead: false },
-      { isRead: true },
-    );
+    await this.notificationRepository.markAllAsRead();
 
     return notifications.map(
       (notification) =>
@@ -60,16 +44,15 @@ export class NotificationsService {
     const notification = await this.notificationRepository
       .createQueryBuilder('notification')
       .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
-      .leftJoinAndSelect(
-        'userSubscription.subscriptionHistory',
-        'subscriptionHistory',
-      )
+      .leftJoinAndSelect('userSubscription.subscriptionHistory', 'subscriptionHistory')
       .where('notification.userId = :userId', { userId })
       .andWhere('notification.id = :notificationId', { notificationId })
       .getOne();
+
     if (!notification) {
       throw new NotFoundException('알림이 존재하지 않습니다.');
     }
+
     return new NotificationVo(
       notification.id,
       notification.title,
@@ -81,18 +64,12 @@ export class NotificationsService {
 
   /** 미확인 알림 카운트 */
   async countNotifications(userId: number): Promise<CountVo> {
-    const countNotifications = await this.notificationRepository.findAndCountBy(
-      {
-        user: {
-          id: userId,
-        },
-        isRead: false,
-      },
-    );
-    const [_, count] = countNotifications;
+    const count = await this.notificationRepository.countUnreadNotifications(userId);
+
     if (count === 0) {
       throw new NotFoundException('모든 알림을 확인하셨습니다.');
     }
+
     return new CountVo(count);
   }
 }
