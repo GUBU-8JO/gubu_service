@@ -348,8 +348,16 @@ export class UserSubscriptionsService {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
 
-    const encryptedId = await this.encryption(accountId);
-    const encryptedPassword = await this.encryption(accountPw);
+    let encryptedId = accountId;
+    let encryptedPassword = accountPw;
+
+    if (!_.isNil(accountId)) {
+      encryptedId = await this.encryption(accountId);
+    }
+
+    if (!_.isNil(accountPw)) {
+      encryptedPassword = await this.encryption(accountPw);
+    }
 
     await this.userSubscriptionRepository.update(
       { id },
