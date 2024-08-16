@@ -4,9 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { PlatformVo } from '../platform/dto/platformVo';
 import { CategoryVo } from './dto/categoryVo';
-import { Cron } from '@nestjs/schedule';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 
 @Injectable()
 export class CategoryService {
@@ -14,7 +11,6 @@ export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async findAllCategory(): Promise<CategoryVo[]> {
@@ -22,19 +18,18 @@ export class CategoryService {
   }
 
   async findPlatformByCategoryId(id: number): Promise<PlatformVo[]> {
-    const strId = id.toString();
-    const categoryPlatform = await this.cacheManager.get<string>(strId);
-    console.log('categoryPlatform' + categoryPlatform);
+    const platformByCategoryId = await this.categoryRepository.find({
+      where: { id },
+      relations: ['platform'],
+    });
 
-    const jsonCategoryPlatform = JSON.parse(categoryPlatform);
-
-    if (!categoryPlatform) {
+    if (!platformByCategoryId) {
       throw new NotFoundException({
         message: '해당 카테고리가 존재하지 않습니다.',
       });
     }
 
-    const platforms = jsonCategoryPlatform.platform.map(
+    const platforms = platformByCategoryId[0].platform.map(
       (el) =>
         new PlatformVo(
           el.id,
