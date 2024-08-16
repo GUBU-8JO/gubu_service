@@ -21,6 +21,7 @@ export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewsRepository: Repository<Review>,
+
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
     @InjectRepository(UserSubscription)
@@ -88,10 +89,10 @@ export class ReviewsService {
       select: ['id', 'rate', 'comment', 'user', 'platformId', 'createdAt'],
       order: { createdAt: 'DESC' },
     });
-    if (!data.length)
+    if (!data.length) {
       throw new NotFoundException('해당 플랫폼에 리뷰가 존재하지 않습니다.');
-
-    return data.map(
+    }
+    const reviews = data.map(
       (review) =>
         new ReadAllReviewVo(
           review.id,
@@ -102,6 +103,8 @@ export class ReviewsService {
           review.createdAt,
         ),
     );
+
+    return reviews;
   }
 
   async deleteReview(id: number) {

@@ -1,10 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import { Get, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Redis from 'ioredis';
 
 @Injectable()
 export class AppService {
-  constructor(private configService: ConfigService) {}
-  getHello(): string {
-    return `Hello World!${this.configService.get('SERVER_PORT')}`;
+  constructor(
+    @InjectRedis() private readonly redis: Redis,
+    private configService: ConfigService,
+  ) {}
+  @Get()
+  async getHello() {
+    //// this.redis.
+    await this.redis.set('naji', 'Redis data!');
+    const redisData = await this.redis.get('naji');
+    return redisData;
   }
 }
