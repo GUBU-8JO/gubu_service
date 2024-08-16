@@ -6,6 +6,7 @@ import { UserSubscription } from './entities/user-subscription.entity';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistory } from './entities/subscription-histories.entity';
 import { User } from './entities/user.entity';
+import { UserSubscriptionRepository } from './user-subscriptions.repository';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { User } from './entities/user.entity';
     ]),
   ],
   controllers: [UserSubscriptionsController],
-  providers: [UserSubscriptionsService],
+  providers: [UserSubscriptionsService, UserSubscriptionRepository],
+  exports: [UserSubscriptionRepository],
 })
 export class UserSubscriptionsModule {}

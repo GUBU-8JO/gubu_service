@@ -14,7 +14,7 @@ import { CategoryModule } from './category/category.module';
 import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 import { FakerModule } from './faker/faker.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { PlatformRepository } from './platform/platforms.repository';
+// import { PlatformRepository } from './platform/platforms.repository';
 import { RedisModule } from '@nestjs-modules/ioredis';
 
 const typeOrmModuleOptions = {

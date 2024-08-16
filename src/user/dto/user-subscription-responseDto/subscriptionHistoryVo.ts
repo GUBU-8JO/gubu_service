@@ -12,7 +12,7 @@ export class SubscriptionHistoryVo {
     price: number,
     startAt: Date,
     nextPayAt: Date,
-    stopRequestedAt: Date,
+    stopRequestedAt?: Date,
   ) {
     this.id = id;
     this.userSubscriptionId = userSubscriptionId;

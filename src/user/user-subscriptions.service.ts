@@ -7,7 +7,6 @@ import {
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserSubscription } from './entities/user-subscription.entity';
 import { Repository } from 'typeorm';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistory } from './entities/subscription-histories.entity';
@@ -21,18 +20,21 @@ import { MySubscriptionVo } from './dto/mySubscriptionVo';
 import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { ConfigService } from '@nestjs/config';
+import { UserSubscriptionRepository } from './user-subscriptions.repository';
 
 @Injectable()
 export class UserSubscriptionsService {
   constructor(
-    @InjectRepository(UserSubscription)
-    private readonly userSubscriptionRepository: Repository<UserSubscription>,
+    // @InjectRepository(UserSubscription)
+    private readonly userSubscriptionRepository: UserSubscriptionRepository,
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
     @InjectRepository(SubscriptionHistory)
     private readonly subscriptionHistory: Repository<SubscriptionHistory>,
     private readonly configService: ConfigService,
   ) {}
+
+  // 유저 구독정보 추가
   async create(
     {
       startedDate,
@@ -45,7 +47,14 @@ export class UserSubscriptionsService {
     userId: number,
     platformId: number,
   ): Promise<UserSubscriptionVo> {
-    const existPlatform = await this.platformRepository.findOne({
+    // const existPlatform = await this.userSubscriptionRepository.create(
+    //   CreateUserSubscriptionDto,
+    //   userId,
+    //   platformId,
+    // );
+
+    // //플랫폼에서 작성된 코드 가져와서 검증할 것
+    const existPlatform = await this.userSubscriptionRepository.findOne({
       where: { id: platformId },
     });
 
@@ -54,7 +63,7 @@ export class UserSubscriptionsService {
         status: 404,
         message: '등록되지않은 플랫폼입니다.',
       });
-
+    //유저아이디와 플랫폼 아이디로 일치하는 것 찾기
     const existingSubscription = await this.userSubscriptionRepository.findOne({
       where: {
         userId: userId,
@@ -129,6 +138,7 @@ export class UserSubscriptionsService {
       data.userId,
     );
   }
+
   // 다음 날짜 계산 함수 (월 단위로 증가)
   private calculateNextDate(startedDate: Date, period: number): Date {
     const nextDate = new Date(startedDate);
@@ -136,19 +146,9 @@ export class UserSubscriptionsService {
     return nextDate;
   }
 
+  // 내 구독정보 모두 조회
   async findAllMe(userId: number): Promise<MySubscriptionVo[]> {
-    const data = await this.userSubscriptionRepository.find({
-      where: { userId },
-      select: [
-        'id',
-        'platformId',
-        'period',
-        'price',
-        'startedDate',
-        'paymentMethod',
-      ],
-      relations: ['platform', 'subscriptionHistory'],
-    });
+    const data = await this.userSubscriptionRepository.findAllMe(userId);
 
     if (!data.length) {
       throw new NotFoundException({
@@ -172,26 +172,15 @@ export class UserSubscriptionsService {
       );
     });
   }
+
+  // 구독정보 하나 조회
   async findOne(id: number): Promise<UserSubscriptionVo> {
-    const data = await this.userSubscriptionRepository.findOne({
-      where: { id },
-      select: [
-        'id',
-        'platformId',
-        'period',
-        'price',
-        'paymentMethod',
-        'startedDate',
-        'accountId',
-        'accountPw',
-        'userId',
-      ],
-      relations: ['platform', 'subscriptionHistory'],
-    });
+    const data = await this.userSubscriptionRepository.findOne(id);
     if (!data) {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
+    // 암호화 : CRYPTO(aes)
     const encryptedIdBufferFromHex = Buffer.from(data.accountId, 'hex');
     const encryptedPwBufferFromHex = Buffer.from(data.accountPw, 'hex');
 
@@ -217,15 +206,15 @@ export class UserSubscriptionsService {
     const decryptedAccountId = decryptedId.toString();
     const decryptedAccountPw = decryptedPw.toString();
 
-    const platform = data.platform;
+    //
     const platformVo = new PlatformVo(
-      platform.id,
-      platform.title,
-      platform.price,
-      platform.image,
-      platform.purchaseLink,
-      platform.period,
-      platform.rating,
+      data.platform.id,
+      data.platform.title,
+      data.platform.price,
+      data.platform.image,
+      data.platform.purchaseLink,
+      data.platform.period,
+      data.platform.rating,
     );
 
     const subscriptionHistoryVos = data.subscriptionHistory.map(
@@ -256,6 +245,7 @@ export class UserSubscriptionsService {
   }
   async findInfo(id: number, password: string) {
     const subscriptionInfo = await this.userSubscriptionRepository.findOne({
+      //아이디로 찾아서 패스워드도 가져오기
       where: { id },
       relations: ['user'],
       select: {
@@ -301,6 +291,7 @@ export class UserSubscriptionsService {
   ): Promise<UserSubscriptionUpdateVo> {
     const existUserSubscription = await this.userSubscriptionRepository.findOne(
       {
+        //아이디로 구독정보에 있는 정보 찾기
         where: { id },
       },
     );
