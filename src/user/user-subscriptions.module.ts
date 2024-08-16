@@ -7,6 +7,8 @@ import { Platform } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistory } from './entities/subscription-histories.entity';
 import { User } from './entities/user.entity';
 import { UserSubscriptionRepository } from './user-subscriptions.repository';
+// import { CacheService } from 'src/cache/cache.service';
+import { CacheModule } from 'src/cache/cache.module';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { UserSubscriptionRepository } from './user-subscriptions.repository';
       SubscriptionHistory,
       User,
     ]),
+    CacheModule,
   ],
   controllers: [UserSubscriptionsController],
   providers: [UserSubscriptionsService, UserSubscriptionRepository],

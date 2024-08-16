@@ -1,32 +1,25 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PlatformVo } from './dto/platformVo';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { Redis } from 'ioredis';
-import { InjectRedis } from '@nestjs-modules/ioredis';
+import { CacheService } from 'src/cache/cache.service';
 import { PlatformRepository } from './platforms.repository';
-import { Inject } from '@nestjs/common';
-
-//@Injectable() : 디비 건드리는 친구에게 붙이는 것
-export class PlatformService {
-  //레파지토리와 연결
+@Injectable()
+export class PlatformsService {
   constructor(
-    @Inject(PlatformRepository)
     private readonly platformRepository: PlatformRepository,
-    @InjectRedis() private readonly redis: Redis,
+    private readonly cacheService: CacheService,
   ) {}
-
-  //우리는 : 레디스 관련은 여기
   async findAllPlatforms(): Promise<PlatformVo[]> {
-    console.time('findAllPlatforms');
-
-    const cacheKey = 'allPlatforms';
-    const cachedAllPlatforms = await this.redis.get(cacheKey);
-    if (cachedAllPlatforms) {
-      console.timeEnd('findAllPlatforms');
-      console.log('전체조회--', JSON.parse(cachedAllPlatforms)); // JSON 파싱
-      return JSON.parse(cachedAllPlatforms);
+    const cachekey = 'platforms';
+    const platformList = await this.cacheService.getCache(cachekey);
+    const platforms = platformList
+      ? JSON.parse(platformList)
+      : await this.platformRepository.findPlatforms();
+    if (!platformList && platforms.length > 0) {
+      await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
+        ttl: 3600,
+      } as any);
     }
-    const platforms = await this.platformRepository.findAllPlatforms();
-    const result = platforms.map(
+    return platforms.map(
       (platform) =>
         new PlatformVo(
           platform.id,
@@ -39,34 +32,19 @@ export class PlatformService {
           platform.period,
         ),
     );
-    await this.redis.set(cacheKey, JSON.stringify(result), 'EX', 600); //68400
-
-    console.timeEnd('findAllPlatforms');
-    console.log(result);
-    return result;
   }
-
-  @Cron(CronExpression.EVERY_10_SECONDS)
   async getTopRatedPlatforms(): Promise<PlatformVo[]> {
-    await this.redis.del('top_rated_platforms');
-    console.time('getTopRatedPlatforms');
-    //데이터 가져오기
-    const cacheKey = 'top_rated_platforms';
-    const cachedPlatforms = await this.redis.zrevrange(
-      cacheKey,
-      0,
-      10,
-      'WITHSCORES',
-    );
-    if (cachedPlatforms.length > 0) {
-      console.timeEnd('getTopRatedPlatforms');
-      const parsedCachedPlatforms = JSON.parse(cachedPlatforms[0]);
-      console.log(parsedCachedPlatforms);
-      return parsedCachedPlatforms;
+    const cachekey = 'topPlatforms';
+    const topPlatforms = await this.cacheService.getCache(cachekey);
+    const platforms = topPlatforms
+      ? JSON.parse(topPlatforms)
+      : await this.platformRepository.findTopPlatforms();
+    if (!topPlatforms && platforms.length > 0) {
+      await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
+        ttl: 3600,
+      } as any);
     }
-
-    const platforms = await this.platformRepository.findAllPlatforms();
-    const result = platforms.map(
+    return platforms.map(
       (platform) =>
         new PlatformVo(
           platform.id,
@@ -74,23 +52,16 @@ export class PlatformService {
           platform.price,
           platform.rating,
           platform.image,
-          platform.categoryId,
-          platform.purchaseLink,
-          platform.period,
         ),
     );
-    //get이 있으면 가져오고, 없음 디비에서 가져옴.
-    await this.redis.set(cacheKey, JSON.stringify(result), 'EX', 600); // 1시간 동안 캐시 유지해야함 86400
-    //
-    // await this.redis.zadd('');
-
-    console.timeEnd('getTopRatedPlatforms');
-    console.log(result); // 10초마다 결과를 콘솔에 출력
-    return result;
   }
-
   async findOnePlatformById(id: number): Promise<PlatformVo> {
-    const platform = await this.platformRepository.findOnePlatformById(id);
+    const platform = await this.platformRepository.platformById(id);
+    if (!platform) {
+      throw new NotFoundException({
+        message: '해당 플랫폼이 존재하지 않습니다.',
+      });
+    }
     return new PlatformVo(
       platform.id,
       platform.title,
@@ -103,21 +74,3 @@ export class PlatformService {
     );
   }
 }
-
-///
-//   @Cron('0 0 9 * * *',{ timeZone : 'Asia/seoul'})
-//   async todayrank()=> {
-//   // 디비수식
-//     const platforms = await this.platformRepositoty.find({
-//       select: ['id', 'title', 'price', 'rating', 'image'],
-//       order: { rating: 'DESC' },
-//       take: 5,
-//     });
-// }
-// this.redis.set({
-//   'rank', platforms
-//     return this.redis.get('rank')
-// }
-// )
-
-///

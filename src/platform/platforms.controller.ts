@@ -6,7 +6,7 @@ import {
   Param,
   ParseIntPipe,
 } from '@nestjs/common';
-import { PlatformService } from './platforms.service';
+import { PlatformsService } from './platforms.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/common/response.dto';
 import { PlatformVo } from './dto/platformVo';
@@ -15,8 +15,8 @@ import { PlatformVo } from './dto/platformVo';
 @Controller('platforms')
 export class PlatformsController {
   constructor(
-    @Inject(PlatformService)
-    private readonly platformService: PlatformService,
+    @Inject(PlatformsService)
+    private readonly platformService: PlatformsService,
   ) {}
   // (private readonly platformService: PlatformsService) { }
 
