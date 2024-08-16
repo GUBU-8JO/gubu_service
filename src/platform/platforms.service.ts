@@ -1,66 +1,30 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Platform } from './entities/platforms.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PlatformVo } from './dto/platformVo';
 import { CacheService } from 'src/cache/cache.service';
+import { PlatformRepository } from './platforms.repository';
 
 @Injectable()
 export class PlatformsService {
   constructor(
-    @InjectRepository(Platform)
-    private platformRepositoty: Repository<Platform>,
+    private readonly platformRepository: PlatformRepository,
 
     private readonly cacheService: CacheService,
   ) {}
 
   async findAllPlatforms(): Promise<PlatformVo[]> {
     const cachekey = 'platforms';
-    const data = await this.cacheService.getCache(cachekey);
-    const jsonData = JSON.parse(data);
+    const platformList = await this.cacheService.getCache(cachekey);
+    const platforms = platformList
+      ? JSON.parse(platformList)
+      : await this.platformRepository.findPlatforms();
 
-    if (!data) {
-      const platforms = await this.platformRepositoty.find({
-        select: [
-          'id',
-          'title',
-          'price',
-          'rating',
-          'image',
-          'categoryId',
-          'purchaseLink',
-          'period',
-        ],
-      });
-      if (!platforms) {
-        throw new NotFoundException({
-          message: '해당 플랫폼이 존재하지 않습니다.',
-        });
-      }
-
-      await this.cacheService.setCache(cachekey, platforms, {
+    if (!platformList && platforms.length > 0) {
+      await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
         ttl: 3600,
       } as any);
-
-      const data = await this.cacheService.getCache(cachekey);
-      const jsonData = JSON.parse(data);
-
-      return jsonData.map(
-        (platform) =>
-          new PlatformVo(
-            platform.id,
-            platform.title,
-            platform.price,
-            platform.rating,
-            platform.image,
-            platform.categoryId,
-            platform.purchaseLink,
-            platform.period,
-          ),
-      );
     }
 
-    return jsonData.map(
+    return platforms.map(
       (platform) =>
         new PlatformVo(
           platform.id,
@@ -77,41 +41,18 @@ export class PlatformsService {
 
   async getTopRatedPlatforms(): Promise<PlatformVo[]> {
     const cachekey = 'topPlatforms';
-    const data = await this.cacheService.getCache(cachekey);
+    const topPlatforms = await this.cacheService.getCache(cachekey);
+    const platforms = topPlatforms
+      ? JSON.parse(topPlatforms)
+      : await this.platformRepository.findTopPlatforms();
 
-    const jsonData = JSON.parse(data);
-
-    if (!data) {
-      const platforms = await this.platformRepositoty.find({
-        select: ['id', 'title', 'price', 'rating', 'image'],
-        order: { rating: 'DESC' },
-        take: 10,
-      });
-      if (!platforms) {
-        throw new NotFoundException({
-          message: '해당 플랫폼이 존재하지 않습니다.',
-        });
-      }
-      await this.cacheService.setCache(cachekey, platforms, {
+    if (!topPlatforms && platforms.length > 0) {
+      await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
         ttl: 3600,
       } as any);
-      const data = await this.cacheService.getCache(cachekey);
-
-      const jsonData = JSON.parse(data);
-
-      return jsonData.map(
-        (platform) =>
-          new PlatformVo(
-            platform.id,
-            platform.title,
-            platform.price,
-            platform.rating,
-            platform.image,
-          ),
-      );
     }
 
-    return jsonData.map(
+    return platforms.map(
       (platform) =>
         new PlatformVo(
           platform.id,
@@ -124,19 +65,7 @@ export class PlatformsService {
   }
 
   async findOnePlatformById(id: number): Promise<PlatformVo> {
-    const platform = await this.platformRepositoty.findOne({
-      where: { id },
-      select: [
-        'id',
-        'title',
-        'price',
-        'rating',
-        'image',
-        'categoryId',
-        'purchaseLink',
-        'period',
-      ],
-    });
+    const platform = await this.platformRepository.platformById(id);
     if (!platform) {
       throw new NotFoundException({
         message: '해당 플랫폼이 존재하지 않습니다.',
