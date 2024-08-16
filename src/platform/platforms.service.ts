@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PlatformVo } from './dto/platformVo';
 import { CacheService } from 'src/cache/cache.service';
 import { PlatformRepository } from './platforms.repository';
@@ -7,8 +6,7 @@ import { PlatformRepository } from './platforms.repository';
 @Injectable()
 export class PlatformsService {
   constructor(
-    @InjectRepository(PlatformRepository)
-    private platformRepository: PlatformRepository,
+    private readonly platformRepository: PlatformRepository,
 
     private readonly cacheService: CacheService,
   ) {}
@@ -21,7 +19,7 @@ export class PlatformsService {
       : await this.platformRepository.findPlatforms();
 
     if (!platformList && platforms.length > 0) {
-      await this.cacheService.setCache(cachekey, platforms, {
+      await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
         ttl: 3600,
       } as any);
     }
@@ -46,14 +44,10 @@ export class PlatformsService {
     const topPlatforms = await this.cacheService.getCache(cachekey);
     const platforms = topPlatforms
       ? JSON.parse(topPlatforms)
-      : await this.platformRepository.find({
-          select: ['id', 'title', 'price', 'rating', 'image'],
-          order: { rating: 'DESC' },
-          take: 10,
-        });
+      : await this.platformRepository.findTopPlatforms();
 
     if (!topPlatforms && platforms.length > 0) {
-      await this.cacheService.setCache(cachekey, platforms, {
+      await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
         ttl: 3600,
       } as any);
     }
