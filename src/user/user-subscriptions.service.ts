@@ -69,30 +69,8 @@ export class UserSubscriptionsService {
         message: '이미 구독중인 플랫폼 입니다.',
       });
 
-    const Idiv = randomBytes(16);
-    const Pwiv = randomBytes(16);
-    const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
-    const key = (await promisify(scrypt)(cryptoPassword, 'salt', 32)) as Buffer;
-    const Idcipher = createCipheriv('aes-256-ctr', key, Idiv);
-    const Pwcipher = createCipheriv('aes-256-ctr', key, Pwiv);
-
-    const encryptedAccountId = Buffer.concat([
-      Idcipher.update(accountId),
-      Idcipher.final(),
-    ]);
-
-    const encryptedAccountPw = Buffer.concat([
-      Pwcipher.update(accountPw),
-      Pwcipher.final(),
-    ]);
-
-    const encryptedId = Buffer.concat([Idiv, encryptedAccountId]).toString(
-      'hex',
-    );
-    const encryptedPassword = Buffer.concat([
-      Pwiv,
-      encryptedAccountPw,
-    ]).toString('hex');
+    const encryptedId = await this.encryption(accountId);
+    const encryptedPassword = await this.encryption(accountPw);
 
     // startedDate를 Date 객체로 변환
     const startedDateObj = new Date(startedDate);
@@ -266,30 +244,8 @@ export class UserSubscriptionsService {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    const encryptedIdBufferFromHex = Buffer.from(data.accountId, 'hex');
-    const encryptedPwBufferFromHex = Buffer.from(data.accountPw, 'hex');
-
-    const Idiv = encryptedIdBufferFromHex.slice(0, 16);
-    const encryptedId = encryptedIdBufferFromHex.slice(16);
-    const Pwiv = encryptedPwBufferFromHex.slice(0, 16);
-    const encryptedPw = encryptedPwBufferFromHex.slice(16);
-
-    const password = this.configService.get('CRYPTO_PASSWORD');
-    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
-    const Iddecipher = createDecipheriv('aes-256-ctr', key, Idiv);
-    const Pwdecipher = createDecipheriv('aes-256-ctr', key, Pwiv);
-
-    const decryptedId = Buffer.concat([
-      Iddecipher.update(encryptedId),
-      Iddecipher.final(),
-    ]);
-    const decryptedPw = Buffer.concat([
-      Pwdecipher.update(encryptedPw),
-      Pwdecipher.final(),
-    ]);
-
-    const decryptedAccountId = decryptedId.toString();
-    const decryptedAccountPw = decryptedPw.toString();
+    const decryptedAccountId = await this.decryption(data.accountId);
+    const decryptedAccountPw = await this.decryption(data.accountPw);
 
     const platform = data.platform;
     const platformVo = new PlatformVo(
@@ -391,14 +347,18 @@ export class UserSubscriptionsService {
     if (newdata) {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
+
+    const encryptedId = await this.encryption(accountId);
+    const encryptedPassword = await this.encryption(accountPw);
+
     await this.userSubscriptionRepository.update(
       { id },
       {
         startedDate,
         paymentMethod,
         period,
-        accountId,
-        accountPw,
+        accountId: encryptedId,
+        accountPw: encryptedPassword,
         price,
       },
     );
@@ -435,5 +395,40 @@ export class UserSubscriptionsService {
     );
 
     return true;
+  }
+
+  private async encryption(data) {
+    const iv = randomBytes(16);
+    const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
+    const key = (await promisify(scrypt)(cryptoPassword, 'salt', 32)) as Buffer;
+    const cipher = createCipheriv('aes-256-ctr', key, iv);
+
+    const encryptedata = Buffer.concat([cipher.update(data), cipher.final()]);
+
+    const encryptedByConcatIvData = Buffer.concat([iv, encryptedata]).toString(
+      'hex',
+    );
+
+    return encryptedByConcatIvData;
+  }
+
+  private async decryption(data) {
+    const encryptedDataBufferFromHex = Buffer.from(data, 'hex');
+
+    const DataIv = encryptedDataBufferFromHex.slice(0, 16);
+    const encryptedData = encryptedDataBufferFromHex.slice(16);
+
+    const password = this.configService.get('CRYPTO_PASSWORD');
+    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
+    const DataDecipher = createDecipheriv('aes-256-ctr', key, DataIv);
+
+    const decryptedBufferData = Buffer.concat([
+      DataDecipher.update(encryptedData),
+      DataDecipher.final(),
+    ]);
+
+    const decryptedData = decryptedBufferData.toString();
+
+    return decryptedData;
   }
 }
