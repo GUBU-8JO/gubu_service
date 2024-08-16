@@ -9,17 +9,14 @@ import {
   CacheModule as NestCacheModule,
   CacheModuleOptions,
 } from '@nestjs/cache-manager';
+import { ReviewRepository } from './review.repository';
 
 @Module({
-  // imports: [
-  //   TypeOrmModule.forFeature([Review, Platform, UserSubscription]),
-  //   CacheModule(),
-  // ],
   imports: [
     TypeOrmModule.forFeature([Review, Platform, UserSubscription]),
     NestCacheModule.register<CacheModuleOptions>({}),
   ],
   controllers: [ReviewsController],
-  providers: [ReviewsService],
+  providers: [ReviewsService, ReviewRepository],
 })
 export class ReviewsModule {}
