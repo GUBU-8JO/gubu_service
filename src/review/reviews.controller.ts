@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { FindReviewDto } from './dto/find-review.dto';
+// import { FindReviewDto } from './dto/find-review.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ResponseDto } from 'src/common/response.dto';

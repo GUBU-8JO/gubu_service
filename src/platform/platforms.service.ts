@@ -2,28 +2,23 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PlatformVo } from './dto/platformVo';
 import { CacheService } from 'src/cache/cache.service';
 import { PlatformRepository } from './platforms.repository';
-
 @Injectable()
 export class PlatformsService {
   constructor(
     private readonly platformRepository: PlatformRepository,
-
     private readonly cacheService: CacheService,
   ) {}
-
   async findAllPlatforms(): Promise<PlatformVo[]> {
     const cachekey = 'platforms';
     const platformList = await this.cacheService.getCache(cachekey);
     const platforms = platformList
       ? JSON.parse(platformList)
       : await this.platformRepository.findPlatforms();
-
     if (!platformList && platforms.length > 0) {
       await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
         ttl: 3600,
       } as any);
     }
-
     return platforms.map(
       (platform) =>
         new PlatformVo(
@@ -38,20 +33,17 @@ export class PlatformsService {
         ),
     );
   }
-
   async getTopRatedPlatforms(): Promise<PlatformVo[]> {
     const cachekey = 'topPlatforms';
     const topPlatforms = await this.cacheService.getCache(cachekey);
     const platforms = topPlatforms
       ? JSON.parse(topPlatforms)
       : await this.platformRepository.findTopPlatforms();
-
     if (!topPlatforms && platforms.length > 0) {
       await this.cacheService.setCache(cachekey, JSON.stringify(platforms), {
         ttl: 3600,
       } as any);
     }
-
     return platforms.map(
       (platform) =>
         new PlatformVo(
@@ -63,7 +55,6 @@ export class PlatformsService {
         ),
     );
   }
-
   async findOnePlatformById(id: number): Promise<PlatformVo> {
     const platform = await this.platformRepository.platformById(id);
     if (!platform) {
