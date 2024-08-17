@@ -24,8 +24,8 @@ export class UserSubscriptionRepository extends Repository<UserSubscription> {
     return userSubData;
   }
 
-  async findOne(id): Promise<UserSubscription> {
-    const findUserSub = await this.find({
+  async findSubscriptionById(id): Promise<UserSubscription> {
+    const findUserSub = await this.findOne({
       where: { id },
       select: [
         'id',
@@ -40,6 +40,6 @@ export class UserSubscriptionRepository extends Repository<UserSubscription> {
       ],
       relations: ['platform', 'subscriptionHistory'],
     });
-    return findUserSub[0];
+    return findUserSub;
   }
 }
