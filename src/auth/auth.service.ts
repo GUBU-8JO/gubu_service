@@ -51,8 +51,7 @@ export class AuthService {
   //디비에 있는 사용자 확인
   async validateUser({ email, password }: SignInDto) {
     //findOnBy 사용시 select옵션을 사용할 수 없으므로, 엔티티에 안가져오기로 했던 비밀번호를 가져올 수 없음
-    const user = await this.authrepository.findUser(email, password);
-    console.log(user);
+    const user = await this.authrepository.findUser(email);
     const passwordMatched = bcrypt.compareSync(password, user?.password ?? '');
     if (!user || !passwordMatched) {
       return null;

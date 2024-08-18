@@ -23,7 +23,7 @@ export class AuthRepository {
     return user;
   }
 
-  async findUser(email: string, password: string) {
+  async findUser(email: string) {
     const user = await this.repository.findOne({
       where: { email },
       select: { id: true, password: true, email: true },
