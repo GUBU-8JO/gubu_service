@@ -28,7 +28,6 @@ export class AuthRepository {
       where: { email },
       select: { id: true, password: true, email: true },
     });
-    console.log(user, 'db user');
     return user;
   }
 

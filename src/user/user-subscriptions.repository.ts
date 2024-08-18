@@ -90,7 +90,7 @@ export class UserSubscriptionRepository {
     return data;
   }
 
-  //계정정보 확인 //password없이 괜찮은지 확인하기
+  //계정정보 확인
   async findInfoById(id: number) {
     const subscriptionInfo = await this.repository.findOne({
       where: { id },
