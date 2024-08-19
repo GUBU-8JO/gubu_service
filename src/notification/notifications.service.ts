@@ -15,6 +15,7 @@ export class NotificationsService {
   async findAll(userId: number): Promise<NotificationVo[]> {
     const notifications = await this.notificationRepository
       .createQueryBuilder('notification')
+      .withDeleted()
       .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
       .leftJoinAndSelect(
         'userSubscription.subscriptionHistory',
