@@ -11,7 +11,6 @@ export class AppService {
   ) {}
   @Get()
   async getHello() {
-    //// this.redis.
     await this.redis.set('naji', 'Redis data!');
     const redisData = await this.redis.get('naji');
     return redisData;
