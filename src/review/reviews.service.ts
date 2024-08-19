@@ -33,16 +33,22 @@ export class ReviewsService {
     const existPlatform = await this.platformRepository.findOne({
       where: { id: platformId },
     });
-    if (!existPlatform) throw new NotFoundException('플랫폼이 존재하지 않습니다.');
+    if (!existPlatform)
+      throw new NotFoundException('플랫폼이 존재하지 않습니다.');
 
     const userSubscription = await this.userSubscriptionRepository.findOne({
       where: { userId, platformId },
     });
     if (!userSubscription) {
-      throw new ForbiddenException('구독한 플랫폼에만 리뷰를 작성할 수 있습니다.');
+      throw new ForbiddenException(
+        '구독한 플랫폼에만 리뷰를 작성할 수 있습니다.',
+      );
     }
 
-    const existReview = await this.reviewRepository.findReview(userId, platformId);
+    const existReview = await this.reviewRepository.findReview(
+      userId,
+      platformId,
+    );
     if (existReview) {
       throw new ConflictException('리뷰는 하나만 작성할 수 있습니다.');
     }
