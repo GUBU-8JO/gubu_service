@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
@@ -7,7 +7,6 @@ import { CategoryVo } from './dto/categoryVo';
 
 @Injectable()
 export class CategoryService {
-  private readonly logger = new Logger(CategoryService.name);
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
@@ -18,36 +17,35 @@ export class CategoryService {
   }
 
   async findPlatformByCategoryId(id: number): Promise<PlatformVo[]> {
-    const platformByCategoryId = await this.categoryRepository.find({
+    const category = await this.categoryRepository.findOne({
       where: { id },
       relations: ['platform'],
     });
 
-    if (!platformByCategoryId) {
+    if (!category) {
       throw new NotFoundException({
         message: '해당 카테고리가 존재하지 않습니다.',
       });
     }
 
-    const platforms = platformByCategoryId[0].platform.map(
-      (el) =>
+    if (!category.platform || category.platform.length === 0) {
+      return [];
+    }
+
+    const platforms = category.platform.map(
+      (platform) =>
         new PlatformVo(
-          el.id,
-          el.title,
-          el.price,
-          el.rating,
-          el.image,
-          el.categoryId,
-          el.purchaseLink,
-          el.period,
+          platform.id,
+          platform.title,
+          platform.price,
+          platform.rating,
+          platform.image,
+          platform.categoryId,
+          platform.purchaseLink,
+          platform.period,
         ),
     );
 
     return platforms;
   }
 }
-
-// const category = await this.categoryRepository.findOne({
-//   where: { id },
-//   relations: ['platform'],
-// });

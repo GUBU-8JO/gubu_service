@@ -20,7 +20,6 @@ import { UserSubscriptionVo } from './dto/user-subscription-responseDto/userSubs
 import { SubscriptionInfoDto } from './dto/subscriptionInfo.dto';
 import { MySubscriptionVo } from './dto/mySubscriptionVo';
 
-//
 @ApiTags('05. 유저 구독정보')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -43,12 +42,12 @@ export class UserSubscriptionsController {
     @Body() createUserSubscriptionDto: CreateUserSubscriptionDto,
   ): Promise<ResponseDto<UserSubscriptionVo>> {
     const userId = req.user.id;
-    const data = await this.userSubscriptionsService.create(
+    const newSubscription = await this.userSubscriptionsService.create(
       createUserSubscriptionDto,
       userId,
       platformId,
     );
-    return new ResponseDto(data);
+    return new ResponseDto(newSubscription);
   }
 
   /**
@@ -59,13 +58,8 @@ export class UserSubscriptionsController {
   @Get('/me')
   async findAllMe(@Req() req): Promise<ResponseDto<MySubscriptionVo[]>> {
     const userId = req.user.id;
-    const data = await this.userSubscriptionsService.findAllMe(userId);
-    return new ResponseDto(data);
-    // return {
-    //   status: HttpStatus.OK,
-    //   message: '자기구독정보 조회가 완료되었습니다.',
-    //   data,
-    // };
+    const newSubscription = await this.userSubscriptionsService.findAllMe(userId);
+    return new ResponseDto(newSubscription);
   }
 
   /**
@@ -76,13 +70,8 @@ export class UserSubscriptionsController {
   @Get('/me/cache')
   async findAllMeCache(@Req() req): Promise<ResponseDto<MySubscriptionVo[]>> {
     const userId = req.user.id;
-    const data = await this.userSubscriptionsService.findAllMeCache(userId);
-    return new ResponseDto(data);
-    // return {
-    //   status: HttpStatus.OK,
-    //   message: '자기구독정보 조회가 완료되었습니다.',
-    //   data,
-    // };
+    const newSubscription = await this.userSubscriptionsService.findAllMeCache(userId);
+    return new ResponseDto(newSubscription);
   }
 
   /**
@@ -91,11 +80,11 @@ export class UserSubscriptionsController {
    */
   @Get('/:subscriptionId')
   async findOne(@Param('subscriptionId') id: number) {
-    const data = await this.userSubscriptionsService.findOne(id);
+    const subscription = await this.userSubscriptionsService.findOne(id);
     return {
       status: HttpStatus.OK,
       message: '특정 구독정보 조회가 완료되었습니다.',
-      data,
+      subscription,
     };
   }
 
@@ -109,8 +98,8 @@ export class UserSubscriptionsController {
     @Body() subscriptionInfoDto: SubscriptionInfoDto,
   ) {
     const { password } = subscriptionInfoDto;
-    const data = await this.userSubscriptionsService.findInfo(id, password);
-    const userInfo = { accountId: data.accountId, accountPw: data.accountPw };
+    const subscriptionInfo = await this.userSubscriptionsService.findInfo(id, password);
+    const userInfo = { accountId: subscriptionInfo.accountId, accountPw: subscriptionInfo.accountPw };
     return {
       status: HttpStatus.OK,
       message: '구독 계정정보 조회가 완료되었습니다.',
@@ -126,14 +115,14 @@ export class UserSubscriptionsController {
     @Param('subscriptionId') id: number,
     @Body() updateUserSubscriptionDto: UpdateUserSubscriptionDto,
   ) {
-    const data = await this.userSubscriptionsService.update(
+    const updatedSubscription = await this.userSubscriptionsService.update(
       id,
       updateUserSubscriptionDto,
     );
     return {
       status: HttpStatus.OK,
       message: '정상적으로 수정 완료되었습니다.',
-      data,
+      updatedSubscription,
     };
   }
 

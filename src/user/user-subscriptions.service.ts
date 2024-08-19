@@ -70,7 +70,7 @@ export class UserSubscriptionsService {
     // startedDate를 Date 객체로 변환
     const startedDateObj = new Date(startedDate);
 
-    const data = await this.userSubscriptionRepository.saveSubscription(
+    const newSubscription = await this.userSubscriptionRepository.saveSubscription(
       startedDate,
       paymentMethod,
       period,
@@ -84,24 +84,24 @@ export class UserSubscriptionsService {
     const nextPayAt = this.calculateNextDate(startedDateObj, period);
 
     await this.subscriptionHistory.save({
-      userSubscriptionId: data.id,
+      userSubscriptionId: newSubscription.id,
       startAt: startedDateObj,
       nextPayAt: nextPayAt,
-      price: data.price,
+      price: newSubscription.price,
       stopDate: null,
-      userSubscription: data,
+      userSubscription: newSubscription,
     });
 
     return new UserSubscriptionVo(
-      data.id,
-      data.platformId,
-      data.period,
-      data.price,
-      data.paymentMethod,
-      data.startedDate,
-      data.accountId,
-      data.accountPw,
-      data.userId,
+      newSubscription.id,
+      newSubscription.platformId,
+      newSubscription.period,
+      newSubscription.price,
+      newSubscription.paymentMethod,
+      newSubscription.startedDate,
+      newSubscription.accountId,
+      newSubscription.accountPw,
+      newSubscription.userId,
     );
   }
   // 다음 날짜 계산 함수 (월 단위로 증가)
@@ -198,15 +198,15 @@ export class UserSubscriptionsService {
   }
 
   async findOne(id: number): Promise<UserSubscriptionVo> {
-    const data = await this.userSubscriptionRepository.findSubscriptionById(id);
-    if (!data) {
+    const subscription = await this.userSubscriptionRepository.findSubscriptionById(id);
+    if (!subscription) {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    const decryptedAccountId = await this.decryption(data.accountId);
-    const decryptedAccountPw = await this.decryption(data.accountPw);
+    const decryptedAccountId = await this.decryption(subscription.accountId);
+    const decryptedAccountPw = await this.decryption(subscription.accountPw);
 
-    const platform = data.platform;
+    const platform = subscription.platform;
     const platformVo = new PlatformVo(
       platform.id,
       platform.title,
@@ -217,7 +217,7 @@ export class UserSubscriptionsService {
       platform.rating,
     );
 
-    const subscriptionHistoryVos = data.subscriptionHistory.map(
+    const subscriptionHistoryVos = subscription.subscriptionHistory.map(
       (history) =>
         new SubscriptionHistoryVo(
           history.id,
@@ -230,15 +230,15 @@ export class UserSubscriptionsService {
     );
 
     return new UserSubscriptionVo(
-      data.id,
-      data.platformId,
-      data.period,
-      data.price,
-      data.paymentMethod,
-      data.startedDate,
+      subscription.id,
+      subscription.platformId,
+      subscription.period,
+      subscription.price,
+      subscription.paymentMethod,
+      subscription.startedDate,
       decryptedAccountId,
       decryptedAccountPw,
-      data.userId,
+      subscription.userId,
       subscriptionHistoryVos,
       platformVo,
     );
@@ -306,14 +306,14 @@ export class UserSubscriptionsService {
       price,
     );
 
-    const data = await this.userSubscriptionRepository.findById(id);
+    const updatedSubscription = await this.userSubscriptionRepository.findById(id);
 
     return new UserSubscriptionUpdateVo(
-      data.startedDate,
-      data.paymentMethod,
-      data.period,
-      data.accountId,
-      data.accountPw,
+      updatedSubscription.startedDate,
+      updatedSubscription.paymentMethod,
+      updatedSubscription.period,
+      updatedSubscription.accountId,
+      updatedSubscription.accountPw,
       price,
     );
   }
