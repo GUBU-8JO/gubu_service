@@ -7,7 +7,6 @@ import {
 import { CreateUserSubscriptionDto } from './dto/create-user-subscription.dto';
 import { UpdateUserSubscriptionDto } from './dto/update-user-subscription.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserSubscription } from './entities/user-subscription.entity';
 import { Repository } from 'typeorm';
 import { Platform } from 'src/platform/entities/platforms.entity';
 import { SubscriptionHistory } from './entities/subscription-histories.entity';
@@ -18,16 +17,16 @@ import { SubscriptionHistoryVo } from './dto/user-subscription-responseDto/subsc
 import { PlatformVo } from '../category/dto/platformVo';
 import bcrypt from 'bcrypt';
 import { MySubscriptionVo } from './dto/mySubscriptionVo';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
+import { createDecipheriv, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from 'src/cache/cache.service';
+import { UserSubscriptionRepository } from './user-subscriptions.repository';
 
 @Injectable()
 export class UserSubscriptionsService {
   constructor(
-    @InjectRepository(UserSubscription)
-    private readonly userSubscriptionRepository: Repository<UserSubscription>,
+    private readonly userSubscriptionRepository: UserSubscriptionRepository,
     @InjectRepository(Platform)
     private readonly platformRepository: Repository<Platform>,
     @InjectRepository(SubscriptionHistory)
@@ -57,78 +56,52 @@ export class UserSubscriptionsService {
         message: '등록되지않은 플랫폼입니다.',
       });
 
-    const existingSubscription = await this.userSubscriptionRepository.findOne({
-      where: {
-        userId: userId,
-        platformId: platformId,
-      },
-    });
+    const existingSubscription =
+      await this.userSubscriptionRepository.checkSubscription(
+        userId,
+        platformId,
+      );
 
     if (existingSubscription)
       throw new BadRequestException({
         message: '이미 구독중인 플랫폼 입니다.',
       });
 
-    const Idiv = randomBytes(16);
-    const Pwiv = randomBytes(16);
-    const cryptoPassword = this.configService.get('CRYPTO_PASSWORD');
-    const key = (await promisify(scrypt)(cryptoPassword, 'salt', 32)) as Buffer;
-    const Idcipher = createCipheriv('aes-256-ctr', key, Idiv);
-    const Pwcipher = createCipheriv('aes-256-ctr', key, Pwiv);
-
-    const encryptedAccountId = Buffer.concat([
-      Idcipher.update(accountId),
-      Idcipher.final(),
-    ]);
-
-    const encryptedAccountPw = Buffer.concat([
-      Pwcipher.update(accountPw),
-      Pwcipher.final(),
-    ]);
-
-    const encryptedId = Buffer.concat([Idiv, encryptedAccountId]).toString(
-      'hex',
-    );
-    const encryptedPassword = Buffer.concat([
-      Pwiv,
-      encryptedAccountPw,
-    ]).toString('hex');
-
     // startedDate를 Date 객체로 변환
     const startedDateObj = new Date(startedDate);
 
-    const data = await this.userSubscriptionRepository.save({
+    const newSubscription = await this.userSubscriptionRepository.saveSubscription(
       startedDate,
       paymentMethod,
       period,
       platformId,
-      accountId: encryptedId,
-      accountPw: encryptedPassword,
+      accountId,
+      accountPw,
       userId,
       price,
-    });
+    );
 
     const nextPayAt = this.calculateNextDate(startedDateObj, period);
 
     await this.subscriptionHistory.save({
-      userSubscriptionId: data.id,
+      userSubscriptionId: newSubscription.id,
       startAt: startedDateObj,
       nextPayAt: nextPayAt,
-      price: data.price,
+      price: newSubscription.price,
       stopDate: null,
-      userSubscription: data,
+      userSubscription: newSubscription,
     });
 
     return new UserSubscriptionVo(
-      data.id,
-      data.platformId,
-      data.period,
-      data.price,
-      data.paymentMethod,
-      data.startedDate,
-      data.accountId,
-      data.accountPw,
-      data.userId,
+      newSubscription.id,
+      newSubscription.platformId,
+      newSubscription.period,
+      newSubscription.price,
+      newSubscription.paymentMethod,
+      newSubscription.startedDate,
+      newSubscription.accountId,
+      newSubscription.accountPw,
+      newSubscription.userId,
     );
   }
   // 다음 날짜 계산 함수 (월 단위로 증가)
@@ -139,18 +112,7 @@ export class UserSubscriptionsService {
   }
 
   async findAllMe(userId: number): Promise<MySubscriptionVo[]> {
-    const data = await this.userSubscriptionRepository.find({
-      where: { userId },
-      select: [
-        'id',
-        'platformId',
-        'period',
-        'price',
-        'startedDate',
-        'paymentMethod',
-      ],
-      relations: ['platform', 'subscriptionHistory'],
-    });
+    const data = await this.userSubscriptionRepository.findAllMe(userId);
 
     if (!data.length) {
       throw new NotFoundException({
@@ -183,18 +145,7 @@ export class UserSubscriptionsService {
 
     if (_.isNil(userSubscriptionCacheDataByUserId)) {
       const userSubscriptionDataByUserId =
-        await this.userSubscriptionRepository.find({
-          where: { userId },
-          select: [
-            'id',
-            'platformId',
-            'period',
-            'price',
-            'startedDate',
-            'paymentMethod',
-          ],
-          relations: ['platform', 'subscriptionHistory'],
-        });
+        await this.userSubscriptionRepository.findAllMe(userId);
       if (_.isNil(userSubscriptionDataByUserId)) {
         throw new NotFoundException({
           status: 404,
@@ -247,51 +198,15 @@ export class UserSubscriptionsService {
   }
 
   async findOne(id: number): Promise<UserSubscriptionVo> {
-    const data = await this.userSubscriptionRepository.findOne({
-      where: { id },
-      select: [
-        'id',
-        'platformId',
-        'period',
-        'price',
-        'paymentMethod',
-        'startedDate',
-        'accountId',
-        'accountPw',
-        'userId',
-      ],
-      relations: ['platform', 'subscriptionHistory'],
-    });
-    if (!data) {
+    const subscription = await this.userSubscriptionRepository.findSubscriptionById(id);
+    if (!subscription) {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
 
-    const encryptedIdBufferFromHex = Buffer.from(data.accountId, 'hex');
-    const encryptedPwBufferFromHex = Buffer.from(data.accountPw, 'hex');
+    const decryptedAccountId = await this.decryption(subscription.accountId);
+    const decryptedAccountPw = await this.decryption(subscription.accountPw);
 
-    const Idiv = encryptedIdBufferFromHex.slice(0, 16);
-    const encryptedId = encryptedIdBufferFromHex.slice(16);
-    const Pwiv = encryptedPwBufferFromHex.slice(0, 16);
-    const encryptedPw = encryptedPwBufferFromHex.slice(16);
-
-    const password = this.configService.get('CRYPTO_PASSWORD');
-    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
-    const Iddecipher = createDecipheriv('aes-256-ctr', key, Idiv);
-    const Pwdecipher = createDecipheriv('aes-256-ctr', key, Pwiv);
-
-    const decryptedId = Buffer.concat([
-      Iddecipher.update(encryptedId),
-      Iddecipher.final(),
-    ]);
-    const decryptedPw = Buffer.concat([
-      Pwdecipher.update(encryptedPw),
-      Pwdecipher.final(),
-    ]);
-
-    const decryptedAccountId = decryptedId.toString();
-    const decryptedAccountPw = decryptedPw.toString();
-
-    const platform = data.platform;
+    const platform = subscription.platform;
     const platformVo = new PlatformVo(
       platform.id,
       platform.title,
@@ -302,7 +217,7 @@ export class UserSubscriptionsService {
       platform.rating,
     );
 
-    const subscriptionHistoryVos = data.subscriptionHistory.map(
+    const subscriptionHistoryVos = subscription.subscriptionHistory.map(
       (history) =>
         new SubscriptionHistoryVo(
           history.id,
@@ -315,29 +230,22 @@ export class UserSubscriptionsService {
     );
 
     return new UserSubscriptionVo(
-      data.id,
-      data.platformId,
-      data.period,
-      data.price,
-      data.paymentMethod,
-      data.startedDate,
+      subscription.id,
+      subscription.platformId,
+      subscription.period,
+      subscription.price,
+      subscription.paymentMethod,
+      subscription.startedDate,
       decryptedAccountId,
       decryptedAccountPw,
-      data.userId,
+      subscription.userId,
       subscriptionHistoryVos,
       platformVo,
     );
   }
   async findInfo(id: number, password: string) {
-    const subscriptionInfo = await this.userSubscriptionRepository.findOne({
-      where: { id },
-      relations: ['user'],
-      select: {
-        user: {
-          password: true,
-        },
-      },
-    });
+    const subscriptionInfo =
+      await this.userSubscriptionRepository.findInfoById(id);
     if (!subscriptionInfo) {
       throw new UnauthorizedException('해당하는 구독정보가 없습니다.');
     }
@@ -373,11 +281,8 @@ export class UserSubscriptionsService {
       price,
     }: UpdateUserSubscriptionDto,
   ): Promise<UserSubscriptionUpdateVo> {
-    const existUserSubscription = await this.userSubscriptionRepository.findOne(
-      {
-        where: { id },
-      },
-    );
+    const existUserSubscription =
+      await this.userSubscriptionRepository.findById(id);
 
     if (!existUserSubscription)
       throw new NotFoundException({ message: '등록되지않는 구독정보입니다.' });
@@ -391,43 +296,36 @@ export class UserSubscriptionsService {
     if (newdata) {
       throw new BadRequestException({ message: '변경된 정보가 없습니다.' });
     }
-    await this.userSubscriptionRepository.update(
-      { id },
-      {
-        startedDate,
-        paymentMethod,
-        period,
-        accountId,
-        accountPw,
-        price,
-      },
+    await this.userSubscriptionRepository.updateSubscription(
+      id,
+      startedDate,
+      paymentMethod,
+      period,
+      accountId,
+      accountPw,
+      price,
     );
 
-    const data = await this.userSubscriptionRepository.findOne({
-      where: { id },
-    });
+    const updatedSubscription = await this.userSubscriptionRepository.findById(id);
 
     return new UserSubscriptionUpdateVo(
-      data.startedDate,
-      data.paymentMethod,
-      data.period,
-      data.accountId,
-      data.accountPw,
+      updatedSubscription.startedDate,
+      updatedSubscription.paymentMethod,
+      updatedSubscription.period,
+      updatedSubscription.accountId,
+      updatedSubscription.accountPw,
       price,
     );
   }
 
   async remove(id: number) {
-    const existData = await this.userSubscriptionRepository.findOne({
-      where: { id },
-      withDeleted: false,
-    });
+    const existData = await this.userSubscriptionRepository.findNotDeleted(id);
     if (_.isNil(existData))
       throw new BadRequestException({
         message: '데이터가 존재하지 않습니다.',
       });
 
-    await this.userSubscriptionRepository.softDelete(id);
+    await this.userSubscriptionRepository.deleteSubscription(id);
 
     await this.subscriptionHistory.update(
       { userSubscriptionId: id },
@@ -435,5 +333,25 @@ export class UserSubscriptionsService {
     );
 
     return true;
+  }
+
+  private async decryption(data) {
+    const encryptedDataBufferFromHex = Buffer.from(data, 'hex');
+
+    const DataIv = encryptedDataBufferFromHex.slice(0, 16);
+    const encryptedData = encryptedDataBufferFromHex.slice(16);
+
+    const password = this.configService.get('CRYPTO_PASSWORD');
+    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
+    const DataDecipher = createDecipheriv('aes-256-ctr', key, DataIv);
+
+    const decryptedBufferData = Buffer.concat([
+      DataDecipher.update(encryptedData),
+      DataDecipher.final(),
+    ]);
+
+    const decryptedData = decryptedBufferData.toString();
+
+    return decryptedData;
   }
 }

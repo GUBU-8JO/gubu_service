@@ -13,9 +13,14 @@ export class NotificationsService {
   ) {}
 
   async findAll(userId: number): Promise<NotificationVo[]> {
-    const notifications = await this.notificationRepository.createQueryBuilder('notification')
+    const notifications = await this.notificationRepository
+      .createQueryBuilder('notification')
+      .withDeleted()
       .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
-      .leftJoinAndSelect('userSubscription.subscriptionHistory', 'subscriptionHistory')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
       .where('notification.userId = :userId', { userId })
       .orderBy('notification.createdAt', 'DESC')
       .getMany();
@@ -42,10 +47,17 @@ export class NotificationsService {
     );
   }
 
-  async findOne(userId: number, notificationId: number): Promise<NotificationVo> {
-    const notification = await this.notificationRepository.createQueryBuilder('notification')
+  async findOne(
+    userId: number,
+    notificationId: number,
+  ): Promise<NotificationVo> {
+    const notification = await this.notificationRepository
+      .createQueryBuilder('notification')
       .leftJoinAndSelect('notification.userSubscription', 'userSubscription')
-      .leftJoinAndSelect('userSubscription.subscriptionHistory', 'subscriptionHistory')
+      .leftJoinAndSelect(
+        'userSubscription.subscriptionHistory',
+        'subscriptionHistory',
+      )
       .where('notification.userId = :userId', { userId })
       .andWhere('notification.id = :notificationId', { notificationId })
       .getOne();

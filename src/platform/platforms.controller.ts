@@ -18,8 +18,7 @@ export class PlatformsController {
     @Inject(PlatformsService)
     private readonly platformService: PlatformsService,
   ) {}
-  // (private readonly platformService: PlatformsService) { }
-
+ 
   /**
    * 플랫폼 전체 조회
    *

@@ -36,8 +36,8 @@ export class AuthController {
     @userInfo() user: User,
     @Body() signInDto: SignInDto,
   ): Promise<ResponseDto<SignInDataVo>> {
-    const data = await this.authService.signIn(signInDto);
+    const signIn = await this.authService.signIn(signInDto);
 
-    return new ResponseDto(data);
+    return new ResponseDto(signIn);
   }
 }
