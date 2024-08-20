@@ -15,6 +15,7 @@ import { ConfigModuleValidationSchema } from './configs/env-validation.config';
 import { FakerModule } from './faker/faker.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { TotalPriceModule } from './user/total-price.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -51,6 +52,7 @@ const typeOrmModuleOptions = {
     PlatformsModule,
     CategoryModule,
     FakerModule,
+    TotalPriceModule,
     ScheduleModule.forRoot(),
     RedisModule.forRootAsync({
       imports: [ConfigModule],
