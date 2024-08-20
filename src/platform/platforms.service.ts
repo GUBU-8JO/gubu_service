@@ -2,13 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PlatformVo } from './dto/platformVo';
 import { CacheService } from 'src/cache/cache.service';
 import { PlatformRepository } from './platforms.repository';
+import { DataSource } from 'typeorm';
 @Injectable()
 export class PlatformsService {
   constructor(
     private readonly platformRepository: PlatformRepository,
     private readonly cacheService: CacheService,
   ) {}
-  async findAllPlatforms(): Promise<PlatformVo[]> {
+  async findAllPlatforms(sortId: number): Promise<PlatformVo[]> {
     const cachekey = 'platforms';
     const platformList = await this.cacheService.getCache(cachekey);
     const platforms = platformList
@@ -19,7 +20,10 @@ export class PlatformsService {
         ttl: 3600,
       } as any);
     }
-    return platforms.map(
+
+    let sortPlatforms = await this.sortPlatfomrsBySortId(platforms, sortId);
+
+    return sortPlatforms.map(
       (platform) =>
         new PlatformVo(
           platform.id,
@@ -72,5 +76,16 @@ export class PlatformsService {
       platform.purchaseLink,
       platform.period,
     );
+  }
+
+  private sortPlatfomrsBySortId(data: any[], sortId: number): any[] {
+    switch (sortId) {
+      case 1:
+        return data.sort((a, b) => a.title.localeCompare(b.title));
+      case 2:
+        return data.sort((a, b) => b.rating - a.rating);
+      default:
+        return data;
+    }
   }
 }
