@@ -5,9 +5,10 @@ import {
   Inject,
   Param,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { PlatformsService } from './platforms.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/common/response.dto';
 import { PlatformVo } from './dto/platformVo';
 
@@ -18,16 +19,19 @@ export class PlatformsController {
     @Inject(PlatformsService)
     private readonly platformService: PlatformsService,
   ) {}
- 
+
   /**
    * 플랫폼 전체 조회
    *
    *
    */
   @Get()
+  @ApiQuery({ name: 'sortId', type: String, description: '정렬 ID' })
   @HttpCode(200)
-  async getAllPlatforms(): Promise<ResponseDto<PlatformVo[]>> {
-    return new ResponseDto(await this.platformService.findAllPlatforms());
+  async getAllPlatforms(
+    @Query('sortId') sortId: string,
+  ): Promise<ResponseDto<PlatformVo[]>> {
+    return new ResponseDto(await this.platformService.findAllPlatforms(sortId));
   }
 
   /**

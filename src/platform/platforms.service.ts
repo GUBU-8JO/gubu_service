@@ -8,7 +8,7 @@ export class PlatformsService {
     private readonly platformRepository: PlatformRepository,
     private readonly cacheService: CacheService,
   ) {}
-  async findAllPlatforms(): Promise<PlatformVo[]> {
+  async findAllPlatforms(sortId: string): Promise<PlatformVo[]> {
     const cachekey = 'platforms';
     const platformList = await this.cacheService.getCache(cachekey);
     const platforms = platformList
@@ -19,7 +19,10 @@ export class PlatformsService {
         ttl: 3600,
       } as any);
     }
-    return platforms.map(
+
+    let sortPlatforms = await this.sortPlatformsBySortId(platforms, sortId);
+
+    return sortPlatforms.map(
       (platform) =>
         new PlatformVo(
           platform.id,
@@ -72,5 +75,16 @@ export class PlatformsService {
       platform.purchaseLink,
       platform.period,
     );
+  }
+
+  private sortPlatformsBySortId(data: any[], sortId: string): any[] {
+    switch (sortId) {
+      case 'title':
+        return data.sort((a, b) => a.title.localeCompare(b.title));
+      case 'rating':
+        return data.sort((a, b) => b.rating - a.rating);
+      default:
+        return data;
+    }
   }
 }
