@@ -8,7 +8,7 @@ export class PlatformsService {
     private readonly platformRepository: PlatformRepository,
     private readonly cacheService: CacheService,
   ) {}
-  async findAllPlatforms(sortId: number): Promise<PlatformVo[]> {
+  async findAllPlatforms(sortId: string): Promise<PlatformVo[]> {
     const cachekey = 'platforms';
     const platformList = await this.cacheService.getCache(cachekey);
     const platforms = platformList
@@ -20,7 +20,7 @@ export class PlatformsService {
       } as any);
     }
 
-    let sortPlatforms = await this.sortPlatfomrsBySortId(platforms, sortId);
+    let sortPlatforms = await this.sortPlatformsBySortId(platforms, sortId);
 
     return sortPlatforms.map(
       (platform) =>
@@ -77,11 +77,11 @@ export class PlatformsService {
     );
   }
 
-  private sortPlatfomrsBySortId(data: any[], sortId: number): any[] {
+  private sortPlatformsBySortId(data: any[], sortId: string): any[] {
     switch (sortId) {
-      case 1:
+      case 'title':
         return data.sort((a, b) => a.title.localeCompare(b.title));
-      case 2:
+      case 'rating':
         return data.sort((a, b) => b.rating - a.rating);
       default:
         return data;

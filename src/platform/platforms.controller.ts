@@ -26,10 +26,10 @@ export class PlatformsController {
    *
    */
   @Get()
-  @ApiQuery({ name: 'sortId', type: Number, description: '정렬 ID' })
+  @ApiQuery({ name: 'sortId', type: String, description: '정렬 ID' })
   @HttpCode(200)
   async getAllPlatforms(
-    @Query('sortId') sortId: number,
+    @Query('sortId') sortId: string,
   ): Promise<ResponseDto<PlatformVo[]>> {
     return new ResponseDto(await this.platformService.findAllPlatforms(sortId));
   }
