@@ -7,7 +7,7 @@ import { TotalPriceRepository } from './total-price.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SubscriptionHistory])],
-  providers: [ TotalPriceService,TotalPriceRepository],
+  providers: [TotalPriceService, TotalPriceRepository],
   controllers: [TotalPriceController],
 })
 export class TotalPriceModule {}
