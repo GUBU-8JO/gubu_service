@@ -9,6 +9,7 @@ export class TotalPriceRepository {
     @InjectRepository(SubscriptionHistory)
     private readonly repository: Repository<SubscriptionHistory>,
   ) {}
+  
   async getMonthlySubscriptionUser(userId: number): Promise<number> {
    try{ const result = await this.repository.query(`
       SELECT COALESCE(SUM(sh.price), 0) AS total_price
