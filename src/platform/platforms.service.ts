@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PlatformVo } from './dto/platformVo';
 import { CacheService } from 'src/cache/cache.service';
 import { PlatformRepository } from './platforms.repository';
-import { DataSource } from 'typeorm';
 @Injectable()
 export class PlatformsService {
   constructor(
