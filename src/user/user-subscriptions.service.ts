@@ -70,16 +70,17 @@ export class UserSubscriptionsService {
     // startedDate를 Date 객체로 변환
     const startedDateObj = new Date(startedDate);
 
-    const newSubscription = await this.userSubscriptionRepository.saveSubscription(
-      startedDate,
-      paymentMethod,
-      period,
-      platformId,
-      accountId,
-      accountPw,
-      userId,
-      price,
-    );
+    const newSubscription =
+      await this.userSubscriptionRepository.saveSubscription(
+        startedDate,
+        paymentMethod,
+        period,
+        platformId,
+        accountId,
+        accountPw,
+        userId,
+        price,
+      );
 
     const nextPayAt = this.calculateNextDate(startedDateObj, period);
 
@@ -198,7 +199,8 @@ export class UserSubscriptionsService {
   }
 
   async findOne(id: number): Promise<UserSubscriptionVo> {
-    const subscription = await this.userSubscriptionRepository.findSubscriptionById(id);
+    const subscription =
+      await this.userSubscriptionRepository.findSubscriptionById(id);
     if (!subscription) {
       throw new NotFoundException(`해당하는 구독정보가 없습니다.`);
     }
@@ -306,7 +308,8 @@ export class UserSubscriptionsService {
       price,
     );
 
-    const updatedSubscription = await this.userSubscriptionRepository.findById(id);
+    const updatedSubscription =
+      await this.userSubscriptionRepository.findById(id);
 
     return new UserSubscriptionUpdateVo(
       updatedSubscription.startedDate,

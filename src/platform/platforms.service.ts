@@ -20,7 +20,7 @@ export class PlatformsService {
       } as any);
     }
 
-    let sortPlatforms = await this.sortPlatformsBySortId(platforms, sortId);
+    const sortPlatforms = await this.sortPlatformsBySortId(platforms, sortId);
 
     return sortPlatforms.map(
       (platform) =>
