@@ -1,14 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';;
+import { Injectable, Logger } from '@nestjs/common';
 import { TotalPriceRepository } from './total-price.repository';
-
 
 @Injectable()
 export class TotalPriceService {
   private readonly logger = new Logger(TotalPriceService.name);
 
-  constructor(
-    private readonly totalPriceRepository: TotalPriceRepository,
-  ) {}
+  constructor(private readonly totalPriceRepository: TotalPriceRepository) {}
 
   // 사용자별 월간 구독 금액 API
   async getUserMonthlySubscription(userId: number): Promise<number> {

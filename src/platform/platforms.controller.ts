@@ -21,6 +21,18 @@ export class PlatformsController {
   ) {}
 
   /**
+   * 가격 변경
+   *
+   */
+  @Get('platformPrice')
+  @HttpCode(200)
+  async renewPrice() {
+    const price = Math.floor(Math.random() * 5000) + 15000; // 15000 ~ 19999 사이의 값
+    const newPrice = Math.floor(price / 100) * 100;
+    return { price: newPrice };
+  }
+
+  /**
    * 플랫폼 전체 조회
    *
    *
